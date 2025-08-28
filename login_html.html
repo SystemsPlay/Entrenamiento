@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Préstamos - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo-icon {
+            font-size: 4rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .logo-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        .logo-subtitle {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .form-floating > label {
+            color: #6c757d;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .user-type-selector {
+            margin-bottom: 20px;
+        }
+
+        .user-type-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .user-type-card:hover {
+            border-color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .user-type-card.active {
+            border-color: var(--secondary-color);
+            background: rgba(52, 152, 219, 0.15);
+        }
+
+        .user-type-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .recovery-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .recovery-link:hover {
+            color: #2980b9;
+            text-decoration: underline;
+        }
+
+        .alert-custom {
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .loading-spinner {
+            display: none;
+        }
+
+        .recovery-modal .modal-content {
+            border-radius: 15px;
+            border: none;
+        }
+
+        .recovery-modal .modal-header {
+            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
+            color: white;
+            border-radius: 15px 15px 0 0;
+        }
+
+        .recovery-result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            border-left: 4px solid var(--success-color);
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 30px 20px;
+                margin: 10px;
+            }
+            
+            .logo-icon {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid login-container">
+        <div class="login-card">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-coins"></i>
+                </div>
+                <h1 class="logo-title">SGL Pro</h1>
+                <p class="logo-subtitle">Sistema de Gestión de Préstamos</p>
+            </div>
+
+            <!-- User Type Selection -->
+            <div class="user-type-selector">
+                <div class="row g-2">
+                    <div class="col-6">
+                        <div class="user-type-card" data-type="admin">
+                            <div class="user-type-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="fw-bold">Administrador</div>
+                            <small class="text-muted">Gestión completa</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="user-type-card" data-type="client">
+                            <div class="user-type-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="fw-bold">Cliente</div>
+                            <small class="text-muted">Consulta préstamos</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="username" placeholder="Usuario" required>
+                    <label for="username">
+                        <i class="fas fa-user me-2"></i>Usuario
+                    </label>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
+                    <label for="password">
+                        <i class="fas fa-lock me-2"></i>Contraseña
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
+                    <span class="login-text">
+                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
+                    </span>
+                    <span class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Iniciando...
+                    </span>
+                </button>
+
+                <div class="text-center">
+                    <a href="#" class="recovery-link" data-bs-toggle="modal" data-bs-target="#recoveryModal">
+                        <i class="fas fa-key me-1"></i>¿Olvidaste tu contraseña?
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Recovery Password Modal -->
+    <div class="modal fade recovery-modal" id="recoveryModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-key me-2"></i>Recuperar Contraseña
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted mb-4">
+                        Completa la siguiente información para recuperar tu contraseña:
+                    </p>
+
+                    <form id="recoveryForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <select class="form-select" id="recDocType" required>
+                                        <option value="">Seleccionar</option>
+                                        <option value="CC">Cédula de Ciudadanía</option>
+                                        <option value="CE">Cédula de Extranjería</option>
+                                        <option value="TI">Tarjeta de Identidad</option>
+                                        <option value="PP">Pasaporte</option>
+                                    </select>
+                                    <label for="recDocType">Tipo de Documento</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="recDocNumber" placeholder="Número" required>
+                                    <label for="recDocNumber">Número de Documento</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="recFullName" placeholder="Nombre completo" required>
+                            <label for="recFullName">Nombre Completo</label>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="tel" class="form-control" id="recPhone" placeholder="Teléfono" required>
+                            <label for="recPhone">Teléfono</label>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="recFavoriteColor" placeholder="Color favorito" required>
+                                    <label for="recFavoriteColor">Color Favorito</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" id="recFavoriteAnimal" placeholder="Animal favorito" required>
+                                    <label for="recFavoriteAnimal">Animal Favorito</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="recoveryResult" class="recovery-result" style="display: none;">
+                            <h6 class="text-success mb-3">
+                                <i class="fas fa-check-circle me-2"></i>Información Validada
+                            </h6>
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong>Usuario:</strong>
+                                    <div id="recoveredUsername" class="text-primary"></div>
+                                </div>
+                                <div class="col-6">
+                                    <strong>Contraseña:</strong>
+                                    <div id="recoveredPassword" class="text-primary"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="btnRecoverPassword">
+                        <i class="fas fa-search me-2"></i>Recuperar Contraseña
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let selectedUserType = 'admin';
+        let sessionToken = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeUserTypeSelector();
+            initializeLoginForm();
+            initializeRecoveryForm();
+            preventBackButton();
+        });
+
+        // User Type Selection
+        function initializeUserTypeSelector() {
+            const userTypeCards = document.querySelectorAll('.user-type-card');
+            
+            userTypeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Remove active class from all cards
+                    userTypeCards.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to selected card
+                    this.classList.add('active');
+                    
+                    // Update selected type
+                    selectedUserType = this.dataset.type;
+                    
+                    // Update form placeholders
+                    updateFormPlaceholders();
+                });
+            });
+            
+            // Set default selection
+            userTypeCards[0].classList.add('active');
+            updateFormPlaceholders();
+        }
+
+        function updateFormPlaceholders() {
+            const usernameInput = document.getElementById('username');
+            const usernameLabel = usernameInput.nextElementSibling;
+            
+            if (selectedUserType === 'admin') {
+                usernameInput.placeholder = 'Usuario administrador';
+                usernameLabel.innerHTML = '<i class="fas fa-user-shield me-2"></i>Usuario';
+            } else {
+                usernameInput.placeholder = 'Número de documento';
+                usernameLabel.innerHTML = '<i class="fas fa-id-card me-2"></i>Número de Documento';
+            }
+        }
+
+        // Login Form
+        function initializeLoginForm() {
+            const loginForm = document.getElementById('loginForm');
+            
+            loginForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value;
+                
+                if (!username || !password) {
+                    showAlert('Por favor completa todos los campos', 'warning');
+                    return;
+                }
+                
+                await performLogin(username, password);
+            });
+        }
+
+        async function performLogin(username, password) {
+            const btn = document.querySelector('.btn-login');
+            const loginText = btn.querySelector('.login-text');
+            const spinner = btn.querySelector('.loading-spinner');
+            
+            // Show loading state
+            btn.disabled = true;
+            loginText.style.display = 'none';
+            spinner.style.display = 'inline';
+            
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        username: username,
+                        password: password,
+                        userType: selectedUserType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    sessionToken = result.data.sessionToken;
+                    localStorage.setItem('sessionToken', sessionToken);
+                    localStorage.setItem('userType', result.data.userType);
+                    localStorage.setItem('username', result.data.username);
+                    
+                    showAlert('Inicio de sesión exitoso. Redirigiendo...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = result.data.redirectUrl;
+                    }, 1500);
+                } else {
+                    showAlert(result.message || 'Error en el inicio de sesión', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Inténtalo de nuevo.', 'danger');
+            } finally {
+                // Reset button state
+                btn.disabled = false;
+                loginText.style.display = 'inline';
+                spinner.style.display = 'none';
+            }
+        }
+
+        // Password Recovery
+        function initializeRecoveryForm() {
+            const btnRecover = document.getElementById('btnRecoverPassword');
+            
+            btnRecover.addEventListener('click', async function() {
+                const form = document.getElementById('recoveryForm');
+                const formData = new FormData(form);
+                
+                const data = {
+                    docType: document.getElementById('recDocType').value,
+                    docNumber: document.getElementById('recDocNumber').value,
+                    fullName: document.getElementById('recFullName').value,
+                    phone: document.getElementById('recPhone').value,
+                    favoriteColor: document.getElementById('recFavoriteColor').value,
+                    favoriteAnimal: document.getElementById('recFavoriteAnimal').value
+                };
+                
+                // Validate form
+                if (!data.docType || !data.docNumber || !data.fullName || 
+                    !data.phone || !data.favoriteColor || !data.favoriteAnimal) {
+                    showAlert('Por favor completa todos los campos', 'warning');
+                    return;
+                }
+                
+                await performPasswordRecovery(data);
+            });
+        }
+
+        async function performPasswordRecovery(data) {
+            const btn = document.getElementById('btnRecoverPassword');
+            const originalText = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+            
+            try {
+                const response = await fetch(window.location.href, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'recoverPassword',
+                        ...data
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('recoveredUsername').textContent = result.data.username;
+                    document.getElementById('recoveredPassword').textContent = result.data.password;
+                    document.getElementById('recoveryResult').style.display = 'block';
+                    
+                    showAlert('Contraseña recuperada exitosamente', 'success');
+                } else {
+                    showAlert(result.message || 'Información no válida', 'danger');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error de conexión. Inténtalo de nuevo.', 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // Alert System
+        function showAlert(message, type = 'info') {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertId = 'alert-' + Date.now();
+            
+            const alertHTML = `
+                <div id="${alertId}" class="alert alert-${type} alert-custom alert-dismissible fade show" role="alert">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-${getAlertIcon(type)} me-2"></i>
+                        <div>${message}</div>
+                        <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+                    </div>
+                </div>
+            `;
+            
+            alertContainer.innerHTML = alertHTML;
+            
+            // Auto dismiss after 5 seconds
+            setTimeout(() => {
+                const alert = document.getElementById(alertId);
+                if (alert) {
+                    const bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                }
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                danger: 'exclamation-triangle',
+                warning: 'exclamation-circle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        // Security Functions
+        function preventBackButton() {
+            window.history.pushState(null, null, window.location.href);
+            
+            window.addEventListener('popstate', function() {
+                window.history.pushState(null, null, window.location.href);
+                showAlert('Por favor usa los controles de navegación del sistema', 'warning');
+            });
+        }
+
+        // Session Management
+        function checkExistingSession() {
+            const token = localStorage.getItem('sessionToken');
+            const userType = localStorage.getItem('userType');
+            
+            if (token && userType) {
+                // Redirect to appropriate dashboard
+                const redirectUrl = userType === 'admin' ? '?page=admin' : '?page=client';
+                window.location.href = redirectUrl;
+            }
+        }
+
+        // Check for existing session on load
+        checkExistingSession();
+
+        // Handle browser refresh
+        window.addEventListener('beforeunload', function() {
+            // Clear sensitive data if not properly logged in
+            if (!sessionToken) {
+                localStorage.removeItem('sessionToken');
+                localStorage.removeItem('userType');
+                localStorage.removeItem('username');
+            }
+        });
+
+        // Security: Clear localStorage on tab close
+        window.addEventListener('unload', function() {
+            if (!sessionToken) {
+                localStorage.clear();
+            }
+        });
+    </script>
+</body>
+</html>
