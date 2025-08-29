@@ -77,7 +77,7 @@ async function performLogin(username, password) {
     spinner.style.display = 'inline';
     
     try {
-        const response = await fetch('https://script.google.com/macros/s/AKfycbxoMvh8i01-6aYtSWtuQODde2GQe1y1OlDBBXOYIwhr0_3ntewGv5L2EtCgPqpbczgDfQ/exec', { 
+        const response = await fetch('https://script.google.com/macros/s/AKfycby7NYD_Yt6rH5DBMY-H9tj91aJ6uoBFmf_t8JxXypFNByFP2zDwd7-janofBK23Pca3Iw/exec', { 
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -262,4 +262,5 @@ window.addEventListener('unload', function() {
     if (!sessionToken) {
         localStorage.clear();
     }
+
 });
