@@ -500,30 +500,30 @@
             }
         }
 
-        async function makeRequest(action, data = {}) {
-            const googleAppsScriptUrl = 'https://script.google.com/macros/s/AKfycby6L-8igduc8AarcMkhkWO4uSIX-qEj0NE0Q4xHMD8t1tUxlmEHFKL8AmxGiOF5QkjnpA/exec';
-            const payload = { action, ...data };
+async function makeRequest(action, data = {}) {
+    const googleAppsScriptUrl = 'https://script.google.com/macros/s/AKfycby6L-8igduc8AarcMkhkWO4uSIX-qEj0NE0Q4xHMD8t1tUxlmEHFKL8AmxGiOF5QkjnpA/exec';
+    const payload = { action, ...data };
 
-            try {
-                const response = await fetch(googleAppsScriptUrl, {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8',
-                    },
-                    body: JSON.stringify(payload),
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                
-                return await response.json();
-            } catch (error) {
-                console.error('Request failed:', error);
-                return { success: false, message: 'Error de conexión' };
-            }
+    try {
+        const response = await fetch(googleAppsScriptUrl, {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(payload),
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('Request failed:', error);
+        return { success: false, message: 'Error de conexión' };
+    }
+}
 
         function showAlert(message, type = 'info') {
             const alertPlaceholder = document.getElementById('alertsList');
