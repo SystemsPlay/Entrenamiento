@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -32,218 +31,219 @@
 
         .login-card {
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
             padding: 40px;
-            width: 100%;
             max-width: 450px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 100%;
         }
 
-        .logo-section {
+        .logo-container {
             text-align: center;
             margin-bottom: 30px;
         }
 
-        .logo-icon {
-            font-size: 4rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
+        .logo {
+            width: 100px;
+            height: 100px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: 0 0 15px rgba(52, 152, 219, 0.5);
+            border: 5px solid white;
+        }
+        
+        .user-type-selector {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
         }
 
-        .logo-title {
-            color: var(--primary-color);
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+        .user-type-card {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            background-color: #f1f1f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .logo-subtitle {
-            color: #6c757d;
-            font-size: 0.9rem;
+        .user-type-card:hover {
+            background-color: #e2e6ea;
+            transform: translateY(-3px);
+        }
+
+        .user-type-card.active {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .form-floating > label {
             color: #6c757d;
         }
-
+        
         .form-control:focus {
             border-color: var(--secondary-color);
             box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
         }
-
-        .btn-login {
+        
+        .btn-primary-custom {
             background: linear-gradient(135deg, var(--secondary-color), #2980b9);
             border: none;
-            padding: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            font-weight: bold;
             transition: all 0.3s ease;
         }
-
-        .btn-login:hover {
+        
+        .btn-primary-custom:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
 
-        .user-type-selector {
-            margin-bottom: 20px;
+        .forgot-password {
+            font-size: 0.9rem;
+            text-align: right;
+            margin-top: 10px;
         }
 
-        .user-type-card {
-            border: 2px solid #e9ecef;
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-        }
-
-        .user-type-card:hover {
-            border-color: var(--secondary-color);
-            background: rgba(52, 152, 219, 0.1);
-        }
-
-        .user-type-card.active {
-            border-color: var(--secondary-color);
-            background: rgba(52, 152, 219, 0.15);
-        }
-
-        .user-type-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .recovery-link {
+        .forgot-password a {
             color: var(--secondary-color);
             text-decoration: none;
-            font-size: 0.9rem;
         }
 
-        .recovery-link:hover {
-            color: #2980b9;
+        .forgot-password a:hover {
             text-decoration: underline;
         }
 
-        .alert-custom {
-            border: none;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 20px;
+        /* Password Toggle */
+        .password-container {
+            position: relative;
         }
 
-        .loading-spinner {
-            display: none;
+        .password-toggle {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        /* Modal Recovery Styles */
+        .recovery-modal .modal-header {
+            background: linear-gradient(45deg, var(--secondary-color), var(--primary-color));
+            color: white;
+            border-bottom: none;
+            border-top-left-radius: 18px;
+            border-top-right-radius: 18px;
         }
 
         .recovery-modal .modal-content {
-            border-radius: 15px;
-            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
 
-        .recovery-modal .modal-header {
-            background: linear-gradient(135deg, var(--secondary-color), #2980b9);
-            color: white;
-            border-radius: 15px 15px 0 0;
+        .recovery-modal .modal-title {
+            font-weight: bold;
         }
 
-        .recovery-result {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 15px;
-            border-left: 4px solid var(--success-color);
+        .recovery-modal .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
         }
 
+        .recovery-modal .modal-footer {
+            border-top: none;
+        }
+
+        .recovery-modal .form-control,
+        .recovery-modal .form-select {
+            border-color: #ddd;
+        }
+
+        .recovery-modal .form-control:focus,
+        .recovery-modal .form-select:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+        }
+        
+        /* Media Queries for Responsiveness */
         @media (max-width: 576px) {
             .login-card {
-                padding: 30px 20px;
-                margin: 10px;
+                padding: 30px;
             }
-            
-            .logo-icon {
-                font-size: 3rem;
+            .logo {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            .user-type-selector {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .user-type-card {
+                padding: 12px;
+            }
+            .modal-dialog {
+                margin: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container-fluid login-container">
+
+    <div class="login-container">
         <div class="login-card">
-            <!-- Logo Section -->
-            <div class="logo-section">
-                <div class="logo-icon">
-                    <i class="fas fa-coins"></i>
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-lock"></i>
                 </div>
-                <h1 class="logo-title">SGL Pro</h1>
-                <p class="logo-subtitle">Sistema de Gestión de Préstamos</p>
             </div>
+            <h2 class="text-center mb-4 text-primary">Iniciar Sesión</h2>
+            <p class="logo-subtitle">Sistema de Gestión de Préstamos</p>
 
-            <!-- User Type Selection -->
+            
             <div class="user-type-selector">
-                <div class="row g-2">
-                    <div class="col-6">
-                        <div class="user-type-card" data-type="admin">
-                            <div class="user-type-icon">
-                                <i class="fas fa-user-shield"></i>
-                            </div>
-                            <div class="fw-bold">Administrador</div>
-                            <small class="text-muted">Gestión completa</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="user-type-card" data-type="client">
-                            <div class="user-type-icon">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="fw-bold">Cliente</div>
-                            <small class="text-muted">Consulta préstamos</small>
-                        </div>
-                    </div>
+                <div class="user-type-card active" data-type="admin">
+                    <i class="fas fa-user-shield me-2"></i>
+                    Administrador
+                </div>
+                <div class="user-type-card" data-type="client">
+                    <i class="fas fa-user me-2"></i>
+                    Cliente
                 </div>
             </div>
+            
+            <div id="alertsList"></div>
 
-            <!-- Alert Messages -->
-            <div id="alertContainer"></div>
-
-            <!-- Login Form -->
             <form id="loginForm">
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="username" placeholder="Usuario" required>
-                    <label for="username">
-                        <i class="fas fa-user me-2"></i>Usuario
-                    </label>
+                    <input type="text" class="form-control" id="username" placeholder="Usuario administrador" required>
+                    <label for="username"><i class="fas fa-user-shield me-2"></i>Usuario</label>
                 </div>
-
-                <div class="form-floating mb-3">
+                <div class="form-floating mb-3 password-container">
                     <input type="password" class="form-control" id="password" placeholder="Contraseña" required>
-                    <label for="password">
-                        <i class="fas fa-lock me-2"></i>Contraseña
-                    </label>
+                    <label for="password"><i class="fas fa-lock me-2"></i>Contraseña</label>
+                    <span class="password-toggle"><i class="fas fa-eye" id="togglePassword"></i></span>
                 </div>
-
-                <button type="submit" class="btn btn-primary btn-login w-100 mb-3">
-                    <span class="login-text">
-                        <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
-                    </span>
-                    <span class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin me-2"></i>Iniciando...
-                    </span>
+                <button type="submit" class="btn btn-primary-custom w-100 py-3 mt-2" id="btnLogin">
+                    <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
                 </button>
-
-                <div class="text-center">
-                    <a href="#" class="recovery-link" data-bs-toggle="modal" data-bs-target="#recoveryModal">
-                        <i class="fas fa-key me-1"></i>¿Olvidaste tu contraseña?
-                    </a>
-                </div>
             </form>
+
+            <div class="forgot-password">
+                <a href="#" data-bs-toggle="modal" data-bs-target="#recoveryModal">¿Olvidaste tu contraseña?</a>
+            </div>
         </div>
     </div>
 
-    <!-- Recovery Password Modal -->
     <div class="modal fade recovery-modal" id="recoveryModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -333,6 +333,248 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="animaciones.js"> </script>
+    <script>
+        let selectedUserType = 'admin';
+        let sessionToken = null;
+        const googleAppsScriptUrl = 'https://script.google.com/macros/s/AKfycby7NYD_Yt6rH5DBMY-H9tj91aJ6uoBFmf_t8JxXypFNByFP2zDwd7-janofBK23Pca3Iw/exec';
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeUserTypeSelector();
+            initializeLoginForm();
+            initializeRecoveryForm();
+            setupPasswordToggle();
+            preventBackButton();
+            checkExistingSession();
+        });
+
+        function initializeUserTypeSelector() {
+            const userTypeCards = document.querySelectorAll('.user-type-card');
+            
+            userTypeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    userTypeCards.forEach(c => c.classList.remove('active'));
+                    this.classList.add('active');
+                    selectedUserType = this.dataset.type;
+                    updateFormPlaceholders();
+                });
+            });
+            
+            userTypeCards[0].classList.add('active');
+            updateFormPlaceholders();
+        }
+
+        function updateFormPlaceholders() {
+            const usernameInput = document.getElementById('username');
+            const usernameLabel = usernameInput.nextElementSibling;
+            
+            if (selectedUserType === 'admin') {
+                usernameInput.placeholder = 'Usuario administrador';
+                usernameLabel.innerHTML = '<i class="fas fa-user-shield me-2"></i>Usuario';
+            } else {
+                usernameInput.placeholder = 'Número de documento';
+                usernameLabel.innerHTML = '<i class="fas fa-id-card me-2"></i>Número de Documento';
+            }
+        }
+
+        function initializeLoginForm() {
+            const loginForm = document.getElementById('loginForm');
+            const btnLogin = document.getElementById('btnLogin');
+            
+            if (!btnLogin) {
+                console.error('Error: Botón de login no encontrado. Verifique el ID en su HTML.');
+                return;
+            }
+
+            loginForm.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const formAlerts = document.getElementById('alertsList');
+
+                btnLogin.disabled = true;
+                btnLogin.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Validando...';
+                formAlerts.innerHTML = '';
+
+                try {
+                    const response = await makeRequest('login', {
+                        username: username,
+                        password: password,
+                        userType: selectedUserType
+                    });
+                    
+                    if (response.success) {
+                        sessionToken = response.data.token;
+                        localStorage.setItem('sessionToken', sessionToken);
+                        localStorage.setItem('userType', selectedUserType);
+                        localStorage.setItem('username', username);
+
+                        showAlert('Inicio de sesión exitoso.', 'success');
+                        setTimeout(() => {
+                            if (selectedUserType === 'admin') {
+                                window.location.href = 'admin_dashboard.html';
+                            } else {
+                                window.location.href = 'client_dashboard.html';
+                            }
+                        }, 1000);
+                    } else {
+                        showAlert(response.message, 'danger');
+                    }
+                } catch (error) {
+                    console.error('Login error:', error);
+                    showAlert('Error de conexión con el servidor. Intente de nuevo más tarde.', 'danger');
+                } finally {
+                    btnLogin.disabled = false;
+                    btnLogin.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión';
+                }
+            });
+        }
+
+        function initializeRecoveryForm() {
+            const btnRecoverPassword = document.getElementById('btnRecoverPassword');
+            
+            if (!btnRecoverPassword) {
+                console.error('Error: Botón de recuperación no encontrado. Verifique el ID en su HTML.');
+                return;
+            }
+
+            btnRecoverPassword.addEventListener('click', async function() {
+                const recDocType = document.getElementById('recDocType').value;
+                const recDocNumber = document.getElementById('recDocNumber').value;
+                const recFullName = document.getElementById('recFullName').value;
+                const recPhone = document.getElementById('recPhone').value;
+                const recFavoriteColor = document.getElementById('recFavoriteColor').value;
+                const recFavoriteAnimal = document.getElementById('recFavoriteAnimal').value;
+                
+                btnRecoverPassword.disabled = true;
+                btnRecoverPassword.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Validando...';
+
+                try {
+                    const response = await makeRequest('recoverPassword', {
+                        docType: recDocType,
+                        docNumber: recDocNumber,
+                        fullName: recFullName,
+                        phone: recPhone,
+                        favColor: recFavoriteColor,
+                        favAnimal: recFavoriteAnimal
+                    });
+                    
+                    const recoveryResultDiv = document.getElementById('recoveryResult');
+                    const recoveredUsernameDiv = document.getElementById('recoveredUsername');
+                    const recoveredPasswordDiv = document.getElementById('recoveredPassword');
+                    
+                    if (!recoveryResultDiv || !recoveredUsernameDiv || !recoveredPasswordDiv) {
+                        console.error('Error: Elementos de recuperación de contraseña no encontrados.');
+                        showAlert('Error del sistema: No se pueden mostrar los resultados de la recuperación.', 'danger');
+                        return;
+                    }
+
+                    if (response.success) {
+                        recoveredUsernameDiv.textContent = response.data.username;
+                        recoveredPasswordDiv.textContent = response.data.password;
+                        recoveryResultDiv.style.display = 'block';
+                    } else {
+                        showAlert(response.message, 'danger');
+                        recoveryResultDiv.style.display = 'none';
+                    }
+                } catch (error) {
+                    console.error('Recovery error:', error);
+                    showAlert('Error de conexión. Intente de nuevo más tarde.', 'danger');
+                } finally {
+                    btnRecoverPassword.disabled = false;
+                    btnRecoverPassword.innerHTML = '<i class="fas fa-search me-2"></i>Recuperar Contraseña';
+                }
+            });
+        }
+
+        function setupPasswordToggle() {
+            const passwordInput = document.getElementById('password');
+            const toggleButton = document.getElementById('togglePassword');
+            
+            if (passwordInput && toggleButton) {
+                toggleButton.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.classList.toggle('fa-eye');
+                    this.classList.toggle('fa-eye-slash');
+                });
+            }
+        }
+
+        async function makeRequest(action, data = {}) {
+            const googleAppsScriptUrl = 'https://script.google.com/macros/s/AKfycby7NYD_Yt6rH5DBMY-H9tj91aJ6uoBFmf_t8JxXypFNByFP2zDwd7-janofBK23Pca3Iw/exec';
+            const payload = { action, ...data };
+
+            try {
+                const response = await fetch(googleAppsScriptUrl, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload),
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                console.error('Request failed:', error);
+                return { success: false, message: 'Error de conexión' };
+            }
+        }
+
+        function showAlert(message, type = 'info') {
+            const alertPlaceholder = document.getElementById('alertsList');
+            if (!alertPlaceholder) return;
+            
+            const wrapper = document.createElement('div');
+            const iconClass = getAlertIcon(type);
+
+            wrapper.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${iconClass} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertPlaceholder.appendChild(wrapper);
+
+            setTimeout(() => {
+                const alert = bootstrap.Alert.getOrCreateInstance(wrapper.querySelector('.alert'));
+                alert.close();
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                success: 'check-circle',
+                danger: 'exclamation-triangle',
+                warning: 'exclamation-circle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';
+        }
+
+        function preventBackButton() {
+            window.history.pushState(null, null, window.location.href);
+            
+            window.addEventListener('popstate', function() {
+                window.history.pushState(null, null, window.location.href);
+                showAlert('Por favor usa los controles de navegación del sistema', 'warning');
+            });
+        }
+
+        function checkExistingSession() {
+            const token = localStorage.getItem('sessionToken');
+            const userType = localStorage.getItem('userType');
+            
+            if (token && userType) {
+                const redirectUrl = userType === 'admin' ? 'admin_dashboard.html' : 'client_dashboard.html';
+                window.location.href = redirectUrl;
+            }
+        }
+    </script>
 </body>
 </html>
