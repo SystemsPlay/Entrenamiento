@@ -403,7 +403,7 @@
                     });
                     
                     if (response.success) {
-                        sessionToken = response.data.token;
+                        sessionToken = response.sessionToken;
                         localStorage.setItem('sessionToken', sessionToken);
                         localStorage.setItem('userType', selectedUserType);
                         localStorage.setItem('username', username);
