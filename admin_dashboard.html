@@ -1431,25 +1431,19 @@
 
         async function makeRequest(action, data = {}) {
             toggleLoading(true);
-            const url = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec'; // Reemplaza con tu URL
-            const payload = { ...data, action, sessionToken };
+            const url = 'https://script.google.com/macros/s/TU_URL/exec';
+            const form = new FormData();
+            form.append('payload', JSON.stringify({ ...data, action, sessionToken }));
 
             try {
                 const response = await fetch(url, {
                     method: 'POST',
-                    mode: 'no-cors', // Para evitar errores de CORS en el desarrollo local
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: new URLSearchParams(payload),
+                    body: form
                 });
-                
-                // Con 'no-cors' la respuesta no puede ser leída. Para un entorno de producción, 
-                // debes configurar CORS en tu Apps Script para poder leer la respuesta JSON.
-                // Este código asume que el backend procesa la solicitud sin devolver datos.
-                // Para una respuesta real, usa 'cors' mode y await response.json().
+
+                const result = await response.json();
                 toggleLoading(false);
-                return { success: true, data: {} }; // Respuesta simulada
+                return result;       // <-- ahora sí devuelve lo que envía Apps Script
             } catch (error) {
                 console.error('Request failed:', error);
                 toggleLoading(false);
