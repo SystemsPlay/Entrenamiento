@@ -704,18 +704,19 @@
             localStorage.removeItem('sessionToken');
             localStorage.removeItem('username');
             clearInterval(activityCheckInterval);
-            window.location.href = '/';
+            window.location.href = 'index.html';
         }
 
         function startActivityTracking() {
             activityCheckInterval = setInterval(async () => {
                 if (!localStorage.getItem('sessionToken')) {
                     showAlert('Sesión expirada. Por favor, inicie sesión de nuevo.', 'warning');
-                    setTimeout(() => window.location.href = '/', 2000);
+                    setTimeout(() => window.location.href = 'index.html', 2000);
                     clearInterval(activityCheckInterval);
                 }
             }, 30000);
         }
     </script>
 </body>
+
 </html>
