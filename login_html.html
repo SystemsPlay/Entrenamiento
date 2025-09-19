@@ -500,27 +500,25 @@
             }
         }
 
-async function makeRequest(action, data = {}) {
-    const googleAppsScriptUrl = 'https://script.google.com/macros/s/AKfycbx7hmSbihwBSc5ZhFzr8CVCkh_O6Qi3zwQHIT8RK953vcWe6UhjFU1jPCaP0Y8svKeLYg/exec';
-    const payload = { action, ...data };
+async function makeRequest(action, data) {
+    const backendUrl = 'https://script.google.com/macros/s/AKfycbwh8kXp8snt0OLVbaXez1-CNIgyZzkd6NZvLz-Sj8Njidaq1RMrTpAW1d3ix-LNvIYz1w/exec'; // Asegúrate de que esta URL sea correcta
 
     try {
-        const response = await fetch(googleAppsScriptUrl, {
+        const response = await fetch(backendUrl, {
             method: 'POST',
-            mode: 'cors',
+            mode: 'cors', // Cambio crucial para permitir la lectura de la respuesta
             headers: {
-                'Content-Type': 'text/plain;charset=utf-8',
+                'Content-Type': 'application/json' // Cambio para enviar los datos como JSON
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify({ ...data, action })
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        return await response.json();
+
+        // La respuesta ahora puede ser leída
+        const result = await response.json();
+        return result;
+
     } catch (error) {
-        console.error('Request failed:', error);
+        console.error('Error en makeRequest:', error);
         return { success: false, message: 'Error de conexión' };
     }
 }
