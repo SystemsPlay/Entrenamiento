@@ -506,10 +506,8 @@ async function makeRequest(action, data) {
     try {
         const response = await fetch(backendUrl, {
             method: 'POST',
-            mode: 'cors', // Cambio crucial para permitir la lectura de la respuesta
             headers: {
-                'Content-Type': 'application/json' // Cambio para enviar los datos como JSON
-            },
+                'Content-Type': 'application/json'},
             body: JSON.stringify({ ...data, action })
         });
 
