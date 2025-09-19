@@ -1,0 +1,721 @@
+<!DOCTYPE html> 
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Clientes - SGL Pro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --info-color: #9b59b6;
+            --light-bg: #ecf0f1;
+            --dark-bg: #2c3e50;
+            --sidebar-width: 250px;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+        }
+
+        .wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--primary-color);
+            color: #fff;
+            padding: 1rem;
+            position: fixed;
+            height: 100%;
+            transition: transform 0.3s ease;
+            transform: translateX(0);
+            z-index: 1000;
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 2rem;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .navbar-toggler {
+                display: block !important;
+            }
+        }
+
+        .sidebar-header {
+            text-align: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-links {
+            list-style: none;
+            padding: 0;
+            margin-top: 2rem;
+        }
+
+        .sidebar-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .sidebar-links a:hover, .sidebar-links a.active {
+            background-color: var(--secondary-color);
+            color: white;
+            font-weight: bold;
+        }
+
+        .section-content {
+            display: none;
+        }
+        .section-content.active {
+            display: block;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--secondary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .card-custom {
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            overflow: hidden;
+        }
+        .card-custom:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        .card-header-custom {
+            background: var(--primary-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+        }
+        .card-header-custom i {
+            margin-right: 0.75rem;
+        }
+
+        .stat-card {
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+        .stat-card h3 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        .stat-card p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .bg-gradient-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
+        .bg-gradient-green { background: linear-gradient(45deg, #2ecc71, #27ae60); }
+        .bg-gradient-purple { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
+        .bg-gradient-orange { background: linear-gradient(45deg, #f39c12, #e67e22); }
+        .bg-gradient-red { background: linear-gradient(45deg, #e74c3c, #c0392b); }
+
+        .btn-custom {
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+            border-color: #2980b9;
+        }
+
+        .table-custom th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        .table-custom tbody tr:hover {
+            background-color: #f1f2f3;
+            cursor: pointer;
+        }
+
+        .alert-custom {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1050;
+            max-width: 90%;
+            min-width: 250px;
+        }
+
+        .navbar-toggler {
+            display: none;
+            border: none;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <a class="navbar-brand font-bold text-xl" href="#">SGL Clientes</a>
+            </div>
+            <ul class="sidebar-links">
+                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
+                <li><a href="#" data-section="loans"><i class="fas fa-coins me-2"></i> Mis Préstamos</a></li>
+                <li><a href="#" data-section="profile"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
+            </ul>
+            <div class="absolute bottom-4 left-4">
+                <a href="#" id="logoutBtn" class="d-flex align-items-center text-white-50 text-decoration-none">
+                    <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
+                </a>
+            </div>
+        </nav>
+
+        <div id="content" class="main-content">
+            <button id="sidebarToggle" class="navbar-toggler mb-4" type="button">
+                <i class="fas fa-bars"></i>
+            </button>
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">
+                ¡Bienvenido, <span id="clientNameTitle">Cliente</span>!
+            </h1>
+
+            <div id="alertPlaceholder"></div>
+
+            <div id="dashboard" class="section-content active">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                    <div class="stat-card bg-gradient-blue">
+                        <i class="fas fa-hand-holding-usd text-4xl mb-3"></i>
+                        <p class="text-sm">Saldo Pendiente Total</p>
+                        <h3 id="totalPendingAmount">$0.00</h3>
+                    </div>
+                    <div class="stat-card bg-gradient-green">
+                        <i class="fas fa-coins text-4xl mb-3"></i>
+                        <p class="text-sm">Préstamos Activos</p>
+                        <h3 id="activeLoansCount">0</h3>
+                    </div>
+                    <div class="stat-card bg-gradient-purple">
+                        <i class="fas fa-check-circle text-4xl mb-3"></i>
+                        <p class="text-sm">Préstamos Finalizados</p>
+                        <h3 id="finalizedLoansCount">0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loans" class="section-content">
+                <div class="card card-custom shadow-sm mb-5">
+                    <div class="card-header-custom">
+                        <i class="fas fa-list"></i> Historial de Préstamos
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-custom">
+                                <thead>
+                                    <tr>
+                                        <th>ID Préstamo</th>
+                                        <th>Monto</th>
+                                        <th>Saldo Actual</th>
+                                        <th>Cuotas</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="loansTableBody">
+                                    <tr><td colspan="6" class="text-center text-gray-500">Cargando préstamos...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="profile" class="section-content">
+                <div class="card card-custom shadow-sm mb-5">
+                    <div class="card-header-custom">
+                        <i class="fas fa-user-circle"></i> Mis Datos Personales
+                    </div>
+                    <div class="card-body" id="clientInfo">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <p class="font-bold text-gray-600">Nombre Completo:</p>
+                                <p class="text-lg text-gray-800" id="clientName">Cargando...</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-600">Documento:</p>
+                                <p class="text-lg text-gray-800" id="clientDoc">Cargando...</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-600">Teléfono:</p>
+                                <p class="text-lg text-gray-800" id="clientPhone">Cargando...</p>
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-600">Dirección:</p>
+                                <p class="text-lg text-gray-800" id="clientAddress">Cargando...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-custom shadow-sm mb-5">
+                    <div class="card-header-custom">
+                        <i class="fas fa-key"></i> Cambiar Contraseña
+                    </div>
+                    <div class="card-body">
+                        <form id="changePasswordForm">
+                            <div class="mb-3">
+                                <label for="oldPassword" class="form-label">Contraseña Actual</label>
+                                <input type="password" class="form-control" id="oldPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="newPassword" class="form-label">Nueva Contraseña</label>
+                                <input type="password" class="form-control" id="newPassword" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
+                                <input type="password" class="form-control" id="confirmPassword" required>
+                            </div>
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-primary btn-custom">
+                                    <i class="fas fa-save me-2"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loanDetailsModal" tabindex="-1" aria-labelledby="loanDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-gray-100">
+                    <h5 class="modal-title font-bold" id="loanDetailsModalLabel">Detalle del Préstamo #<span id="loanIdTitle"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 text-center">
+                        <div class="p-4 rounded-lg bg-blue-100 text-blue-800">
+                            <i class="fas fa-dollar-sign text-2xl mb-2"></i>
+                            <p class="text-sm font-bold">Monto del Préstamo</p>
+                            <h4 class="text-xl font-bold" id="loanAmount"></h4>
+                        </div>
+                        <div class="p-4 rounded-lg bg-green-100 text-green-800">
+                            <i class="fas fa-credit-card text-2xl mb-2"></i>
+                            <p class="text-sm font-bold">Saldo Pendiente</p>
+                            <h4 class="text-xl font-bold" id="loanBalance"></h4>
+                        </div>
+                        <div class="p-4 rounded-lg bg-yellow-100 text-yellow-800">
+                            <i class="fas fa-calendar-alt text-2xl mb-2"></i>
+                            <p class="text-sm font-bold">Cuotas Pagadas</p>
+                            <h4 class="text-xl font-bold" id="loanPayments"></h4>
+                        </div>
+                        <div class="p-4 rounded-lg bg-red-100 text-red-800">
+                            <i class="fas fa-info-circle text-2xl mb-2"></i>
+                            <p class="text-sm font-bold">Estado</p>
+                            <h4 class="text-xl font-bold" id="loanStatus"></h4>
+                        </div>
+                    </div>
+                    <h6 class="font-bold text-lg section-title mb-3 mt-4">Tabla de Pagos</h6>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th># Cuota</th>
+                                    <th>Fecha de Vencimiento</th>
+                                    <th>Monto de Cuota</th>
+                                    <th>Capital</th>
+                                    <th>Interés</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-primary btn-custom" id="viewContractBtn"><i class="fas fa-file-contract me-2"></i> Ver Contrato</button>
+                    <button type="button" class="btn btn-success btn-custom" id="generatePazSalvoBtn" style="display:none;"><i class="fas fa-check-circle me-2"></i> Generar Paz y Salvo</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-gray-100">
+                    <h5 class="modal-title font-bold" id="paymentModalLabel">Realizar Pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="paymentForm">
+                        <input type="hidden" id="paymentLoanId">
+                        <div class="mb-3">
+                            <label for="paymentAmount" class="form-label">Monto a Pagar</label>
+                            <input type="number" class="form-control" id="paymentAmount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="paymentMethod" class="form-label">Método de Pago</label>
+                            <select class="form-select" id="paymentMethod" required>
+                                <option value="">Seleccione...</option>
+                                <option value="transferencia">Transferencia Bancaria</option>
+                                <option value="efectivo">Efectivo</option>
+                            </select>
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-custom"><i class="fas fa-cash-register me-2"></i> Registrar Pago</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="contractModal" tabindex="-1" aria-labelledby="contractModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-gray-100">
+                    <h5 class="modal-title font-bold" id="contractModalLabel">Contrato de Préstamo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="contractContent">
+                    <h2 class="text-center font-bold text-2xl mb-4">CONTRATO DE PRÉSTAMO DE DINERO</h2>
+                    <p>Este contrato de préstamo de dinero (en adelante, el "Contrato") se celebra entre:</p>
+                    <p><strong>PRESTAMISTA:</strong> [Nombre del Prestamista]</p>
+                    <p><strong>PRESTATARIO:</strong> <span id="contractClientName"></span>, identificado(a) con [Tipo de Documento] No. <span id="contractClientDoc"></span></p>
+                    <p class="mt-4">El PRESTAMISTA se compromete a entregar al PRESTATARIO la suma de <span id="contractLoanAmount"></span>, con un interés del <span id="contractInterestRate"></span>% anual, a ser pagado en <span id="contractLoanTerms"></span> cuotas.</p>
+                    <div class="mt-5 text-center">
+                        <p>___________________________________</p>
+                        <p><strong>Firma del Prestatario</strong></p>
+                        <p><span id="signatureName"></span></p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-success btn-custom" id="downloadContractBtn"><i class="fas fa-file-pdf me-2"></i> Descargar PDF</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        const BACKEND_URL = 'URL_DE_TU_APPS_SCRIPT'; // **IMPORTANTE: Reemplazar con la URL de tu Apps Script**
+        const sessionToken = localStorage.getItem('sessionToken');
+        const username = localStorage.getItem('username');
+        let activityCheckInterval;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (!sessionToken || !username) {
+                window.location.href = '/';
+                return;
+            }
+            startActivityTracking();
+            await fetchClientData(username);
+            await fetchLoans(username);
+            
+            // Handle sidebar navigation
+            document.querySelectorAll('.sidebar-links a').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const sectionId = e.target.getAttribute('data-section');
+                    document.querySelectorAll('.section-content').forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    document.getElementById(sectionId).classList.add('active');
+                    document.querySelectorAll('.sidebar-links a').forEach(item => item.classList.remove('active'));
+                    e.target.classList.add('active');
+                    if (window.innerWidth <= 768) {
+                        document.getElementById('sidebar').classList.remove('active');
+                    }
+                });
+            });
+            document.getElementById('sidebarToggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('active');
+            });
+
+            // Handle password change form submission
+            document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const oldPassword = document.getElementById('oldPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (newPassword !== confirmPassword) {
+                    showAlert('Las nuevas contraseñas no coinciden.', 'danger');
+                    return;
+                }
+
+                // Call backend to change password
+                const result = await makeRequest('changePassword', {
+                    username,
+                    sessionToken,
+                    oldPassword,
+                    newPassword
+                });
+
+                if (result.success) {
+                    showAlert('Contraseña cambiada exitosamente.', 'success');
+                    document.getElementById('changePasswordForm').reset();
+                } else {
+                    showAlert(result.message || 'Error al cambiar la contraseña.', 'danger');
+                }
+            });
+        });
+
+        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            await logout();
+        });
+
+        async function fetchClientData(username) {
+            const data = await makeRequest('getClientInfo', { username, sessionToken });
+            if (data && data.success) {
+                const client = data.client;
+                document.getElementById('clientNameTitle').textContent = client.name.split(' ')[0];
+                document.getElementById('clientName').textContent = client.name;
+                document.getElementById('clientDoc').textContent = client.doc;
+                document.getElementById('clientPhone').textContent = client.phone;
+                document.getElementById('clientAddress').textContent = client.address;
+            } else {
+                showAlert('No se pudieron cargar los datos del cliente.', 'danger');
+            }
+        }
+
+        async function fetchLoans(username) {
+            const data = await makeRequest('getClientLoans', { username, sessionToken });
+            const loansTableBody = document.getElementById('loansTableBody');
+            loansTableBody.innerHTML = '';
+            if (data && data.success && data.loans.length > 0) {
+                let totalPending = 0;
+                let activeLoans = 0;
+                let finalizedLoans = 0;
+                data.loans.forEach(loan => {
+                    const row = document.createElement('tr');
+                    const statusBadge = loan.status === 'activo' ?
+                        `<span class="badge bg-success">Activo</span>` :
+                        `<span class="badge bg-dark">Finalizado</span>`;
+                    
+                    if (loan.status === 'activo') {
+                        totalPending += loan.currentBalance;
+                        activeLoans++;
+                    } else {
+                        finalizedLoans++;
+                    }
+
+                    row.innerHTML = `
+                        <td>${loan.id}</td>
+                        <td>$${loan.amount.toLocaleString()}</td>
+                        <td>$${loan.currentBalance.toLocaleString()}</td>
+                        <td>${loan.paidInstallments} / ${loan.totalInstallments}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                            <button class="btn btn-sm btn-info view-details-btn" data-loan-id="${loan.id}"><i class="fas fa-eye"></i> Ver</button>
+                        </td>
+                    `;
+                    loansTableBody.appendChild(row);
+                });
+                document.getElementById('totalPendingAmount').textContent = `$${totalPending.toLocaleString()}`;
+                document.getElementById('activeLoansCount').textContent = activeLoans;
+                document.getElementById('finalizedLoansCount').textContent = finalizedLoans;
+                
+                document.querySelectorAll('.view-details-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        const loanId = e.currentTarget.getAttribute('data-loan-id');
+                        const selectedLoan = data.loans.find(l => l.id == loanId);
+                        if (selectedLoan) {
+                            populateLoanDetailsModal(selectedLoan);
+                            const loanDetailsModal = new bootstrap.Modal(document.getElementById('loanDetailsModal'));
+                            loanDetailsModal.show();
+                        }
+                    });
+                });
+            } else {
+                loansTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No tienes préstamos registrados.</td></tr>';
+            }
+        }
+
+        function populateLoanDetailsModal(loan) {
+            document.getElementById('loanIdTitle').textContent = loan.id;
+            document.getElementById('loanAmount').textContent = `$${loan.amount.toLocaleString()}`;
+            document.getElementById('loanBalance').textContent = `$${loan.currentBalance.toLocaleString()}`;
+            document.getElementById('loanStatus').textContent = loan.status === 'activo' ? 'Activo' : 'Finalizado';
+            document.getElementById('loanPayments').textContent = `${loan.paidInstallments} / ${loan.totalInstallments}`;
+            
+            const paymentsTableBody = document.getElementById('paymentsTableBody');
+            paymentsTableBody.innerHTML = '';
+            
+            if (loan.payments && loan.payments.length > 0) {
+                loan.payments.forEach(payment => {
+                    const row = document.createElement('tr');
+                    const statusBadge = payment.status === 'pagada' ?
+                        `<span class="badge bg-success">Pagada</span>` :
+                        `<span class="badge bg-warning">Pendiente</span>`;
+                    
+                    row.innerHTML = `
+                        <td>${payment.cuotaNumber}</td>
+                        <td>${payment.dueDate}</td>
+                        <td>$${payment.amount.toLocaleString()}</td>
+                        <td>$${payment.capital.toLocaleString()}</td>
+                        <td>$${payment.interest.toLocaleString()}</td>
+                        <td>${statusBadge}</td>
+                        <td>
+                           <button class="btn btn-sm btn-success pay-btn" data-payment-id="${payment.id}" ${payment.status === 'pagada' ? 'disabled' : ''}><i class="fas fa-money-bill-wave"></i> Pagar</button>
+                        </td>
+                    `;
+                    paymentsTableBody.appendChild(row);
+                });
+            } else {
+                paymentsTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay pagos registrados para este préstamo.</td></tr>';
+            }
+
+            if (loan.status === 'finalizado' && loan.isPazSalvoGenerated) {
+                document.getElementById('generatePazSalvoBtn').style.display = 'block';
+            } else {
+                document.getElementById('generatePazSalvoBtn').style.display = 'none';
+            }
+        }
+
+        document.getElementById('loansTableBody').addEventListener('click', (e) => {
+            if (e.target.classList.contains('pay-btn')) {
+                const paymentId = e.target.getAttribute('data-payment-id');
+                const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+                paymentModal.show();
+                document.getElementById('paymentLoanId').value = paymentId;
+            }
+        });
+
+        document.getElementById('viewContractBtn').addEventListener('click', () => {
+            const loanId = document.getElementById('loanIdTitle').textContent;
+            document.getElementById('contractClientName').textContent = document.getElementById('clientName').textContent;
+            document.getElementById('contractClientDoc').textContent = document.getElementById('clientDoc').textContent;
+            document.getElementById('contractLoanAmount').textContent = document.getElementById('loanAmount').textContent;
+            document.getElementById('contractInterestRate').textContent = '30';
+            document.getElementById('contractLoanTerms').textContent = '2';
+
+            const contractModal = new bootstrap.Modal(document.getElementById('contractModal'));
+            contractModal.show();
+        });
+
+        async function makeRequest(action, data) {
+            try {
+                const response = await fetch(BACKEND_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ ...data, action }).toString()
+                });
+                return { success: true, data: {} };
+            } catch (error) {
+                console.error('Request failed:', error);
+                return { success: false, message: 'Error de conexión' };
+            }
+        }
+
+        function showAlert(message, type) {
+            const alertPlaceholder = document.getElementById('alertPlaceholder');
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = `
+                <div class="alert alert-${type} alert-dismissible fade show alert-custom" role="alert">
+                    <i class="fas fa-${getAlertIcon(type)} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertPlaceholder.appendChild(wrapper);
+
+            setTimeout(() => {
+                const alert = bootstrap.Alert.getOrCreateInstance(wrapper.querySelector('.alert'));
+                alert.close();
+            }, 5000);
+        }
+
+        function getAlertIcon(type) {
+            const icons = {
+                success: 'check-circle', 
+                danger: 'exclamation-triangle',
+                warning: 'exclamation-circle',
+                info: 'info-circle'
+            };
+            return icons[type] || 'info-circle';     
+        }
+
+        async function logout() {
+            await makeRequest('logout', { sessionToken });
+            localStorage.removeItem('sessionToken');
+            localStorage.removeItem('username');
+            clearInterval(activityCheckInterval);
+            window.location.href = '/';
+        }
+
+        function startActivityTracking() {
+            activityCheckInterval = setInterval(async () => {
+                if (!localStorage.getItem('sessionToken')) {
+                    showAlert('Sesión expirada. Por favor, inicie sesión de nuevo.', 'warning');
+                    setTimeout(() => window.location.href = '/', 2000);
+                    clearInterval(activityCheckInterval);
+                }
+            }, 30000);
+        }
+    </script>
+</body>
+</html>
