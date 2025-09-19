@@ -403,18 +403,14 @@
                     });
                     
                     if (response.success) {
-                        sessionToken = response.sessionToken;
+                        sessionToken = response.sessionToken;      // <<<<<<  CAMBIO
                         localStorage.setItem('sessionToken', sessionToken);
-                        localStorage.setItem('userType', selectedUserType);
-                        localStorage.setItem('username', username);
+                        localStorage.setItem('userType', response.userType); // mejor usar el que devuelve el backend
+                        localStorage.setItem('username', response.username);
 
                         showAlert('Inicio de sesión exitoso.', 'success');
                         setTimeout(() => {
-                            if (selectedUserType === 'admin') {
-                                window.location.href = 'admin_dashboard.html';
-                            } else {
-                                window.location.href = 'client_dashboard.html';
-                            }
+                            window.location.href = response.redirectUrl; // usa la URL que envía el backend
                         }, 1000);
                     } else {
                         showAlert(response.message, 'danger');
