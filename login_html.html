@@ -501,17 +501,21 @@
         }
 
 async function makeRequest(action, data) {
-    const backendUrl = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec'; // Asegúrate de que esta URL sea correcta
+    const backendUrl = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec'; // tu URL
 
     try {
+        // 1. Crear un FormData
+        const form = new FormData();
+        // 2. Meter en un solo campo todo el objeto que necesitas enviar
+        form.append('payload', JSON.stringify({ ...data, action }));
+
+        // 3. Hacer fetch SIN cabeceras personalizadas
         const response = await fetch(backendUrl, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'},
-            body: JSON.stringify({ ...data, action })
+            body: form   // NO pongas headers
         });
 
-        // La respuesta ahora puede ser leída
+        // 4. Leer el JSON de respuesta
         const result = await response.json();
         return result;
 
@@ -520,6 +524,7 @@ async function makeRequest(action, data) {
         return { success: false, message: 'Error de conexión' };
     }
 }
+
 
         function showAlert(message, type = 'info') {
             const alertPlaceholder = document.getElementById('alertsList');
