@@ -9,9 +9,10 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   
+  <script src="https://ssl.gstatic.com/script/apps-script-auth/api.js"></script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/helpers.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
@@ -865,7 +866,6 @@
   
   <script>
     // Variables globales
-    const URL_BACKEND = '<?= ScriptApp.getService().getUrl() ?>';
     let sessionToken = localStorage.getItem('sessionToken');
     let username = localStorage.getItem('username');
     let currentLoanId = null;
@@ -1230,10 +1230,10 @@
                     <td>${contract.id}</td>
                     <td>Préstamo #${contract.loanId}</td>
                     <td>${new Date(contract.date).toLocaleDateString()}</td>
-                    <td>Contrato</td>
+                    <td>Tipo: Contrato</td>
                     <td><span class="badge-modern badge-success">Generado</span></td>
                     <td>
-                        <button class="btn btn-sm-modern btn-primary-modern" onclick="downloadContract('${contract.id}')">
+                        <button class="btn btn-sm-modern btn-primary-modern" onclick="downloadContract('${contract.loanId}')">
                             <i class="fas fa-download"></i>
                         </button>
                     </td>
@@ -1287,7 +1287,7 @@
                 console.error("Error al obtener detalles del préstamo:", error);
                 showAlert('Error al obtener los detalles del préstamo.');
             })
-            .getLoanDetails({ loanId }); // Asume que esta función existe en tu Apps Script
+            .getLoanDetails(loanId);
     }
 
     // ===================================
@@ -1316,7 +1316,7 @@
                 console.error("Error al actualizar perfil:", error);
                 showAlert('Error al actualizar el perfil.');
             })
-            .updateClientInfo(data); // Asume que esta función existe en tu Apps Script
+            .updateClientInfo(data);
     });
 
     changePasswordForm.addEventListener('submit', (e) => {
@@ -1447,7 +1447,7 @@
                 console.error("Error al generar el contrato:", error);
                 showAlert('Error al generar el contrato.');
             })
-            .generateContract({ loanId });
+            .generateContract(loanId);
     }
 
     async function generatePdfAndDownload(htmlContent, filename) {
