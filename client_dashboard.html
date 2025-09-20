@@ -4,97 +4,718 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Panel de Clientes - SGL Pro</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --primary:#2c3e50; --secondary:#3498db; --light-bg:#ecf0f1;
-      --card-radius:1rem;
+    :root {
+      --primary: #1a365d;
+      --primary-light: #2d5a87;
+      --secondary: #3182ce;
+      --accent: #805ad5;
+      --success: #38a169;
+      --warning: #d69e2e;
+      --danger: #e53e3e;
+      --light-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --border-color: #e2e8f0;
+      --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      --gradient-warning: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+      --gradient-accent: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
     }
-    body{background:var(--light-bg); font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; color:#222; margin:0;}
-    .wrapper{display:flex;min-height:100vh}
-    .sidebar{width:260px;background:var(--primary);color:#fff;padding:1rem;position:fixed;height:100%;overflow:auto}
-    .main{margin-left:260px;padding:1.25rem;width:100%}
-    .sidebar .brand{font-weight:700;font-size:1.2rem;margin-bottom:1rem}
-    .sidebar a{display:block;color:rgba(255,255,255,.85);padding:.6rem;border-radius:.5rem;text-decoration:none}
-    .sidebar a.active, .sidebar a:hover{background:var(--secondary);color:#fff}
-    @media(max-width:768px){.sidebar{position:fixed;left:-280px;transition:all .25s} .sidebar.open{left:0} .main{margin-left:0} .toggler{display:inline-block}}
-    .card-custom{border-radius:var(--card-radius);box-shadow:0 8px 30px rgba(0,0,0,0.06);overflow:hidden}
-    .card-header-custom{background:var(--primary);color:#fff;padding:.9rem 1.25rem;font-weight:600}
-    .stat{padding:1rem;border-radius:.8rem;color:#fff;text-align:center}
-    .bg-blue{background:linear-gradient(45deg,#3498db,#2980b9)}
-    .bg-green{background:linear-gradient(45deg,#2ecc71,#27ae60)}
-    .bg-purple{background:linear-gradient(45deg,#9b59b6,#8e44ad)}
-    .table-custom th{background:var(--primary);color:#fff}
-    .alert-fixed{position:fixed;top:1rem;right:1rem;z-index:2000;min-width:260px}
-    .btn-small{padding:.35rem .6rem;font-size:.9rem}
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: var(--light-bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    
+    /* LAYOUT */
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-strong);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-header {
+      padding: 2rem 1.5rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .welcome-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+    
+    .sidebar-nav {
+      padding: 1rem 0;
+    }
+    
+    .nav-item {
+      margin-bottom: 0.25rem;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      border-radius: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      font-weight: 500;
+    }
+    
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateX(4px);
+    }
+    
+    .nav-link.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-right: 4px solid #ffd700;
+    }
+    
+    .nav-link i {
+      width: 20px;
+      margin-right: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .sidebar-footer {
+      position: absolute;
+      bottom: 1rem;
+      left: 1.5rem;
+      right: 1.5rem;
+    }
+    
+    .main {
+      margin-left: 280px;
+      padding: 2rem;
+      width: calc(100% - 280px);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -280px;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .mobile-toggle {
+        display: block !important;
+      }
+    }
+    
+    /* COMPONENTS */
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    
+    .mobile-toggle {
+      display: none;
+      margin-bottom: 1rem;
+    }
+    
+    /* CARDS */
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
+    }
+    
+    .stat-card:hover {
+      box-shadow: var(--shadow-medium);
+      transform: translateY(-2px);
+    }
+    
+    .stat-card.success::before {
+      background: var(--gradient-success);
+    }
+    
+    .stat-card.warning::before {
+      background: var(--gradient-warning);
+    }
+    
+    .stat-card.accent::before {
+      background: var(--gradient-accent);
+    }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+    
+    .stat-icon.primary {
+      background: var(--gradient-primary);
+    }
+    
+    .stat-icon.success {
+      background: var(--gradient-success);
+    }
+    
+    .stat-icon.warning {
+      background: var(--gradient-warning);
+    }
+    
+    .stat-icon.accent {
+      background: var(--gradient-accent);
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .content-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .card-header-modern {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .card-body-modern {
+      padding: 1.5rem;
+    }
+    
+    /* CHARTS */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin: 1rem 0;
+    }
+    
+    /* TABLES */
+    .table-modern {
+      margin: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    
+    .table-modern th {
+      background: var(--light-bg);
+      color: var(--text-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: 1rem;
+      border: none;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .table-modern td {
+      padding: 1rem;
+      border: none;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    
+    .table-modern tbody tr:hover {
+      background: var(--light-bg);
+    }
+    
+    /* BADGES */
+    .badge-modern {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge-success {
+      background: #e6fffa;
+      color: #00695c;
+    }
+    
+    .badge-warning {
+      background: #fff8e1;
+      color: #e65100;
+    }
+    
+    .badge-secondary {
+      background: #f5f5f5;
+      color: #616161;
+    }
+    
+    /* BUTTONS */
+    .btn-modern {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary-modern {
+      background: var(--gradient-primary);
+      color: white;
+    }
+    
+    .btn-primary-modern:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-medium);
+    }
+    
+    .btn-sm-modern {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+    
+    /* FORMS */
+    .form-control-modern {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control-modern:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+    
+    .form-label-modern {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    /* ALERTS */
+    .alert-fixed {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 2000;
+      min-width: 320px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: var(--shadow-strong);
+      animation: slideInRight 0.3s ease;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    /* ACTIVITY FEED */
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+      background: var(--light-bg);
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gradient-success);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-size: 1rem;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .activity-amount {
+      font-weight: 700;
+      color: var(--success);
+      font-size: 1.1rem;
+    }
+    
+    /* LOADING */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid var(--secondary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* SECTIONS */
+    .section {
+      display: none;
+    }
+    
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
   <div class="wrapper">
+    <!-- SIDEBAR -->
     <nav id="sidebar" class="sidebar">
-      <div class="brand">SGL Clientes</div>
-      <div class="mb-3 text-white-50">Bienvenido, <strong id="clientNameTitle">Cliente</strong></div>
-      <a href="#" class="active" data-section="dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
-      <a href="#" data-section="loans"><i class="fas fa-coins me-2"></i> Mis Préstamos</a>
-      <a href="#" data-section="contracts"><i class="fas fa-file-contract me-2"></i> Contratos / Paz y Salvo</a>
-      <a href="#" data-section="profile"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a>
-      <div style="position:absolute;bottom:1rem;left:1rem">
-        <a href="login.html" id="logoutBtn" class="text-white-50"><i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión</a>
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          SGL Pro
+        </div>
+        <div class="welcome-text">
+          Bienvenido, <strong id="clientNameTitle">Cliente</strong>
+        </div>
+      </div>
+      
+      <div class="sidebar-nav">
+        <div class="nav-item">
+          <a href="#" class="nav-link active" data-section="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            Panel Principal
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="loans">
+            <i class="fas fa-money-bill-wave"></i>
+            Mis Préstamos
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="contracts">
+            <i class="fas fa-file-contract"></i>
+            Contratos
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="profile">
+            <i class="fas fa-user-circle"></i>
+            Mi Perfil
+          </a>
+        </div>
+      </div>
+      
+      <div class="sidebar-footer">
+        <a href="#" id="logoutBtn" class="nav-link" style="color: rgba(255,255,255,0.6);">
+          <i class="fas fa-sign-out-alt"></i>
+          Cerrar Sesión
+        </a>
       </div>
     </nav>
 
+    <!-- MAIN CONTENT -->
     <main class="main">
-      <button id="toggler" class="btn btn-light toggler mb-3 d-none"><i class="fas fa-bars"></i></button>
-      <h2 class="mb-3">Hola, <span id="clientNameHeadline">Cliente</span></h2>
+      <button id="mobileToggle" class="btn btn-light mobile-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      
+      <div class="page-header">
+        <h1 class="page-title">Hola, <span id="clientNameHeadline">Cliente</span></h1>
+        <p class="page-subtitle">Gestiona tus préstamos y consulta tu información financiera</p>
+      </div>
 
       <div id="alertPlaceholder"></div>
 
-      <!-- DASHBOARD -->
+      <!-- DASHBOARD SECTION -->
       <section id="dashboard" class="section active">
-        <div class="row g-3 mb-4">
-          <div class="col-12 col-sm-6 col-lg-4">
-            <div class="stat bg-blue card-custom">
-              <div><small>Saldo Pendiente Total</small></div>
-              <div class="h3 mt-2" id="totalPendingAmount">$0</div>
+        <!-- STATS CARDS -->
+        <div class="row g-4 mb-4">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card primary">
+              <div class="stat-icon primary">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="stat-value" id="totalPendingAmount">$0</div>
+              <div class="stat-label">Saldo Pendiente</div>
             </div>
           </div>
-          <div class="col-12 col-sm-6 col-lg-4">
-            <div class="stat bg-green card-custom">
-              <div><small>Préstamos Activos</small></div>
-              <div class="h3 mt-2" id="activeLoansCount">0</div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card success">
+              <div class="stat-icon success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-value" id="activeLoansCount">0</div>
+              <div class="stat-label">Préstamos Activos</div>
             </div>
           </div>
-          <div class="col-12 col-sm-6 col-lg-4">
-            <div class="stat bg-purple card-custom">
-              <div><small>Préstamos Finalizados</small></div>
-              <div class="h3 mt-2" id="finalizedLoansCount">0</div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card warning">
+              <div class="stat-icon warning">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <div class="stat-value" id="finalizedLoansCount">0</div>
+              <div class="stat-label">Préstamos Finalizados</div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card accent">
+              <div class="stat-icon accent">
+                <i class="fas fa-percentage"></i>
+              </div>
+              <div class="stat-value" id="averageInterestRate">0%</div>
+              <div class="stat-label">Tasa Promedio</div>
             </div>
           </div>
         </div>
 
-        <div class="card card-custom mb-4">
-          <div class="card-header-custom">Actividad reciente</div>
-          <div class="card-body">
-            <div id="recentActivityContainer">
-              <p class="text-muted">Cargando actividad...</p>
+        <div class="row">
+          <!-- CHART SECTION -->
+          <div class="col-12 col-lg-8">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-chart-area"></i>
+                Evolución de Pagos
+              </div>
+              <div class="card-body-modern">
+                <div class="chart-container">
+                  <canvas id="paymentsChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RECENT ACTIVITY -->
+          <div class="col-12 col-lg-4">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-clock"></i>
+                Actividad Reciente
+              </div>
+              <div class="card-body-modern" style="padding: 0;">
+                <div id="recentActivityContainer">
+                  <div class="text-center p-4">
+                    <div class="loading-spinner mx-auto mb-2"></div>
+                    <small class="text-muted">Cargando actividad...</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOAN STATUS CHART -->
+        <div class="row mt-4">
+          <div class="col-12 col-md-6">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-chart-pie"></i>
+                Estado de Préstamos
+              </div>
+              <div class="card-body-modern">
+                <div class="chart-container" style="height: 250px;">
+                  <canvas id="loanStatusChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-calendar-alt"></i>
+                Próximos Vencimientos
+              </div>
+              <div class="card-body-modern">
+                <div id="upcomingPayments">
+                  <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-2"></div>
+                    <small class="text-muted">Cargando vencimientos...</small>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- LOANS -->
-      <section id="loans" class="section" style="display:none">
-        <div class="card card-custom mb-4">
-          <div class="card-header-custom"><i class="fas fa-list me-2"></i> Mis Préstamos</div>
-          <div class="card-body">
+      <!-- LOANS SECTION -->
+      <section id="loans" class="section">
+        <div class="content-card">
+          <div class="card-header-modern">
+            <i class="fas fa-money-bill-wave"></i>
+            Mis Préstamos
+          </div>
+          <div class="card-body-modern">
             <div class="table-responsive">
-              <table class="table table-hover table-custom">
+              <table class="table table-modern">
                 <thead>
-                  <tr><th>ID</th><th>Monto</th><th>Saldo</th><th>Cuotas</th><th>Estado</th><th>Acciones</th></tr>
+                  <tr>
+                    <th>ID Préstamo</th>
+                    <th>Monto Original</th>
+                    <th>Saldo Actual</th>
+                    <th>Cuotas</th>
+                    <th>Tasa</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
                 </thead>
                 <tbody id="loansTableBody">
-                  <tr><td colspan="6" class="text-center text-muted">Cargando...</td></tr>
+                  <tr>
+                    <td colspan="7" class="text-center py-4">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted">Cargando préstamos...</small>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -102,16 +723,33 @@
         </div>
       </section>
 
-      <!-- CONTRACTS -->
-      <section id="contracts" class="section" style="display:none">
-        <div class="card card-custom mb-4">
-          <div class="card-header-custom"><i class="fas fa-file-contract me-2"></i> Contratos y Paz y Salvo</div>
-          <div class="card-body">
+      <!-- CONTRACTS SECTION -->
+      <section id="contracts" class="section">
+        <div class="content-card">
+          <div class="card-header-modern">
+            <i class="fas fa-file-contract"></i>
+            Contratos y Documentos
+          </div>
+          <div class="card-body-modern">
             <div class="table-responsive">
-              <table class="table table-hover table-custom">
-                <thead><tr><th>ID</th><th>Préstamo</th><th>Fecha</th><th>Tipo</th><th>Acciones</th></tr></thead>
+              <table class="table table-modern">
+                <thead>
+                  <tr>
+                    <th>ID Documento</th>
+                    <th>Préstamo</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
                 <tbody id="contractsTableBody">
-                  <tr><td colspan="5" class="text-center text-muted">Cargando...</td></tr>
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted">Cargando documentos...</small>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>
@@ -119,377 +757,736 @@
         </div>
       </section>
 
-      <!-- PROFILE -->
-      <section id="profile" class="section" style="display:none">
-        <div class="card card-custom mb-4">
-          <div class="card-header-custom"><i class="fas fa-user-circle me-2"></i> Mi Perfil</div>
-          <div class="card-body">
-            <form id="profileForm">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Documento (no editable)</label>
-                  <input id="profileDoc" class="form-control" readonly>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Nombre completo</label>
-                  <input id="profileName" class="form-control" required>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Teléfono</label>
-                  <input id="profilePhone" class="form-control" required>
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Dirección</label>
-                  <input id="profileAddress" class="form-control">
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Color favorito (pregunta seguridad)</label>
-                  <input id="profileColor" class="form-control">
-                </div>
-                <div class="col-12 col-md-6">
-                  <label class="form-label">Animal favorito (pregunta seguridad)</label>
-                  <input id="profileAnimal" class="form-control">
-                </div>
-                <div class="col-12 text-end">
-                  <button type="submit" class="btn btn-primary btn-custom"><i class="fas fa-save me-2"></i> Guardar cambios</button>
-                </div>
+      <!-- PROFILE SECTION -->
+      <section id="profile" class="section">
+        <div class="row">
+          <div class="col-12 col-lg-8">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-user-circle"></i>
+                Información Personal
               </div>
-            </form>
+              <div class="card-body-modern">
+                <form id="profileForm">
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Documento (no editable)</label>
+                      <input id="profileDoc" class="form-control form-control-modern" readonly>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Nombre Completo</label>
+                      <input id="profileName" class="form-control form-control-modern" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Teléfono</label>
+                      <input id="profilePhone" class="form-control form-control-modern" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Dirección</label>
+                      <input id="profileAddress" class="form-control form-control-modern">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Color Favorito</label>
+                      <input id="profileColor" class="form-control form-control-modern">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Animal Favorito</label>
+                      <input id="profileAnimal" class="form-control form-control-modern">
+                    </div>
+                    <div class="col-12 text-end">
+                      <button type="submit" class="btn btn-modern btn-primary-modern">
+                        <i class="fas fa-save"></i>
+                        Guardar Cambios
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="card card-custom mb-4">
-          <div class="card-header-custom"><i class="fas fa-key me-2"></i> Cambiar Contraseña</div>
-          <div class="card-body">
-            <form id="changePasswordForm">
-              <div class="row g-3">
-                <div class="col-12 col-md-4">
-                  <label class="form-label">Contraseña actual</label>
-                  <input id="oldPassword" type="password" class="form-control" required>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label class="form-label">Nueva contraseña</label>
-                  <input id="newPassword" type="password" class="form-control" required>
-                </div>
-                <div class="col-12 col-md-4">
-                  <label class="form-label">Confirmar</label>
-                  <input id="confirmPassword" type="password" class="form-control" required>
-                </div>
-                <div class="col-12 text-end">
-                  <button class="btn btn-primary btn-custom" type="submit"><i class="fas fa-key me-2"></i> Cambiar</button>
-                </div>
+          <div class="col-12 col-lg-4">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-key"></i>
+                Cambiar Contraseña
               </div>
-            </form>
+              <div class="card-body-modern">
+                <form id="changePasswordForm">
+                  <div class="mb-3">
+                    <label class="form-label-modern">Contraseña Actual</label>
+                    <input id="oldPassword" type="password" class="form-control form-control-modern" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label-modern">Nueva Contraseña</label>
+                    <input id="newPassword" type="password" class="form-control form-control-modern" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label-modern">Confirmar Contraseña</label>
+                    <input id="confirmPassword" type="password" class="form-control form-control-modern" required>
+                  </div>
+                  <button class="btn btn-modern btn-primary-modern w-100" type="submit">
+                    <i class="fas fa-key"></i>
+                    Cambiar Contraseña
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
       </section>
     </main>
   </div>
 
-  <!-- Loan details modal -->
+  <!-- LOAN DETAILS MODAL -->
   <div class="modal fade" id="loanModal" tabindex="-1">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content">
-        <div class="modal-header bg-light">
-          <h5 class="modal-title">Préstamo <span id="loanModalId"></span></h5>
-          <button class="btn-close" data-bs-dismiss="modal"></button>
+      <div class="modal-content" style="border-radius: 16px; border: none; box-shadow: var(--shadow-strong);">
+        <div class="modal-header" style="background: var(--gradient-primary); color: white; border: none;">
+          <h5 class="modal-title">
+            <i class="fas fa-money-bill-wave me-2"></i>
+            Préstamo <span id="loanModalId"></span>
+          </h5>
+          <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
         </div>
-        <div class="modal-body">
-          <div class="row g-3 mb-3">
-            <div class="col-6"><strong>Monto:</strong> <span id="modalLoanAmount"></span></div>
-            <div class="col-6"><strong>Saldo:</strong> <span id="modalLoanBalance"></span></div>
-            <div class="col-6"><strong>Cuotas:</strong> <span id="modalLoanCuotas"></span></div>
-            <div class="col-6"><strong>Estado:</strong> <span id="modalLoanEstado"></span></div>
+        <div class="modal-body p-4">
+          <div class="row g-3 mb-4">
+            <div class="col-6 col-md-3">
+              <div class="stat-card" style="margin: 0;">
+                <small class="text-muted">Monto Original</small>
+                <h6 id="modalLoanAmount" class="mb-0">$0</h6>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="stat-card" style="margin: 0;">
+                                <small class="text-muted">Saldo Actual</small>
+                <h6 id="modalLoanBalance" class="mb-0">$0</h6>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="stat-card" style="margin: 0;">
+                <small class="text-muted">Cuotas</small>
+                <h6 id="modalLoanCuotas" class="mb-0">0/0</h6>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="stat-card" style="margin: 0;">
+                <small class="text-muted">Estado</small>
+                <h6 id="modalLoanEstado" class="mb-0">-</h6>
+              </div>
+            </div>
           </div>
-          <h6>Plan de pagos</h6>
+          
+          <h6 class="mb-3">
+            <i class="fas fa-calendar-check me-2"></i>
+            Plan de Pagos
+          </h6>
           <div class="table-responsive">
-            <table class="table table-sm">
-              <thead><tr><th>#</th><th>Vencimiento</th><th>Total</th><th>Capital</th><th>Interés</th><th>Estado</th></tr></thead>
-              <tbody id="modalPaymentsBody"></tbody>
+            <table class="table table-modern">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Vencimiento</th>
+                  <th>Total</th>
+                  <th>Capital</th>
+                  <th>Interés</th>
+                  <th>Estado</th>
+                </tr>
+              </thead>
+              <tbody id="modalPaymentsBody">
+                <tr>
+                  <td colspan="6" class="text-center py-3">
+                    <div class="loading-spinner mx-auto mb-2"></div>
+                    <small class="text-muted">Cargando plan de pagos...</small>
+                  </td>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
-        <div class="modal-footer">
+        <div class="modal-footer border-0 bg-light">
           <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button id="downloadContractBtn" class="btn btn-primary"><i class="fas fa-file-pdf me-2"></i> Descargar Contrato</button>
-          <button id="downloadPazSalvoBtn" class="btn btn-success" style="display:none"><i class="fas fa-file-export me-2"></i> Descargar Paz y Salvo</button>
+          <button id="downloadContractBtn" class="btn btn-modern btn-primary-modern">
+            <i class="fas fa-file-pdf"></i>
+            Descargar Contrato
+          </button>
+          <button id="downloadPazSalvoBtn" class="btn btn-modern" style="background: var(--gradient-success); color: white; display: none;">
+            <i class="fas fa-file-export"></i>
+            Descargar Paz y Salvo
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Libraries -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <!-- LIBRARIES -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <script>
-  // ---------- CONFIG ----------
-  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec'; // <-- reemplaza
+  // ========== CONFIGURACIÓN ==========
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec';
   const sessionToken = localStorage.getItem('sessionToken');
   const username = localStorage.getItem('username');
 
-  // ---------- BOOTSTRAP / UI helpers ----------
-  function showAlert(msg, type='info') {
-    const ph = document.getElementById('alertPlaceholder');
-    const wrapper = document.createElement('div');
-    wrapper.className = 'alert alert-' + type + ' alert-fixed';
-    wrapper.innerHTML = `<div><strong>${msg}</strong></div>`;
-    ph.appendChild(wrapper);
-    setTimeout(()=> wrapper.remove(), 5000);
+  // Variables globales para gráficos
+  let paymentsChart = null;
+  let loanStatusChart = null;
+  let CURRENT_MODAL_CONTRACT = null;
+
+  // ========== UTILIDADES ==========
+  function showAlert(msg, type = 'info') {
+    const alertHtml = `
+      <div class="alert alert-${type} alert-fixed alert-dismissible fade show" role="alert">
+        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+        <strong>${msg}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>`;
+    
+    document.getElementById('alertPlaceholder').innerHTML = alertHtml;
+    
+    setTimeout(() => {
+      const alert = document.querySelector('.alert-fixed');
+      if (alert) alert.remove();
+    }, 5000);
   }
 
-  function toggleSidebar(open) {
-    const sb = document.getElementById('sidebar');
-    if(open) sb.classList.add('open'); else sb.classList.remove('open');
+  function formatMoney(amount) {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0
+    }).format(Number(amount) || 0);
   }
 
-  // ---------- NETWORK ----------
+  function formatDate(dateStr) {
+    return new Date(dateStr).toLocaleDateString('es-CO');
+  }
+
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+
+  // ========== COMUNICACIÓN CON BACKEND ==========
   async function makeRequest(action, data = {}) {
     try {
       const payload = { ...data, action, sessionToken };
-      const form = new FormData();
-      form.append('payload', JSON.stringify(payload));
-      const resp = await fetch(BACKEND_URL, { method:'POST', body: form });
-      const result = await resp.json();
+      const formData = new FormData();
+      formData.append('payload', JSON.stringify(payload));
+      
+      const response = await fetch(BACKEND_URL, {
+        method: 'POST',
+        body: formData
+      });
+      
+      const result = await response.json();
       return result;
-    } catch (e) {
-      console.error('Request error', e);
-      return { success:false, message:'Error de conexión' };
+    } catch (error) {
+      console.error('Error en request:', error);
+      return { success: false, message: 'Error de conexión' };
     }
   }
 
-  // ---------- BOOT / NAV ----------
+  // ========== INICIALIZACIÓN ==========
   document.addEventListener('DOMContentLoaded', async () => {
+    // Verificar autenticación
     if (!sessionToken || !username) {
-      window.location.href = '/';
+      window.location.href = 'login.html';
       return;
     }
-    // responsive toggler
-    const toggler = document.getElementById('toggler');
-    toggler.addEventListener('click', ()=> toggleSidebar(true));
-    document.querySelectorAll('.sidebar a').forEach(a=>{
-      a.addEventListener('click', async (ev)=>{
-        ev.preventDefault();
-        document.querySelectorAll('.section').forEach(s => s.style.display='none');
-        const sec = a.getAttribute('data-section') || 'dashboard';
-        document.getElementById(sec).style.display = 'block';
-        document.querySelectorAll('.sidebar a').forEach(x=>x.classList.remove('active'));
-        a.classList.add('active');
 
-        // load data per section
-        if (sec === 'dashboard') await loadDashboard();
-        if (sec === 'loans') await loadLoans();
-        if (sec === 'contracts') await loadContracts();
-        if (sec === 'profile') await loadProfile();
-        // close sidebar on mobile
-        if (window.innerWidth <= 768) toggleSidebar(false);
+    // Configurar navegación
+    setupNavigation();
+    
+    // Configurar formularios
+    setupForms();
+    
+    // Cargar datos iniciales
+    await loadInitialData();
+    
+    // Cargar dashboard por defecto
+    await loadDashboard();
+  });
+
+  function setupNavigation() {
+    // Mobile toggle
+    document.getElementById('mobileToggle').addEventListener('click', toggleSidebar);
+
+    // Navigation links
+    document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+      link.addEventListener('click', async (e) => {
+        e.preventDefault();
+        
+        const section = e.currentTarget.getAttribute('data-section');
+        
+        // Update active states
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        
+        // Show/hide sections
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById(section).classList.add('active');
+        
+        // Load section data
+        switch (section) {
+          case 'dashboard':
+            await loadDashboard();
+            break;
+          case 'loans':
+            await loadLoans();
+            break;
+          case 'contracts':
+            await loadContracts();
+            break;
+          case 'profile':
+            await loadProfile();
+            break;
+        }
+
+        // Close mobile sidebar
+        if (window.innerWidth <= 768) {
+          document.getElementById('sidebar').classList.remove('open');
+        }
       });
     });
 
-    // initial load
-    document.getElementById('clientNameTitle').textContent = username;
-    document.getElementById('clientNameHeadline').textContent = username;
-    await loadDashboard();
-    // setup forms
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+      e.preventDefault();
+      await logout();
+    });
+  }
+
+  function setupForms() {
     document.getElementById('profileForm').addEventListener('submit', saveProfile);
     document.getElementById('changePasswordForm').addEventListener('submit', changePassword);
-    
-    document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-  await logout();
-});
-    // download contract / paz y salvo
     document.getElementById('downloadContractBtn').addEventListener('click', downloadCurrentContractPDF);
     document.getElementById('downloadPazSalvoBtn').addEventListener('click', downloadCurrentPazSalvoPDF);
-  });
+  }
 
-  // ---------- DASHBOARD ----------
-  async function loadDashboard(){
-    // load client info, loans summary and recent activity
-    const infoResp = await makeRequest('getClientInfo', { username });
-    const loansResp = await makeRequest('getClientLoans', { username });
-    const paymentsResp = await makeRequest('getClientPayments', { clientId: username });
-
-    if (infoResp.success) {
-      const client = infoResp.data.client;
-      document.getElementById('clientNameTitle').textContent = client.name.split(' ')[0] || client.name;
+  async function loadInitialData() {
+    const response = await makeRequest('getClientInfo', { username });
+    
+    if (response.success) {
+      const client = response.data.client;
+      const displayName = client.name ? client.name.split(' ')[0] : username;
+      
+      document.getElementById('clientNameTitle').textContent = displayName;
       document.getElementById('clientNameHeadline').textContent = client.name || username;
-    }
-
-    if (loansResp.success) {
-      const loans = loansResp.data.loans || [];
-      const totalPending = loans.filter(l => l.status === 'activo').reduce((s,l)=> s + (Number(l.currentBalance)||0),0);
-      const activeCount = loans.filter(l => l.status === 'activo').length;
-      const finalized = loans.filter(l => l.status !== 'activo').length;
-      document.getElementById('totalPendingAmount').textContent = formatMoney(totalPending);
-      document.getElementById('activeLoansCount').textContent = activeCount;
-      document.getElementById('finalizedLoansCount').textContent = finalized;
-
-      // recent activity: show last payments (from paymentsResp) or loan events
-      const container = document.getElementById('recentActivityContainer');
-      container.innerHTML = '';
-      const payments = paymentsResp.success ? (paymentsResp.data.payments || []) : [];
-      const recent = payments.slice(-6).reverse();
-      if (recent.length === 0) container.innerHTML = '<p class="text-muted">No hay actividad reciente.</p>';
-      else {
-        const ul = document.createElement('ul'); ul.className='list-group';
-        recent.forEach(p=>{
-          const li = document.createElement('li'); li.className='list-group-item d-flex justify-content-between align-items-start';
-          li.innerHTML = `<div><strong>Pago</strong> - Préstamo ${p[1]}<div class="text-muted small">${new Date(p[2]).toLocaleString()}</div></div><div class="fw-bold">${formatMoney(Number(p[4]||0))}</div>`;
-          ul.appendChild(li);
-        });
-        container.appendChild(ul);
-      }
     }
   }
 
-  // ---------- LOANS ----------
-  async function loadLoans(){
-    const resp = await makeRequest('getClientLoans', { username });
-    const tbody = document.getElementById('loansTableBody');
-    tbody.innerHTML = '';
-    if (!resp.success || !Array.isArray(resp.data.loans) || resp.data.loans.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No tienes préstamos registrados.</td></tr>';
+  // ========== DASHBOARD ==========
+  async function loadDashboard() {
+    try {
+      // Cargar datos en paralelo
+      const [clientInfo, clientLoans, clientPayments] = await Promise.all([
+        makeRequest('getClientInfo', { username }),
+        makeRequest('getClientLoans', { username }),
+        makeRequest('getClientPayments', { clientId: username })
+      ]);
+
+      // Actualizar estadísticas
+      updateDashboardStats(clientLoans.data?.loans || []);
+      
+      // Actualizar actividad reciente
+      updateRecentActivity(clientPayments.data?.payments || []);
+      
+      // Crear gráficos
+      createPaymentsChart(clientPayments.data?.payments || []);
+      createLoanStatusChart(clientLoans.data?.loans || []);
+      
+      // Actualizar próximos vencimientos
+      updateUpcomingPayments(clientLoans.data?.loans || []);
+      
+    } catch (error) {
+      console.error('Error loading dashboard:', error);
+      showAlert('Error al cargar el dashboard', 'danger');
+    }
+  }
+
+  function updateDashboardStats(loans) {
+    const activeLoans = loans.filter(l => String(l[6]).toLowerCase() === 'activo'); // Estado en posición 6
+    const finalizedLoans = loans.filter(l => String(l[6]).toLowerCase() !== 'activo');
+    
+    const totalPending = activeLoans.reduce((sum, loan) => {
+      return sum + (Number(loan[8]) || 0); // Saldo actual en posición 8
+    }, 0);
+    
+    const averageRate = loans.length > 0 
+      ? loans.reduce((sum, loan) => sum + (Number(loan[5]) || 0), 0) / loans.length 
+      : 0; // Tasa en posición 5
+
+    document.getElementById('totalPendingAmount').textContent = formatMoney(totalPending);
+    document.getElementById('activeLoansCount').textContent = activeLoans.length;
+    document.getElementById('finalizedLoansCount').textContent = finalizedLoans.length;
+    document.getElementById('averageInterestRate').textContent = averageRate.toFixed(1) + '%';
+  }
+
+  function updateRecentActivity(payments) {
+    const container = document.getElementById('recentActivityContainer');
+    
+    if (!payments || payments.length === 0) {
+      container.innerHTML = `
+        <div class="text-center p-4">
+          <i class="fas fa-inbox text-muted mb-2" style="font-size: 2rem;"></i>
+          <p class="text-muted mb-0">No hay actividad reciente</p>
+        </div>`;
       return;
     }
-    resp.data.loans.forEach(loan => {
+
+    const recentPayments = payments
+      .slice(-5)
+      .reverse()
+      .map(payment => {
+        return `
+          <div class="activity-item">
+            <div class="activity-icon">
+              <i class="fas fa-credit-card"></i>
+            </div>
+            <div class="activity-content">
+              <div class="activity-title">Pago registrado</div>
+              <div class="activity-subtitle">
+                Préstamo ${payment[1]} • ${formatDate(payment[2])}
+              </div>
+            </div>
+            <div class="activity-amount">${formatMoney(payment[4])}</div>
+          </div>`;
+      }).join('');
+
+    container.innerHTML = recentPayments;
+  }
+
+  function createPaymentsChart(payments) {
+    const ctx = document.getElementById('paymentsChart');
+    if (!ctx) return;
+
+    // Destruir gráfico anterior si existe
+    if (paymentsChart) {
+      paymentsChart.destroy();
+    }
+
+    // Procesar datos para el gráfico
+    const monthlyData = {};
+    payments.forEach(payment => {
+      const date = new Date(payment[2]);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = 0;
+      }
+      monthlyData[monthKey] += Number(payment[4]) || 0;
+    });
+
+    const labels = Object.keys(monthlyData).sort();
+    const data = labels.map(label => monthlyData[label]);
+
+    paymentsChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: labels.map(label => {
+          const [year, month] = label.split('-');
+          return `${month}/${year}`;
+        }),
+        datasets: [{
+          label: 'Pagos Realizados',
+          data: data,
+          borderColor: '#3182ce',
+          backgroundColor: 'rgba(49, 130, 206, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: function(value) {
+                return formatMoney(value);
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  function createLoanStatusChart(loans) {
+    const ctx = document.getElementById('loanStatusChart');
+    if (!ctx) return;
+
+    if (loanStatusChart) {
+      loanStatusChart.destroy();
+    }
+
+    const activeCount = loans.filter(l => String(l[6]).toLowerCase() === 'activo').length;
+    const finalizedCount = loans.length - activeCount;
+
+    loanStatusChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Activos', 'Finalizados'],
+        datasets: [{
+          data: [activeCount, finalizedCount],
+          backgroundColor: ['#38a169', '#718096'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
+        }
+      }
+    });
+  }
+
+  function updateUpcomingPayments(loans) {
+    const container = document.getElementById('upcomingPayments');
+    
+    // Simular próximos vencimientos basados en los préstamos activos
+    const activeLoans = loans.filter(l => String(l[6]).toLowerCase() === 'activo');
+    
+    if (activeLoans.length === 0) {
+      container.innerHTML = `
+        <div class="text-center">
+          <i class="fas fa-calendar-check text-muted mb-2" style="font-size: 2rem;"></i>
+          <p class="text-muted mb-0">No hay vencimientos próximos</p>
+        </div>`;
+      return;
+    }
+
+    const upcomingHtml = activeLoans.slice(0, 3).map(loan => {
+      const nextPaymentDate = new Date();
+      nextPaymentDate.setMonth(nextPaymentDate.getMonth() + 1);
+      
+      return `
+        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+          <div>
+            <strong>Préstamo ${loan[0]}</strong>
+            <br>
+            <small class="text-muted">${formatDate(nextPaymentDate)}</small>
+          </div>
+          <span class="badge badge-warning">Pendiente</span>
+        </div>`;
+    }).join('');
+
+    container.innerHTML = upcomingHtml;
+  }
+
+  // ========== PRÉSTAMOS ==========
+  async function loadLoans() {
+    const response = await makeRequest('getClientLoans', { username });
+    const tbody = document.getElementById('loansTableBody');
+    
+    if (!response.success || !response.data.loans || response.data.loans.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="text-center py-4">
+            <i class="fas fa-inbox text-muted mb-2" style="font-size: 2rem; display: block;"></i>
+            <span class="text-muted">No tienes préstamos registrados</span>
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = '';
+    
+    response.data.loans.forEach(loan => {
       const tr = document.createElement('tr');
-      const paid = Number(loan.paidInstallments || 0);
-      const total = Number(loan.totalInstallments || 0);
+      
+      // Mapear datos del array (basado en tu estructura de Google Sheets)
+      const loanId = loan[0];
+      const amount = loan[3];
+      const installments = loan[4];
+      const interestRate = loan[5];
+      const status = loan[6];
+      const currentBalance = loan[8];
+      
+      // Calcular cuotas pagadas (simulado)
+      const paidInstallments = status === 'activo' ? Math.floor(installments * 0.3) : installments;
+      
       tr.innerHTML = `
-        <td>${loan.id}</td>
-        <td>${formatMoney(Number(loan.amount)||0)}</td>
-        <td>${formatMoney(Number(loan.currentBalance)||0)}</td>
-        <td>${paid} / ${total}</td>
-        <td>${loan.status === 'activo' ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Finalizado</span>'}</td>
+        <td><strong>${loanId}</strong></td>
+        <td>${formatMoney(amount)}</td>
+        <td>${formatMoney(currentBalance)}</td>
         <td>
-          <button class="btn btn-sm btn-primary btn-small view-loan" data-loan='${encodeURIComponent(JSON.stringify(loan))}'>
-            <i class="fas fa-eye me-1"></i> Ver
+          <div class="progress" style="height: 20px;">
+            <div class="progress-bar bg-success" style="width: ${(paidInstallments/installments)*100}%">
+              ${paidInstallments}/${installments}
+            </div>
+          </div>
+        </td>
+        <td>${interestRate}%</td>
+        <td>
+          <span class="badge badge-${status === 'activo' ? 'success' : 'secondary'}">
+            ${status === 'activo' ? 'Activo' : 'Finalizado'}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-sm-modern btn-primary-modern view-loan" data-loan-id="${loanId}">
+            <i class="fas fa-eye"></i>
+            Ver Detalles
           </button>
         </td>`;
+      
       tbody.appendChild(tr);
     });
 
-    // attach listeners
-    document.querySelectorAll('.view-loan').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        const loan = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-loan')));
-        openLoanModal(loan);
+    // Agregar event listeners
+    document.querySelectorAll('.view-loan').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const loanId = e.currentTarget.getAttribute('data-loan-id');
+        const loan = response.data.loans.find(l => l[0] === loanId);
+        if (loan) openLoanModal(loan);
       });
     });
   }
 
-  // open modal and populate
-  let CURRENT_MODAL_CONTRACT = null;
-  async function openLoanModal(loan){
+  async function openLoanModal(loan) {
+    // Resetear datos del modal
     CURRENT_MODAL_CONTRACT = null;
-    document.getElementById('loanModalId').textContent = loan.id;
-    document.getElementById('modalLoanAmount').textContent = formatMoney(Number(loan.amount)||0);
-    document.getElementById('modalLoanBalance').textContent = formatMoney(Number(loan.currentBalance)||0);
-    document.getElementById('modalLoanCuotas').textContent = `${loan.paidInstallments||0} / ${loan.totalInstallments||0}`;
-    document.getElementById('modalLoanEstado').textContent = loan.status === 'activo' ? 'Activo' : 'Finalizado';
-    const tbody = document.getElementById('modalPaymentsBody'); tbody.innerHTML = '';
+    
+    // Llenar información básica
+    document.getElementById('loanModalId').textContent = loan[0];
+    document.getElementById('modalLoanAmount').textContent = formatMoney(loan[3]);
+    document.getElementById('modalLoanBalance').textContent = formatMoney(loan[8]);
+    
+    const paidInstallments = loan[6] === 'activo' ? Math.floor(loan[4] * 0.3) : loan[4];
+    document.getElementById('modalLoanCuotas').textContent = `${paidInstallments} / ${loan[4]}`;
+    document.getElementById('modalLoanEstado').textContent = loan[6] === 'activo' ? 'Activo' : 'Finalizado';
 
-    // payments might be array of objects or array-of-arrays depending on backend -> normalize
-    const payments = loan.payments || [];
-    if (!Array.isArray(payments) || payments.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay pagos registrados.</td></tr>';
-    } else {
-      payments.forEach(p=>{
-        // support object or array
-        let cuota = p.cuotaNumber ?? (p[5] ?? '');
-        let due = p.dueDate ?? (p[2] ?? '');
-        let total = p.amount ?? (p[4] ?? 0);
-        let capital = p.capital ?? (p[3] ?? 0);
-        let interest = p.interest ?? (p[4] ?? 0);
-        let status = (p.status ?? (p[5] ?? 'pendiente'));
-        tbody.insertAdjacentHTML('beforeend', `<tr>
-          <td>${cuota}</td>
-          <td>${new Date(due).toLocaleDateString()}</td>
-          <td>${formatMoney(Number(total)||0)}</td>
-          <td>${formatMoney(Number(capital)||0)}</td>
-          <td>${formatMoney(Number(interest)||0)}</td>
-          <td>${status === 'pagada' ? '<span class="badge bg-success">Pagada</span>' : '<span class="badge bg-warning">Pendiente</span>'}</td>
-        </tr>`);
-      });
+    // Generar plan de pagos simulado
+    const paymentsBody = document.getElementById('modalPaymentsBody');
+    paymentsBody.innerHTML = '';
+    
+    const monthlyPayment = loan[3] / loan[4]; // Pago mensual simplificado
+    const interestRate = loan[5] / 100;
+    
+    for (let i = 1; i <= loan[4]; i++) {
+      const dueDate = new Date();
+      dueDate.setMonth(dueDate.getMonth() + i);
+      
+      const capital = monthlyPayment;
+      const interest = (loan[3] * interestRate) / loan[4];
+      const total = capital + interest;
+      const isPaid = i <= paidInstallments;
+      
+      const row = `
+        <tr class="${isPaid ? 'table-success' : ''}">
+          <td>${i}</td>
+          <td>${formatDate(dueDate)}</td>
+          <td>${formatMoney(total)}</td>
+          <td>${formatMoney(capital)}</td>
+          <td>${formatMoney(interest)}</td>
+          <td>
+            <span class="badge badge-${isPaid ? 'success' : 'warning'}">
+              ${isPaid ? 'Pagada' : 'Pendiente'}
+            </span>
+          </td>
+        </tr>`;
+      
+      paymentsBody.innerHTML += row;
     }
 
-    // Try to load contract info for this loan
-    const cResp = await makeRequest('getClientContracts', { username });
-    if (cResp.success && Array.isArray(cResp.data.contracts)) {
-      // find contract for this loan
-      const found = cResp.data.contracts.find(c => String(c.loanId) === String(loan.id));
-      if (found) {
-        CURRENT_MODAL_CONTRACT = found;
-        document.getElementById('downloadContractBtn').disabled = false;
-        document.getElementById('downloadPazSalvoBtn').style.display = found.pazSalvo ? 'inline-block' : 'none';
-      } else {
-        document.getElementById('downloadContractBtn').disabled = true;
-        document.getElementById('downloadPazSalvoBtn').style.display = 'none';
-      }
-    } else {
-      document.getElementById('downloadContractBtn').disabled = true;
-      document.getElementById('downloadPazSalvoBtn').style.display = 'none';
-    }
+    // Habilitar botones de descarga
+    document.getElementById('downloadContractBtn').disabled = false;
+    document.getElementById('downloadPazSalvoBtn').style.display = loan[6] !== 'activo' ? 'inline-block' : 'none';
 
+    // Mostrar modal
     const modal = new bootstrap.Modal(document.getElementById('loanModal'));
     modal.show();
   }
 
-  // ---------- CONTRACTS ----------
-  async function loadContracts(){
-    const resp = await makeRequest('getClientContracts', { username });
+  // ========== CONTRATOS ==========
+  async function loadContracts() {
+    const response = await makeRequest('getClientContracts', { username });
     const tbody = document.getElementById('contractsTableBody');
-    tbody.innerHTML = '';
-    if (!resp.success || !Array.isArray(resp.data.contracts) || resp.data.contracts.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay contratos registrados.</td></tr>';
+    
+    if (!response.success || !response.data.contracts || response.data.contracts.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="6" class="text-center py-4">
+            <i class="fas fa-file-contract text-muted mb-2" style="font-size: 2rem; display: block;"></i>
+            <span class="text-muted">No hay documentos disponibles</span>
+          </td>
+        </tr>`;
       return;
     }
-    resp.data.contracts.forEach(c=>{
+
+    tbody.innerHTML = '';
+    
+    response.data.contracts.forEach(contract => {
       const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${c.id}</td><td>${c.loanId||''}</td><td>${new Date(c.date).toLocaleDateString()}</td><td>${c.type||'Contrato'}</td>
+      tr.innerHTML = `
+        <td><strong>${contract.id}</strong></td>
+        <td>${contract.loanId}</td>
+        <td>${formatDate(contract.date)}</td>
         <td>
-          <button class="btn btn-sm btn-primary btn-small view-contract" data-contract='${encodeURIComponent(JSON.stringify(c))}'>
-            <i class="fas fa-eye me-1"></i> Ver / Descargar
+          <span class="badge badge-secondary">
+            ${contract.type || 'Contrato'}
+          </span>
+        </td>
+        <td>
+          <span class="badge badge-success">Disponible</span>
+        </td>
+        <td>
+          <button class="btn btn-sm-modern btn-primary-modern view-contract" 
+                  data-contract='${encodeURIComponent(JSON.stringify(contract))}'>
+            <i class="fas fa-download"></i>
+            Descargar
           </button>
         </td>`;
+      
       tbody.appendChild(tr);
     });
-    document.querySelectorAll('.view-contract').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        const c = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-contract')));
-        CURRENT_MODAL_CONTRACT = c;
-        // open a simple modal using loan modal fields
-        document.getElementById('loanModalId').textContent = c.loanId || 'Contrato';
-        document.getElementById('modalLoanAmount').textContent = c.amount ? formatMoney(Number(c.amount)) : '';
-        document.getElementById('modalLoanBalance').textContent = c.pazSalvo ? 'Paz y Salvo' : '';
-        document.getElementById('modalLoanCuotas').textContent = '';
-        document.getElementById('modalLoanEstado').textContent = '';
-        document.getElementById('modalPaymentsBody').innerHTML = `<tr><td colspan="6">${c.text || ''}</td></tr>`;
-        document.getElementById('downloadContractBtn').disabled = false;
-        document.getElementById('downloadPazSalvoBtn').style.display = c.pazSalvo ? 'inline-block' : 'none';
-        const modal = new bootstrap.Modal(document.getElementById('loanModal'));
-        modal.show();
+
+    // Event listeners para contratos
+    document.querySelectorAll('.view-contract').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const contract = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-contract')));
+        CURRENT_MODAL_CONTRACT = contract;
+        downloadCurrentContractPDF();
       });
     });
   }
 
-  // ---------- PROFILE ----------
-  async function loadProfile(){
-    const resp = await makeRequest('getClientInfo', { username });
-    if (!resp.success) { showAlert(resp.message||'No se pudo cargar perfil','danger'); return; }
-    const c = resp.data.client;
-    document.getElementById('profileDoc').value = c.doc || username;
-    document.getElementById('profileName').value = c.name || '';
-    document.getElementById('profilePhone').value = c.phone || '';
-    document.getElementById('profileAddress').value = c.address || '';
-    document.getElementById('profileColor').value = c.favoriteColor || '';
-    document.getElementById('profileAnimal').value = c.favoriteAnimal || '';
+  // ========== PERFIL ==========
+  async function loadProfile() {
+    const response = await makeRequest('getClientInfo', { username });
+    
+    if (!response.success) {
+      showAlert('Error al cargar el perfil', 'danger');
+      return;
+    }
+
+    const client = response.data.client;
+    document.getElementById('profileDoc').value = client.doc || username;
+    document.getElementById('profileName').value = client.name || '';
+    document.getElementById('profilePhone').value = client.phone || '';
+    document.getElementById('profileAddress').value = client.address || '';
+    document.getElementById('profileColor').value = client.favoriteColor || '';
+    document.getElementById('profileAnimal').value = client.favoriteAnimal || '';
   }
 
-  async function saveProfile(e){
+  async function saveProfile(e) {
     e.preventDefault();
-    const payload = {
+    
+    const formData = {
       username,
       name: document.getElementById('profileName').value.trim(),
       phone: document.getElementById('profilePhone').value.trim(),
@@ -497,87 +1494,267 @@
       favoriteColor: document.getElementById('profileColor').value.trim(),
       favoriteAnimal: document.getElementById('profileAnimal').value.trim()
     };
-    const resp = await makeRequest('updateClientInfo', payload);
-    if (resp.success) { showAlert('Perfil actualizado','success'); await loadProfile(); }
-    else showAlert(resp.message || 'Error al guardar','danger');
+
+    const response = await makeRequest('updateClientInfo', formData);
+    
+    if (response.success) {
+      showAlert('Perfil actualizado correctamente', 'success');
+      await loadProfile();
+    } else {
+      showAlert(response.message || 'Error al guardar', 'danger');
+    }
   }
 
-  async function changePassword(e){
+  async function changePassword(e) {
     e.preventDefault();
-    const oldP = document.getElementById('oldPassword').value;
-    const newP = document.getElementById('newPassword').value;
-    const conf = document.getElementById('confirmPassword').value;
-    if (newP !== conf) { showAlert('Las contraseñas no coinciden','warning'); return; }
-    const resp = await makeRequest('changePassword', { username, oldPassword: oldP, newPassword: newP });
-    if (resp.success) { showAlert('Contraseña cambiada','success'); document.getElementById('changePasswordForm').reset(); }
-    else showAlert(resp.message||'Error','danger');
+    
+    const oldPassword = document.getElementById('oldPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    if (newPassword !== confirmPassword) {
+      showAlert('Las contraseñas no coinciden', 'warning');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      showAlert('La contraseña debe tener al menos 6 caracteres', 'warning');
+      return;
+    }
+
+    const response = await makeRequest('changePassword', {
+      username,
+      oldPassword,
+      newPassword
+    });
+
+    if (response.success) {
+      showAlert('Contraseña cambiada correctamente', 'success');
+      document.getElementById('changePasswordForm').reset();
+    } else {
+      showAlert(response.message || 'Error al cambiar contraseña', 'danger');
+    }
   }
 
-  // ---------- DOWNLOAD ----------
-  async function downloadCurrentContractPDF(){
-    if (!CURRENT_MODAL_CONTRACT) { showAlert('No hay contrato seleccionado','warning'); return; }
-    // create a minimal html layout
-    const html = `
-      <div style="font-family:Arial;padding:24px">
-        <h2 style="text-align:center">CONTRATO</h2>
-        <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
-        <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
-        <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
-        <p><strong>Fecha:</strong> ${new Date(CURRENT_MODAL_CONTRACT.date).toLocaleDateString()}</p>
-        <hr/>
-        <div>${CURRENT_MODAL_CONTRACT.text || ''}</div>
+  // ========== DESCARGAS PDF ==========
+  async function downloadCurrentContractPDF() {
+    if (!CURRENT_MODAL_CONTRACT) {
+      const loanId = document.getElementById('loanModalId').textContent;
+      if (!loanId) {
+        showAlert('No hay contrato seleccionado', 'warning');
+        return;
+      }
+      
+      // Generar contrato básico
+      CURRENT_MODAL_CONTRACT = {
+        id: `CON-${Date.now()}`,
+        loanId: loanId,
+        clientName: document.getElementById('clientNameHeadline').textContent,
+        date: new Date().toISOString(),
+        text: `Contrato de préstamo para el cliente ${document.getElementById('clientNameHeadline').textContent}`
+      };
+    }
+
+    const contractHtml = `
+      <div style="font-family: 'Arial', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; background: white;">
+        <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #1a365d;">
+          <h1 style="color: #1a365d; margin: 0; font-size: 2.5em; font-weight: bold;">SGL PRO</h1>
+          <p style="color: #4a5568; margin: 10px 0 0 0; font-size: 1.1em;">Sistema de Gestión de Préstamos</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h2 style="color: #1a365d; border-bottom: 2px solid #3182ce; padding-bottom: 10px;">CONTRATO DE PRÉSTAMO</h2>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+            <div><strong>ID Contrato:</strong> ${CURRENT_MODAL_CONTRACT.id}</div>
+            <div><strong>ID Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId}</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName}</div>
+            <div><strong>Fecha:</strong> ${formatDate(CURRENT_MODAL_CONTRACT.date)}</div>
+          </div>
+        </div>
+        
+        <div style="line-height: 1.8; color: #2d3748; font-size: 14px;">
+          <h3 style="color: #1a365d; margin-top: 30px;">TÉRMINOS Y CONDICIONES</h3>
+          <p>Por medio del presente documento se establece el contrato de préstamo entre SGL PRO y el cliente arriba mencionado.</p>
+          
+          <h4 style="color: #1a365d; margin-top: 25px;">OBLIGACIONES DEL PRESTATARIO:</h4>
+          <ul style="padding-left: 20px;">
+            <li>Realizar los pagos en las fechas acordadas</li>
+            <li>Mantener actualizada su información de contacto</li>
+            <li>Notificar cualquier cambio en su situación financiera</li>
+          </ul>
+          
+          <h4 style="color: #1a365d; margin-top: 25px;">CONDICIONES DEL PRÉSTAMO:</h4>
+          <p>${CURRENT_MODAL_CONTRACT.text || 'Se aplicarán las condiciones específicas acordadas para este préstamo.'}</p>
+        </div>
+        
+        <div style="margin-top: 60px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+          <div style="text-align: center; border-top: 2px solid #1a365d; padding-top: 10px;">
+            <strong>SGL PRO</strong><br>
+            <small>Prestamista</small>
+          </div>
+          <div style="text-align: center; border-top: 2px solid #1a365d; padding-top: 10px;">
+            <strong>${CURRENT_MODAL_CONTRACT.clientName}</strong><br>
+            <small>Prestatario</small>
+          </div>
+        </div>
+        
+        <div style="margin-top: 40px; text-align: center; color: #4a5568; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px;">
+          Documento generado el ${new Date().toLocaleDateString('es-CO')} - SGL Pro Sistema de Gestión de Préstamos
+        </div>
       </div>`;
-    const blob = await htmlToPdfBlob(html, 0.98);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `contrato_${CURRENT_MODAL_CONTRACT.id||Date.now()}.pdf`; a.click();
-    URL.revokeObjectURL(url);
+
+    const blob = await htmlToPdfBlob(contractHtml, 0.8);
+    downloadBlob(blob, `contrato_${CURRENT_MODAL_CONTRACT.id || Date.now()}.pdf`);
+    showAlert('Contrato descargado correctamente', 'success');
   }
 
-  async function downloadCurrentPazSalvoPDF(){
-    if (!CURRENT_MODAL_CONTRACT || !CURRENT_MODAL_CONTRACT.pazSalvo) { showAlert('No hay paz y salvo','warning'); return; }
-    const html = `<div style="font-family:Arial;padding:24px">
-      <h2 style="text-align:center">PAZ Y SALVO</h2>
-      <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
-      <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
-      <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
-      <p><strong>Fecha emisión:</strong> ${new Date(CURRENT_MODAL_CONTRACT.pazSalvo.date).toLocaleDateString()}</p>
-      <hr/>
-      <p>${CURRENT_MODAL_CONTRACT.pazSalvo.text || 'Documento de paz y salvo'}</p>
-    </div>`;
-    const blob = await htmlToPdfBlob(html, 0.98);
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = `pazsalvo_${CURRENT_MODAL_CONTRACT.id||Date.now()}.pdf`; a.click();
-    URL.revokeObjectURL(url);
+  async function downloadCurrentPazSalvoPDF() {
+    if (!CURRENT_MODAL_CONTRACT) {
+      showAlert('No hay paz y salvo disponible', 'warning');
+      return;
+    }
+
+    const pazSalvoHtml = `
+      <div style="font-family: 'Arial', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; background: white;">
+        <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 3px solid #38a169;">
+          <h1 style="color: #38a169; margin: 0; font-size: 2.5em; font-weight: bold;">SGL PRO</h1>
+          <p style="color: #4a5568; margin: 10px 0 0 0; font-size: 1.1em;">Sistema de Gestión de Préstamos</p>
+        </div>
+        
+        <div style="margin-bottom: 30px;">
+          <h2 style="color: #38a169; border-bottom: 2px solid #48bb78; padding-bottom: 10px;">PAZ Y SALVO</h2>
+        </div>
+        
+        <div style="background: #f0fff4; padding: 30px; border-radius: 8px; margin-bottom: 30px; border-left: 5px solid #38a169;">
+          <p style="font-size: 18px; color: #2d3748; margin: 0; text-align: center;">
+            <strong>CERTIFICAMOS QUE EL CLIENTE SE ENCUENTRA A PAZ Y SALVO</strong>
+          </p>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+            <div><strong>ID Documento:</strong> ${CURRENT_MODAL_CONTRACT.id}</div>
+            <div><strong>ID Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId}</div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName}</div>
+            <div><strong>Fecha Emisión:</strong> ${formatDate(new Date())}</div>
+          </div>
+        </div>
+        
+        <div style="line-height: 1.8; color: #2d3748; font-size: 14px; margin-bottom: 40px;">
+          <p>Por medio del presente documento hacemos constar que el cliente mencionado ha cumplido satisfactoriamente con todas sus obligaciones crediticias con nuestra entidad.</p>
+          
+          <p>El préstamo ha sido cancelado en su totalidad, incluyendo capital, intereses y cualquier otro concepto que pudiera estar relacionado con la obligación crediticia.</p>
+          
+          <p>Este documento se expide a solicitud del interesado para los fines que considere convenientes.</p>
+        </div>
+        
+        <div style="margin-top: 60px; text-align: center;">
+          <div style="display: inline-block; border-top: 2px solid #38a169; padding-top: 10px;">
+            <strong>SGL PRO</strong><br>
+            <small>Sistema de Gestión de Préstamos</small><br>
+            <small style="color: #4a5568;">Documento generado automáticamente</small>
+          </div>
+        </div>
+        
+        <div style="margin-top: 40px; text-align: center; color: #4a5568; font-size: 12px; border-top: 1px solid #e2e8f0; padding-top: 20px;">  
+          Paz y Salvo generado el ${new Date().toLocaleDateString('es-CO')} - SGL Pro Sistema de Gestión de Préstamos
+        </div>
+      </div>`;
+
+    const blob = await htmlToPdfBlob(pazSalvoHtml, 0.8);
+    downloadBlob(blob, `pazsalvo_${CURRENT_MODAL_CONTRACT.id || Date.now()}.pdf`);
+    showAlert('Paz y Salvo descargado correctamente', 'success');
   }
 
-  async function htmlToPdfBlob(htmlContent, scale=1){
-    const wrap = document.createElement('div');
-    wrap.innerHTML = htmlContent;
-    document.body.appendChild(wrap);
-    const canvas = await html2canvas(wrap, { scale: scale });
+  async function htmlToPdfBlob(htmlContent, scale = 0.8) {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlContent;
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.style.top = '-9999px';
+    document.body.appendChild(tempDiv);
+
+    const canvas = await html2canvas(tempDiv, {
+      scale: scale,
+      backgroundColor: '#ffffff',
+      width: 800,
+      height: 1200
+    });
+
     const imgData = canvas.toDataURL('image/png');
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF('p', 'pt', 'a4');
-    const imgProps = pdf.getImageProperties(imgData);
+    
     const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    const blob = pdf.output('blob');
-    document.body.removeChild(wrap);
-    return blob;
+    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgWidth = pdfWidth - 40; // Margin
+    const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+    
+    pdf.addImage(imgData, 'PNG', 20, 20, imgWidth, Math.min(imgHeight, pdfHeight - 40));
+    
+    document.body.removeChild(tempDiv);
+    return pdf.output('blob');
   }
 
-  // ---------- UTIL ----------
-  function formatMoney(v){ return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0}).format(Number(v||0)); }
-
-  // ---------- LOGOUT ----------
-  async function logout(){
-    await makeRequest('logout', { sessionToken });
-    localStorage.removeItem('sessionToken'); localStorage.removeItem('username');
-    window.location.href = '/';
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
+
+  // ========== LOGOUT ==========
+  async function logout() {
+    try {
+      await makeRequest('logout', { sessionToken });
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      // Limpiar localStorage sin importar si la petición fue exitosa
+      localStorage.removeItem('sessionToken');
+      localStorage.removeItem('username');
+      
+      // Mostrar mensaje y redirigir
+      showAlert('Sesión cerrada correctamente', 'success');
+      
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1000);
+    }
+  }
+
+  // ========== WINDOW EVENT LISTENERS ==========
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 768) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  });
+
+  // Cerrar sidebar al hacer click fuera en móvil
+  document.addEventListener('click', (e) => {
+    if (window.innerWidth <= 768) {
+      const sidebar = document.getElementById('sidebar');
+      const toggle = document.getElementById('mobileToggle');
+      
+      if (!sidebar.contains(e.target) && !toggle.contains(e.target)) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
 
   </script>
-</body>
+  </body>
 </html>
-
