@@ -273,10 +273,10 @@
                                 <div class="form-floating">
                                     <select class="form-select" id="recDocType" required>
                                         <option value="">Seleccionar</option>
-                                        <option value="CC">Cédula de Ciudadanía</option>
-                                        <option value="CE">Cédula de Extranjería</option>
-                                        <option value="TI">Tarjeta de Identidad</option>
-                                        <option value="PP">Pasaporte</option>
+                                        <option value="CC" selected>Cédula de Ciudadanía</option>
+                                        <option value="CE" selected>Cédula de Extranjería</option>
+                                        <option value="TI" selected>Tarjeta de Identidad</option>
+                                        <option value="PPT" selected>Pasaporte</option>
                                     </select>
                                     <label for="recDocType">Tipo de Documento</label>
                                 </div>
@@ -463,9 +463,10 @@
                         numeroDocumento: recDocNumber,
                         nombreCompleto: recFullName,
                         telefono: recPhone,
-                       colorFavorito: recFavoriteColor,
+                        colorFavorito: recFavoriteColor,
                         animalFavorito: recFavoriteAnimal
                     });
+
 
                     const recoveryResultDiv = document.getElementById('recoveryResult');
                     const recoveredUsernameDiv = document.getElementById('recoveredUsername');
