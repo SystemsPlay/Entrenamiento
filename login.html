@@ -318,6 +318,8 @@
                             </div>
                         </div>
 
+                        <div id="recoveryError" class="alert alert-danger" style="display:none;"></div>
+
                         <div id="recoveryResult" class="recovery-result" style="display: none;">
                             <h6 class="text-success mb-3">
                                 <i class="fas fa-check-circle me-2"></i>Información Validada
@@ -438,63 +440,55 @@
             });
         }
 
-        function initializeRecoveryForm() {
-            const btnRecoverPassword = document.getElementById('btnRecoverPassword');
+        btnRecoverPassword.addEventListener('click', async function() {
+    const recDocType = document.getElementById('recDocType').value;
+    const recDocNumber = document.getElementById('recDocNumber').value;
+    const recFullName = document.getElementById('recFullName').value;
+    const recPhone = document.getElementById('recPhone').value;
+    const recFavoriteColor = document.getElementById('recFavoriteColor').value;
+    const recFavoriteAnimal = document.getElementById('recFavoriteAnimal').value;
 
-            if (!btnRecoverPassword) {
-                console.error('Error: Botón de recuperación no encontrado. Verifique el ID en su HTML.');
-                return;
-            }
+    const errorDiv   = document.getElementById('recoveryError');
+    const resultDiv  = document.getElementById('recoveryResult');
+    const userDiv    = document.getElementById('recoveredUsername');
+    const passDiv    = document.getElementById('recoveredPassword');
 
-            btnRecoverPassword.addEventListener('click', async function () {
-                const recDocType = document.getElementById('recDocType').value;
-                const recDocNumber = document.getElementById('recDocNumber').value;
-                const recFullName = document.getElementById('recFullName').value;
-                const recPhone = document.getElementById('recPhone').value;
-                const recFavoriteColor = document.getElementById('recFavoriteColor').value;
-                const recFavoriteAnimal = document.getElementById('recFavoriteAnimal').value;
+    errorDiv.style.display = 'none';
+    resultDiv.style.display = 'none';
 
-                btnRecoverPassword.disabled = true;
-                btnRecoverPassword.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Validando...';
+    btnRecoverPassword.disabled = true;
+    btnRecoverPassword.innerHTML =
+      '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Validando...';
 
-                try {
-                    const response = await makeRequest('recoverPassword', {
-                        tipoDocumento: recDocType,
-                        numeroDocumento: recDocNumber,
-                        nombreCompleto: recFullName,
-                        telefono: recPhone,
-                        colorFavorito: recFavoriteColor,
-                        animalFavorito: recFavoriteAnimal
-                    });
+    try {
+        const response = await makeRequest('recoverPassword', {
+            tipoDocumento: recDocType,
+            numeroDocumento: recDocNumber,
+            nombreCompleto: recFullName,
+            telefono: recPhone,
+            colorFavorito: recFavoriteColor,
+            animalFavorito: recFavoriteAnimal
+        });
 
-
-                    const recoveryResultDiv = document.getElementById('recoveryResult');
-                    const recoveredUsernameDiv = document.getElementById('recoveredUsername');
-                    const recoveredPasswordDiv = document.getElementById('recoveredPassword');
-
-                    if (!recoveryResultDiv || !recoveredUsernameDiv || !recoveredPasswordDiv) {
-                        console.error('Error: Elementos de recuperación de contraseña no encontrados.');
-                        showAlert('Error del sistema: No se pueden mostrar los resultados de la recuperación.', 'danger');
-                        return;
-                    }
-
-                    if (response.success) {
-                        recoveredUsernameDiv.textContent = response.data.username;
-                        recoveredPasswordDiv.textContent = response.data.password;
-                        recoveryResultDiv.style.display = 'block';
-                    } else {
-                        showAlert(response.message, 'danger');
-                        recoveryResultDiv.style.display = 'none';
-                    }
-                } catch (error) {
-                    console.error('Recovery error:', error);
-                    showAlert('Error de conexión. Intente de nuevo más tarde.', 'danger');
-                } finally {
-                    btnRecoverPassword.disabled = false;
-                    btnRecoverPassword.innerHTML = '<i class="fas fa-search me-2"></i>Recuperar Contraseña';
-                }
-            });
+        if (response.success) {
+            userDiv.textContent = response.data.username;
+            passDiv.textContent = response.data.password;
+            resultDiv.style.display = 'block';
+        } else {
+            // ⬇️ Mensaje de error dentro del modal
+            errorDiv.textContent = response.message;
+            errorDiv.style.display = 'block';
         }
+    } catch (err) {
+        errorDiv.textContent = 'Error de conexión. Intente de nuevo más tarde.';
+        errorDiv.style.display = 'block';
+    } finally {
+        btnRecoverPassword.disabled = false;
+        btnRecoverPassword.innerHTML =
+          '<i class="fas fa-search me-2"></i>Recuperar Contraseña';
+    }
+});
+
 
         function setupPasswordToggle() {
             const passwordInput = document.getElementById('password');
