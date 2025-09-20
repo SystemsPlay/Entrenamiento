@@ -21,7 +21,7 @@
       --text-primary: #2d3748;
       --text-secondary: #4a5568;
       --border-color: #e2e8f0;
-      --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
       --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
       --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
       --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -942,6 +942,7 @@
     }
 
     function formatDate(dateStr) {
+      if (!dateStr) return '';
       return new Date(dateStr).toLocaleDateString('es-CO');
     }
 
@@ -1035,36 +1036,33 @@
 
     async function loadInitialData() {
       const response = await makeRequest('getClientInfo', { username });
-      if (response.success) {
+      if (response.success && response.data && response.data.client) {
         const client = response.data.client;
-        const displayName = client.name ? client.name.split(' ')[0] : username;
+        const displayName = client[2] ? client[2].split(' ')[0] : username;
         document.getElementById('clientNameTitle').textContent = displayName;
-        document.getElementById('clientNameHeadline').textContent = client.name || username;
+        document.getElementById('clientNameHeadline').textContent = client[2] || username;
+      } else {
+        showAlert(response.message || 'No se pudo cargar la información del cliente.', 'danger');
       }
     }
 
     // ========== DASHBOARD ==========
     async function loadDashboard() {
       try {
-        // Cargar datos en paralelo
-        const [clientInfo, clientLoans, clientPayments] = await Promise.all([
-          makeRequest('getClientInfo', { username }),
+        const [clientLoans, clientPayments] = await Promise.all([
           makeRequest('getClientLoans', { username }),
           makeRequest('getClientPayments', { clientId: username })
         ]);
 
-        // Actualizar estadísticas
-        updateDashboardStats(clientLoans.data?.loans || []);
+        const loans = clientLoans.success && clientLoans.data && Array.isArray(clientLoans.data.loans) ? clientLoans.data.loans : [];
+        const payments = clientPayments.success && clientPayments.data && Array.isArray(clientPayments.data.payments) ? clientPayments.data.payments : [];
 
-        // Actualizar actividad reciente
-        updateRecentActivity(clientPayments.data?.payments || []);
+        updateDashboardStats(loans);
+        updateRecentActivity(payments);
+        createPaymentsChart(payments);
+        createLoanStatusChart(loans);
+        updateUpcomingPayments(loans);
 
-        // Crear gráficos
-        createPaymentsChart(clientPayments.data?.payments || []);
-        createLoanStatusChart(clientLoans.data?.loans || []);
-
-        // Actualizar próximos vencimientos
-        updateUpcomingPayments(clientLoans.data?.loans || []);
       } catch (error) {
         console.error('Error loading dashboard:', error);
         showAlert('Error al cargar el dashboard', 'danger');
@@ -1072,12 +1070,12 @@
     }
 
     function updateDashboardStats(loans) {
-      const activeLoans = loans.filter(l => String(l[6]).toLowerCase() === 'activo'); // Estado en posición 6
+      const activeLoans = loans.filter(l => String(l[6]).toLowerCase() === 'activo'); 
       const finalizedLoans = loans.filter(l => String(l[6]).toLowerCase() !== 'activo');
       const totalPending = activeLoans.reduce((sum, loan) => {
-        return sum + (Number(loan[8]) || 0); // Saldo actual en posición 8
+        return sum + (Number(loan[8]) || 0); 
       }, 0);
-      const averageRate = loans.length > 0 ? loans.reduce((sum, loan) => sum + (Number(loan[5]) || 0), 0) / loans.length : 0; // Tasa en posición 5
+      const averageRate = loans.length > 0 ? loans.reduce((sum, loan) => sum + (Number(loan[5]) || 0), 0) / loans.length : 0; 
       
       document.getElementById('totalPendingAmount').textContent = formatMoney(totalPending);
       document.getElementById('activeLoansCount').textContent = activeLoans.length;
@@ -1121,12 +1119,10 @@
       const ctx = document.getElementById('paymentsChart');
       if (!ctx) return;
 
-      // Destruir gráfico anterior si existe
       if (paymentsChart) {
         paymentsChart.destroy();
       }
 
-      // Procesar datos para el gráfico
       const monthlyData = {};
       payments.forEach(payment => {
         const date = new Date(payment[2]);
@@ -1213,7 +1209,6 @@
 
     function updateUpcomingPayments(loans) {
       const container = document.getElementById('upcomingPayments');
-      // Simular próximos vencimientos basados en los préstamos activos
       const activeLoans = loans.filter(l => String(l[6]).toLowerCase() === 'activo');
       if (activeLoans.length === 0) {
         container.innerHTML = `
@@ -1243,7 +1238,9 @@
     async function loadLoans() {
       const response = await makeRequest('getClientLoans', { username });
       const tbody = document.getElementById('loansTableBody');
-      if (!response.success || !response.data.loans || response.data.loans.length === 0) {
+      const loans = response.success && response.data && Array.isArray(response.data.loans) ? response.data.loans : [];
+
+      if (loans.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="7" class="text-center py-4">
@@ -1254,10 +1251,10 @@
         return;
       }
       tbody.innerHTML = '';
-      response.data.loans.forEach(loan => {
-        const tr = document.createElement('tr');
+      loans.forEach(loan => {
         const [id, clientId, docId, amount, installments, interest, status, paymentPlan, balance] = loan;
-        const statusBadge = `<span class="badge badge-modern ${status.toLowerCase() === 'activo' ? 'badge-success' : 'badge-secondary'}">${status}</span>`;
+        const statusBadge = `<span class="badge badge-modern ${String(status).toLowerCase() === 'activo' ? 'badge-success' : 'badge-secondary'}">${status}</span>`;
+        const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${id}</td>
           <td>${formatMoney(amount)}</td>
@@ -1274,7 +1271,6 @@
         tbody.appendChild(tr);
       });
 
-      // Agregar event listeners a los botones de detalles
       document.querySelectorAll('.loan-details-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
           const loanId = e.currentTarget.getAttribute('data-loan-id');
@@ -1285,40 +1281,43 @@
 
     async function showLoanDetails(loanId) {
       const response = await makeRequest('getLoanDetails', { loanId });
-      if (!response.success) {
-        showAlert(response.message, 'danger');
+      if (!response.success || !response.data) {
+        showAlert(response.message || 'No se pudo cargar los detalles del préstamo', 'danger');
         return;
       }
 
       const loan = response.data.loan;
       const payments = response.data.payments;
 
-      document.getElementById('loanModalId').textContent = loan.id;
-      document.getElementById('modalLoanAmount').textContent = formatMoney(loan.amount);
-      document.getElementById('modalLoanBalance').textContent = formatMoney(loan.balance);
-      document.getElementById('modalLoanCuotas').textContent = `${payments.filter(p => p.status === 'Pagado').length}/${loan.installments}`;
-      document.getElementById('modalLoanEstado').textContent = loan.status;
+      document.getElementById('loanModalId').textContent = loan[0];
+      document.getElementById('modalLoanAmount').textContent = formatMoney(loan[3]);
+      document.getElementById('modalLoanBalance').textContent = formatMoney(loan[8]);
+      document.getElementById('modalLoanCuotas').textContent = `${payments.filter(p => String(p[5]).toLowerCase() === 'pagada').length}/${loan[4]}`;
+      document.getElementById('modalLoanEstado').textContent = loan[6];
 
       const paymentsTbody = document.getElementById('modalPaymentsBody');
       paymentsTbody.innerHTML = '';
-      payments.forEach(payment => {
-        const tr = document.createElement('tr');
-        const statusBadge = `<span class="badge badge-modern ${payment.status === 'Pagado' ? 'badge-success' : 'badge-warning'}">${payment.status}</span>`;
-        tr.innerHTML = `
-          <td>${payment.installmentNumber}</td>
-          <td>${formatDate(payment.dueDate)}</td>
-          <td>${formatMoney(payment.total)}</td>
-          <td>${formatMoney(payment.capital)}</td>
-          <td>${formatMoney(payment.interest)}</td>
-          <td>${statusBadge}</td>`;
-        paymentsTbody.appendChild(tr);
-      });
-
-      // Show/hide download paz y salvo button
+      if (payments && payments.length > 0) {
+        payments.forEach(payment => {
+          const tr = document.createElement('tr');
+          const statusBadge = `<span class="badge badge-modern ${String(payment[5]).toLowerCase() === 'pagada' ? 'badge-success' : 'badge-warning'}">${payment[5]}</span>`;
+          tr.innerHTML = `
+            <td>${payment[0]}</td>
+            <td>${formatDate(payment[2])}</td>
+            <td>${formatMoney(payment[4])}</td>
+            <td>${formatMoney(payment[3])}</td>
+            <td>${formatMoney(payment[4] - payment[3])}</td>
+            <td>${statusBadge}</td>`;
+          paymentsTbody.appendChild(tr);
+        });
+      } else {
+         paymentsTbody.innerHTML = `<tr><td colspan="6" class="text-center py-3"><small class="text-muted">No hay pagos registrados.</small></td></tr>`;
+      }
+      
       const downloadPazSalvoBtn = document.getElementById('downloadPazSalvoBtn');
-      if (loan.status === 'Finalizado') {
+      if (String(loan[6]).toLowerCase() === 'finalizado') {
         downloadPazSalvoBtn.style.display = 'inline-flex';
-        CURRENT_MODAL_CONTRACT = { id: loan.id, client: loan.client, finalizedDate: new Date().toLocaleDateString('es-CO') };
+        CURRENT_MODAL_CONTRACT = { id: loan[0], client: loan[2], finalizedDate: new Date().toLocaleDateString('es-CO') };
       } else {
         downloadPazSalvoBtn.style.display = 'none';
         CURRENT_MODAL_CONTRACT = null;
@@ -1332,7 +1331,9 @@
     async function loadContracts() {
       const response = await makeRequest('getClientContracts', { username });
       const tbody = document.getElementById('contractsTableBody');
-      if (!response.success || !response.data.contracts || response.data.contracts.length === 0) {
+      const contracts = response.success && response.data && Array.isArray(response.data.contracts) ? response.data.contracts : [];
+
+      if (contracts.length === 0) {
         tbody.innerHTML = `
           <tr>
             <td colspan="6" class="text-center py-4">
@@ -1343,10 +1344,10 @@
         return;
       }
       tbody.innerHTML = '';
-      response.data.contracts.forEach(contract => {
-        const tr = document.createElement('tr');
+      contracts.forEach(contract => {
         const [id, loanId, date, type, status, url] = contract;
-        const statusBadge = `<span class="badge badge-modern ${status.toLowerCase() === 'activo' ? 'badge-success' : 'badge-secondary'}">${status}</span>`;
+        const statusBadge = `<span class="badge badge-modern ${String(status).toLowerCase() === 'activo' ? 'badge-success' : 'badge-secondary'}">${status}</span>`;
+        const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${id}</td>
           <td>${loanId}</td>
@@ -1365,16 +1366,16 @@
     // ========== PERFIL ==========
     async function loadProfile() {
       const response = await makeRequest('getClientInfo', { username });
-      if (response.success) {
+      if (response.success && response.data && response.data.client) {
         const client = response.data.client;
-        document.getElementById('profileDoc').value = client.docId || '';
-        document.getElementById('profileName').value = client.name || '';
-        document.getElementById('profilePhone').value = client.phone || '';
-        document.getElementById('profileAddress').value = client.address || '';
-        document.getElementById('profileColor').value = client.color || '';
-        document.getElementById('profileAnimal').value = client.animal || '';
+        document.getElementById('profileDoc').value = client[1] || '';
+        document.getElementById('profileName').value = client[2] || '';
+        document.getElementById('profilePhone').value = client[3] || '';
+        document.getElementById('profileAddress').value = client[4] || '';
+        document.getElementById('profileColor').value = client[6] || '';
+        document.getElementById('profileAnimal').value = client[7] || '';
       } else {
-        showAlert(response.message, 'danger');
+        showAlert(response.message || 'No se pudo cargar la información del perfil', 'danger');
       }
     }
 
@@ -1390,9 +1391,9 @@
       const response = await makeRequest('updateClientProfile', data);
       if (response.success) {
         showAlert('Perfil actualizado correctamente', 'success');
-        loadInitialData(); // Para actualizar el nombre en la cabecera
+        loadInitialData();
       } else {
-        showAlert(response.message, 'danger');
+        showAlert(response.message || 'Error al actualizar el perfil', 'danger');
       }
     }
 
@@ -1412,67 +1413,77 @@
         showAlert('Contraseña cambiada correctamente', 'success');
         document.getElementById('changePasswordForm').reset();
       } else {
-        showAlert(response.message, 'danger');
+        showAlert(response.message || 'Error al cambiar la contraseña', 'danger');
       }
     }
 
     // ========== GENERACIÓN DE DOCUMENTOS ==========
     async function downloadCurrentContractPDF() {
       const loanId = document.getElementById('loanModalId').textContent;
-      if (!loanId) return;
+      if (!loanId) {
+        showAlert('No se pudo encontrar el ID del préstamo.', 'warning');
+        return;
+      }
 
-      const response = await makeRequest('generateContract', { loanId });
-      if (response.success) {
-        const contract = response.data;
+      const response = await makeRequest('getLoanDetails', { loanId });
+      if (response.success && response.data && response.data.loan) {
+        const loan = response.data.loan;
         const html = `
           <div style="font-family: 'Inter', sans-serif; padding: 2rem; color: #2d3748;">
             <h1 style="color: #1a365d;">Contrato de Préstamo - SGL Pro</h1>
-            <p style="font-size: 0.9rem; color: #4a5568;"><strong>Fecha:</strong> ${formatDate(contract.date)}</p>
-            <p>Este documento certifica el acuerdo de préstamo entre las partes.</p>
+            <p style="font-size: 0.9rem; color: #4a5568;"><strong>Fecha:</strong> ${formatDate(new Date())}</p>
             <hr style="border-color: #e2e8f0;">
             <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
               <h3 style="color: #3182ce;">Detalles del Préstamo</h3>
-              <p><strong>ID Préstamo:</strong> ${contract.loanId}</p>
-              <p><strong>Monto:</strong> ${formatMoney(contract.amount)}</p>
-              <p><strong>Número de Cuotas:</strong> ${contract.installments}</p>
-              <p><strong>Tasa de Interés:</strong> ${contract.interestRate}%</p>
-            </div>
-            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0;">
-              <h3 style="color: #3182ce;">Información del Cliente</h3>
-              <p><strong>Nombre:</strong> ${contract.clientName}</p>
-              <p><strong>Documento:</strong> ${contract.clientDoc}</p>
+              <p><strong>ID Préstamo:</strong> ${loan[0]}</p>
+              <p><strong>Monto:</strong> ${formatMoney(loan[3])}</p>
+              <p><strong>Número de Cuotas:</strong> ${loan[4]}</p>
+              <p><strong>Tasa de Interés:</strong> ${loan[5]}%</p>
             </div>
             <br>
             <p style="font-size: 0.8rem; color: #718096; text-align: center;">Documento generado electrónicamente por SGL Pro. No requiere firma.</p>
           </div>`;
-        downloadHtmlAsPdf(html, `contrato_${loanId}.pdf`);
+        downloadHtmlAsPdf(html, `contrato_${loan[0]}.pdf`);
       } else {
-        showAlert(response.message, 'danger');
+        showAlert(response.message || 'Error al obtener los datos del contrato.', 'danger');
       }
     }
 
     async function downloadCurrentPazSalvoPDF() {
-      if (!CURRENT_MODAL_CONTRACT) return;
-
-      const html = `
-        <div style="font-family: 'Inter', sans-serif; padding: 2rem; color: #2d3748;">
-          <h1 style="color: #38a169;">Paz y Salvo - SGL Pro</h1>
-          <p style="font-size: 0.9rem; color: #4a5568;"><strong>Fecha:</strong> ${CURRENT_MODAL_CONTRACT.finalizedDate}</p>
-          <hr style="border-color: #e2e8f0;">
-          <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
-            <h3 style="color: #3182ce;">Detalles del Préstamo</h3>
-            <p>Este documento certifica que el cliente <strong>${CURRENT_MODAL_CONTRACT.client}</strong>, con número de documento ${CURRENT_MODAL_CONTRACT.id}, ha saldado completamente su obligación financiera correspondiente al préstamo con ID <strong>${CURRENT_MODAL_CONTRACT.id}</strong>.</p>
-            <p>Todas las cuotas e intereses han sido pagados en su totalidad, dejando un saldo de $0. Este paz y salvo tiene vigencia indefinida.</p>
-          </div>
-          <br>
-          <p style="font-size: 0.8rem; color: #718096; text-align: center;">Documento generado electrónicamente por SGL Pro. No requiere firma.</p>
-        </div>`;
-      downloadHtmlAsPdf(html, `pazsalvo_${CURRENT_MODAL_CONTRACT.id}.pdf`);
+      const loanId = document.getElementById('loanModalId').textContent;
+      if (!loanId) {
+        showAlert('No se pudo encontrar el ID del préstamo.', 'warning');
+        return;
+      }
+      
+      const response = await makeRequest('getLoanDetails', { loanId });
+      if (response.success && response.data && response.data.loan) {
+        const loan = response.data.loan;
+        const html = `
+          <div style="font-family: 'Inter', sans-serif; padding: 2rem; color: #2d3748;">
+            <h1 style="color: #38a169;">Paz y Salvo - SGL Pro</h1>
+            <p style="font-size: 0.9rem; color: #4a5568;"><strong>Fecha de emisión:</strong> ${formatDate(new Date())}</p>
+            <hr style="border-color: #e2e8f0;">
+            <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+              <p>Este documento certifica que el cliente con documento <strong>${loan[2]}</strong> ha saldado completamente su obligación financiera correspondiente al préstamo con ID <strong>${loan[0]}</strong>.</p>
+              <p>Todas las cuotas e intereses han sido pagados en su totalidad, dejando un saldo de $0. Este paz y salvo tiene vigencia indefinida.</p>
+            </div>
+            <br>
+            <p style="font-size: 0.8rem; color: #718096; text-align: center;">Documento generado electrónicamente por SGL Pro. No requiere firma.</p>
+          </div>`;
+        downloadHtmlAsPdf(html, `pazsalvo_${loan[0]}.pdf`);
+      } else {
+        showAlert(response.message || 'Error al obtener los datos del paz y salvo.', 'danger');
+      }
     }
 
     function downloadHtmlAsPdf(html, filename) {
       const { jsPDF } = window.jspdf;
-      html2canvas(document.body, { scrollY: -window.scrollY }).then(canvas => {
+      const element = document.createElement('div');
+      element.innerHTML = html;
+      document.body.appendChild(element);
+
+      html2canvas(element, { scale: 2 }).then(canvas => {
         const imgData = canvas.toDataURL('image/png');
         const pdf = new jsPDF('p', 'mm', 'a4');
         const imgProps = pdf.getImageProperties(imgData);
@@ -1480,6 +1491,7 @@
         const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(filename);
+        document.body.removeChild(element);
       });
     }
 
@@ -1490,13 +1502,9 @@
       } catch (error) {
         console.error('Error during logout:', error);
       } finally {
-        // Limpiar localStorage sin importar si la petición fue exitosa
         localStorage.removeItem('sessionToken');
         localStorage.removeItem('username');
-        
-        // Mostrar mensaje y redirigir
         showAlert('Sesión cerrada correctamente', 'success');
-        
         setTimeout(() => {
           window.location.href = 'login.html';
         }, 1000);
@@ -1510,7 +1518,6 @@
       }
     });
 
-    // Cerrar sidebar al hacer click fuera en móvil
     document.addEventListener('click', (e) => {
       if (window.innerWidth <= 768) {
         const sidebar = document.getElementById('sidebar');
