@@ -1,723 +1,580 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Clientes - SGL Pro</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #2ecc71;
-            --danger-color: #e74c3c;
-            --warning-color: #f39c12;
-            --info-color: #9b59b6;
-            --light-bg: #ecf0f1;
-            --dark-bg: #2c3e50;
-            --sidebar-width: 250px;
-        }
-
-        body {
-            background-color: var(--light-bg);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #333;
-        }
-
-        .wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 1rem;
-            position: fixed;
-            height: 100%;
-            transition: transform 0.3s ease;
-            transform: translateX(0);
-            z-index: 1000;
-        }
-
-        .main-content {
-            margin-left: var(--sidebar-width);
-            padding: 2rem;
-            flex-grow: 1;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .navbar-toggler {
-                display: block !important;
-            }
-        }
-
-        .sidebar-header {
-            text-align: center;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-links {
-            list-style: none;
-            padding: 0;
-            margin-top: 2rem;
-        }
-
-        .sidebar-links a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            display: block;
-            padding: 0.75rem 1rem;
-            border-radius: 0.5rem;
-            transition: all 0.3s ease;
-        }
-        .sidebar-links a:hover, .sidebar-links a.active {
-            background-color: var(--secondary-color);
-            color: white;
-            font-weight: bold;
-        }
-
-        .section-content {
-            display: none;
-        }
-        .section-content.active {
-            display: block;
-        }
-
-        .section-title {
-            color: var(--primary-color);
-            border-bottom: 3px solid var(--secondary-color);
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .card-custom {
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            overflow: hidden;
-        }
-        .card-custom:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        }
-        .card-header-custom {
-            background: var(--primary-color);
-            color: white;
-            padding: 1rem 1.5rem;
-            font-size: 1.1rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-        }
-        .card-header-custom i {
-            margin-right: 0.75rem;
-        }
-
-        .stat-card {
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-        .stat-card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-        }
-        .stat-card h3 {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-        .stat-card p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .bg-gradient-blue { background: linear-gradient(45deg, #3498db, #2980b9); }
-        .bg-gradient-green { background: linear-gradient(45deg, #2ecc71, #27ae60); }
-        .bg-gradient-purple { background: linear-gradient(45deg, #9b59b6, #8e44ad); }
-        .bg-gradient-orange { background: linear-gradient(45deg, #f39c12, #e67e22); }
-        .bg-gradient-red { background: linear-gradient(45deg, #e74c3c, #c0392b); }
-
-        .btn-custom {
-            border-radius: 0.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-primary {
-            background-color: var(--secondary-color);
-            border-color: var(--secondary-color);
-        }
-        .btn-primary:hover {
-            background-color: #2980b9;
-            border-color: #2980b9;
-        }
-
-        .table-custom th {
-            background-color: var(--primary-color);
-            color: white;
-            font-weight: 600;
-            border-bottom: 3px solid var(--secondary-color);
-        }
-        .table-custom tbody tr:hover {
-            background-color: #f1f2f3;
-            cursor: pointer;
-        }
-
-        .alert-custom {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1050;
-            max-width: 90%;
-            min-width: 250px;
-        }
-
-        .navbar-toggler {
-            display: none;
-            border: none;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1001;
-        }
-        
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel de Clientes - SGL Pro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#2c3e50; --secondary:#3498db; --light-bg:#ecf0f1;
+      --card-radius:1rem;
+    }
+    body{background:var(--light-bg); font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; color:#222; margin:0;}
+    .wrapper{display:flex;min-height:100vh}
+    .sidebar{width:260px;background:var(--primary);color:#fff;padding:1rem;position:fixed;height:100%;overflow:auto}
+    .main{margin-left:260px;padding:1.25rem;width:100%}
+    .sidebar .brand{font-weight:700;font-size:1.2rem;margin-bottom:1rem}
+    .sidebar a{display:block;color:rgba(255,255,255,.85);padding:.6rem;border-radius:.5rem;text-decoration:none}
+    .sidebar a.active, .sidebar a:hover{background:var(--secondary);color:#fff}
+    @media(max-width:768px){.sidebar{position:fixed;left:-280px;transition:all .25s} .sidebar.open{left:0} .main{margin-left:0} .toggler{display:inline-block}}
+    .card-custom{border-radius:var(--card-radius);box-shadow:0 8px 30px rgba(0,0,0,0.06);overflow:hidden}
+    .card-header-custom{background:var(--primary);color:#fff;padding:.9rem 1.25rem;font-weight:600}
+    .stat{padding:1rem;border-radius:.8rem;color:#fff;text-align:center}
+    .bg-blue{background:linear-gradient(45deg,#3498db,#2980b9)}
+    .bg-green{background:linear-gradient(45deg,#2ecc71,#27ae60)}
+    .bg-purple{background:linear-gradient(45deg,#9b59b6,#8e44ad)}
+    .table-custom th{background:var(--primary);color:#fff}
+    .alert-fixed{position:fixed;top:1rem;right:1rem;z-index:2000;min-width:260px}
+    .btn-small{padding:.35rem .6rem;font-size:.9rem}
+  </style>
 </head>
 <body>
-    <div class="wrapper">
-        <nav id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <a class="navbar-brand font-bold text-xl" href="#">SGL Clientes</a>
+  <div class="wrapper">
+    <nav id="sidebar" class="sidebar">
+      <div class="brand">SGL Clientes</div>
+      <div class="mb-3 text-white-50">Bienvenido, <strong id="clientNameTitle">Cliente</strong></div>
+      <a href="#" class="active" data-section="dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a>
+      <a href="#" data-section="loans"><i class="fas fa-coins me-2"></i> Mis Préstamos</a>
+      <a href="#" data-section="contracts"><i class="fas fa-file-contract me-2"></i> Contratos / Paz y Salvo</a>
+      <a href="#" data-section="profile"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a>
+      <div style="position:absolute;bottom:1rem;left:1rem">
+        <a href="#" id="logoutBtn" class="text-white-50"><i class="fas fa-sign-out-alt me-1"></i> Cerrar sesión</a>
+      </div>
+    </nav>
+
+    <main class="main">
+      <button id="toggler" class="btn btn-light toggler mb-3 d-none"><i class="fas fa-bars"></i></button>
+      <h2 class="mb-3">Hola, <span id="clientNameHeadline">Cliente</span></h2>
+
+      <div id="alertPlaceholder"></div>
+
+      <!-- DASHBOARD -->
+      <section id="dashboard" class="section active">
+        <div class="row g-3 mb-4">
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat bg-blue card-custom">
+              <div><small>Saldo Pendiente Total</small></div>
+              <div class="h3 mt-2" id="totalPendingAmount">$0</div>
             </div>
-            <ul class="sidebar-links">
-                <li><a href="#" class="active" data-section="dashboard"><i class="fas fa-chart-line me-2"></i> Dashboard</a></li>
-                <li><a href="#" data-section="loans"><i class="fas fa-coins me-2"></i> Mis Préstamos</a></li>
-                <li><a href="#" data-section="profile"><i class="fas fa-user-circle me-2"></i> Mi Perfil</a></li>
-            </ul>
-            <div class="absolute bottom-4 left-4">
-                <a href="#" id="logoutBtn" class="d-flex align-items-center text-white-50 text-decoration-none">
-                    <i class="fas fa-sign-out-alt me-1"></i> Cerrar Sesión
-                </a>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat bg-green card-custom">
+              <div><small>Préstamos Activos</small></div>
+              <div class="h3 mt-2" id="activeLoansCount">0</div>
             </div>
-        </nav>
-
-        <div id="content" class="main-content">
-            <button id="sidebarToggle" class="navbar-toggler mb-4" type="button">
-                <i class="fas fa-bars"></i>
-            </button>
-            <h1 class="text-3xl font-bold text-gray-800 mb-4">
-                ¡Bienvenido, <span id="clientNameTitle">Cliente</span>!
-            </h1>
-
-            <div id="alertPlaceholder"></div>
-
-            <div id="dashboard" class="section-content active">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="stat-card bg-gradient-blue">
-                        <i class="fas fa-hand-holding-usd text-4xl mb-3"></i>
-                        <p class="text-sm">Saldo Pendiente Total</p>
-                        <h3 id="totalPendingAmount">$0.00</h3>
-                    </div>
-                    <div class="stat-card bg-gradient-green">
-                        <i class="fas fa-coins text-4xl mb-3"></i>
-                        <p class="text-sm">Préstamos Activos</p>
-                        <h3 id="activeLoansCount">0</h3>
-                    </div>
-                    <div class="stat-card bg-gradient-purple">
-                        <i class="fas fa-check-circle text-4xl mb-3"></i>
-                        <p class="text-sm">Préstamos Finalizados</p>
-                        <h3 id="finalizedLoansCount">0</h3>
-                    </div>
-                </div>
+          </div>
+          <div class="col-12 col-sm-6 col-lg-4">
+            <div class="stat bg-purple card-custom">
+              <div><small>Préstamos Finalizados</small></div>
+              <div class="h3 mt-2" id="finalizedLoansCount">0</div>
             </div>
-
-            <div id="loans" class="section-content">
-                <div class="card card-custom shadow-sm mb-5">
-                    <div class="card-header-custom">
-                        <i class="fas fa-list"></i> Historial de Préstamos
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover table-custom">
-                                <thead>
-                                    <tr>
-                                        <th>ID Préstamo</th>
-                                        <th>Monto</th>
-                                        <th>Saldo Actual</th>
-                                        <th>Cuotas</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="loansTableBody">
-                                    <tr><td colspan="6" class="text-center text-gray-500">Cargando préstamos...</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="profile" class="section-content">
-                <div class="card card-custom shadow-sm mb-5">
-                    <div class="card-header-custom">
-                        <i class="fas fa-user-circle"></i> Mis Datos Personales
-                    </div>
-                    <div class="card-body" id="clientInfo">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <p class="font-bold text-gray-600">Nombre Completo:</p>
-                                <p class="text-lg text-gray-800" id="clientName">Cargando...</p>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-600">Documento:</p>
-                                <p class="text-lg text-gray-800" id="clientDoc">Cargando...</p>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-600">Teléfono:</p>
-                                <p class="text-lg text-gray-800" id="clientPhone">Cargando...</p>
-                            </div>
-                            <div>
-                                <p class="font-bold text-gray-600">Dirección:</p>
-                                <p class="text-lg text-gray-800" id="clientAddress">Cargando...</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card card-custom shadow-sm mb-5">
-                    <div class="card-header-custom">
-                        <i class="fas fa-key"></i> Cambiar Contraseña
-                    </div>
-                    <div class="card-body">
-                        <form id="changePasswordForm">
-                            <div class="mb-3">
-                                <label for="oldPassword" class="form-label">Contraseña Actual</label>
-                                <input type="password" class="form-control" id="oldPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="newPassword" class="form-label">Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="newPassword" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="confirmPassword" class="form-label">Confirmar Nueva Contraseña</label>
-                                <input type="password" class="form-control" id="confirmPassword" required>
-                            </div>
-                            <div class="d-grid mt-4">
-                                <button type="submit" class="btn btn-primary btn-custom">
-                                    <i class="fas fa-save me-2"></i> Guardar Cambios
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="loanDetailsModal" tabindex="-1" aria-labelledby="loanDetailsModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header bg-gray-100">
-                    <h5 class="modal-title font-bold" id="loanDetailsModalLabel">Detalle del Préstamo #<span id="loanIdTitle"></span></h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 text-center">
-                        <div class="p-4 rounded-lg bg-blue-100 text-blue-800">
-                            <i class="fas fa-dollar-sign text-2xl mb-2"></i>
-                            <p class="text-sm font-bold">Monto del Préstamo</p>
-                            <h4 class="text-xl font-bold" id="loanAmount"></h4>
-                        </div>
-                        <div class="p-4 rounded-lg bg-green-100 text-green-800">
-                            <i class="fas fa-credit-card text-2xl mb-2"></i>
-                            <p class="text-sm font-bold">Saldo Pendiente</p>
-                            <h4 class="text-xl font-bold" id="loanBalance"></h4>
-                        </div>
-                        <div class="p-4 rounded-lg bg-yellow-100 text-yellow-800">
-                            <i class="fas fa-calendar-alt text-2xl mb-2"></i>
-                            <p class="text-sm font-bold">Cuotas Pagadas</p>
-                            <h4 class="text-xl font-bold" id="loanPayments"></h4>
-                        </div>
-                        <div class="p-4 rounded-lg bg-red-100 text-red-800">
-                            <i class="fas fa-info-circle text-2xl mb-2"></i>
-                            <p class="text-sm font-bold">Estado</p>
-                            <h4 class="text-xl font-bold" id="loanStatus"></h4>
-                        </div>
-                    </div>
-                    <h6 class="font-bold text-lg section-title mb-3 mt-4">Tabla de Pagos</h6>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped">
-                            <thead>
-                                <tr>
-                                    <th># Cuota</th>
-                                    <th>Fecha de Vencimiento</th>
-                                    <th>Monto de Cuota</th>
-                                    <th>Capital</th>
-                                    <th>Interés</th>
-                                    <th>Estado</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="paymentsTableBody">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-primary btn-custom" id="viewContractBtn"><i class="fas fa-file-contract me-2"></i> Ver Contrato</button>
-                    <button type="button" class="btn btn-success btn-custom" id="generatePazSalvoBtn" style="display:none;"><i class="fas fa-check-circle me-2"></i> Generar Paz y Salvo</button>
-                </div>
+        <div class="card card-custom mb-4">
+          <div class="card-header-custom">Actividad reciente</div>
+          <div class="card-body">
+            <div id="recentActivityContainer">
+              <p class="text-muted">Cargando actividad...</p>
             </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-gray-100">
-                    <h5 class="modal-title font-bold" id="paymentModalLabel">Realizar Pago</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="paymentForm">
-                        <input type="hidden" id="paymentLoanId">
-                        <div class="mb-3">
-                            <label for="paymentAmount" class="form-label">Monto a Pagar</label>
-                            <input type="number" class="form-control" id="paymentAmount" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="paymentMethod" class="form-label">Método de Pago</label>
-                            <select class="form-select" id="paymentMethod" required>
-                                <option value="">Seleccione...</option>
-                                <option value="transferencia">Transferencia Bancaria</option>
-                                <option value="efectivo">Efectivo</option>
-                            </select>
-                        </div>
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-custom"><i class="fas fa-cash-register me-2"></i> Registrar Pago</button>
-                        </div>
-                    </form>
-                </div>
+      <!-- LOANS -->
+      <section id="loans" class="section" style="display:none">
+        <div class="card card-custom mb-4">
+          <div class="card-header-custom"><i class="fas fa-list me-2"></i> Mis Préstamos</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover table-custom">
+                <thead>
+                  <tr><th>ID</th><th>Monto</th><th>Saldo</th><th>Cuotas</th><th>Estado</th><th>Acciones</th></tr>
+                </thead>
+                <tbody id="loansTableBody">
+                  <tr><td colspan="6" class="text-center text-muted">Cargando...</td></tr>
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <div class="modal fade" id="contractModal" tabindex="-1" aria-labelledby="contractModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header bg-gray-100">
-                    <h5 class="modal-title font-bold" id="contractModalLabel">Contrato de Préstamo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="contractContent">
-                    <h2 class="text-center font-bold text-2xl mb-4">CONTRATO DE PRÉSTAMO DE DINERO</h2>
-                    <p>Este contrato de préstamo de dinero (en adelante, el "Contrato") se celebra entre:</p>
-                    <p><strong>PRESTAMISTA:</strong> [Nombre del Prestamista]</p>
-                    <p><strong>PRESTATARIO:</strong> <span id="contractClientName"></span>, identificado(a) con [Tipo de Documento] No. <span id="contractClientDoc"></span></p>
-                    <p class="mt-4">El PRESTAMISTA se compromete a entregar al PRESTATARIO la suma de <span id="contractLoanAmount"></span>, con un interés del <span id="contractInterestRate"></span>% anual, a ser pagado en <span id="contractLoanTerms"></span> cuotas.</p>
-                    <div class="mt-5 text-center">
-                        <p>___________________________________</p>
-                        <p><strong>Firma del Prestatario</strong></p>
-                        <p><span id="signatureName"></span></p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-success btn-custom" id="downloadContractBtn"><i class="fas fa-file-pdf me-2"></i> Descargar PDF</button>
-                </div>
+      <!-- CONTRACTS -->
+      <section id="contracts" class="section" style="display:none">
+        <div class="card card-custom mb-4">
+          <div class="card-header-custom"><i class="fas fa-file-contract me-2"></i> Contratos y Paz y Salvo</div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover table-custom">
+                <thead><tr><th>ID</th><th>Préstamo</th><th>Fecha</th><th>Tipo</th><th>Acciones</th></tr></thead>
+                <tbody id="contractsTableBody">
+                  <tr><td colspan="5" class="text-center text-muted">Cargando...</td></tr>
+                </tbody>
+              </table>
             </div>
+          </div>
         </div>
-    </div>
+      </section>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        const BACKEND_URL = 'URL_DE_TU_APPS_SCRIPT'; // **IMPORTANTE: Reemplazar con la URL de tu Apps Script**
-        const sessionToken = localStorage.getItem('sessionToken');
-        const username = localStorage.getItem('username');
-        let activityCheckInterval;
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            if (!sessionToken || !username) {
-                window.location.href = '/';
-                return;
-            }
-            startActivityTracking();
-            await fetchClientData(username);
-            await fetchLoans(username);
-            
-            // Handle sidebar navigation
-            document.querySelectorAll('.sidebar-links a').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const sectionId = e.target.getAttribute('data-section');
-                    document.querySelectorAll('.section-content').forEach(section => {
-                        section.classList.remove('active');
-                    });
-                    document.getElementById(sectionId).classList.add('active');
-                    document.querySelectorAll('.sidebar-links a').forEach(item => item.classList.remove('active'));
-                    e.target.classList.add('active');
-                    if (window.innerWidth <= 768) {
-                        document.getElementById('sidebar').classList.remove('active');
-                    }
-                });
-            });
-            document.getElementById('sidebarToggle').addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('active');
-            });
-
-            // Handle password change form submission
-            document.getElementById('changePasswordForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const oldPassword = document.getElementById('oldPassword').value;
-                const newPassword = document.getElementById('newPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-
-                if (newPassword !== confirmPassword) {
-                    showAlert('Las nuevas contraseñas no coinciden.', 'danger');
-                    return;
-                }
-
-                // Call backend to change password
-                const result = await makeRequest('changePassword', {
-                    username,
-                    sessionToken,
-                    oldPassword,
-                    newPassword
-                });
-
-                if (result.success) {
-                    showAlert('Contraseña cambiada exitosamente.', 'success');
-                    document.getElementById('changePasswordForm').reset();
-                } else {
-                    showAlert(result.message || 'Error al cambiar la contraseña.', 'danger');
-                }
-            });
-        });
-
-        document.getElementById('logoutBtn').addEventListener('click', async (e) => {
-            e.preventDefault();
-            await logout();
-        });
-
-        async function fetchClientData(username) {
-            const data = await makeRequest('getClientInfo', { username, sessionToken });
-            if (data && data.success) {
-                const client = data.client;
-                document.getElementById('clientNameTitle').textContent = client.name.split(' ')[0];
-                document.getElementById('clientName').textContent = client.name;
-                document.getElementById('clientDoc').textContent = client.doc;
-                document.getElementById('clientPhone').textContent = client.phone;
-                document.getElementById('clientAddress').textContent = client.address;
-            } else {
-                showAlert('No se pudieron cargar los datos del cliente.', 'danger');
-            }
-        }
-
-        async function fetchLoans(username) {
-            const data = await makeRequest('getClientLoans', { username, sessionToken });
-            const loansTableBody = document.getElementById('loansTableBody');
-            loansTableBody.innerHTML = '';
-            if (data && data.success && data.loans.length > 0) {
-                let totalPending = 0;
-                let activeLoans = 0;
-                let finalizedLoans = 0;
-                data.loans.forEach(loan => {
-                    const row = document.createElement('tr');
-                    const statusBadge = loan.status === 'activo' ?
-                        `<span class="badge bg-success">Activo</span>` :
-                        `<span class="badge bg-dark">Finalizado</span>`;
-                    
-                    if (loan.status === 'activo') {
-                        totalPending += loan.currentBalance;
-                        activeLoans++;
-                    } else {
-                        finalizedLoans++;
-                    }
-
-                    row.innerHTML = `
-                        <td>${loan.id}</td>
-                        <td>$${loan.amount.toLocaleString()}</td>
-                        <td>$${loan.currentBalance.toLocaleString()}</td>
-                        <td>${loan.paidInstallments} / ${loan.totalInstallments}</td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <button class="btn btn-sm btn-info view-details-btn" data-loan-id="${loan.id}"><i class="fas fa-eye"></i> Ver</button>
-                        </td>
-                    `;
-                    loansTableBody.appendChild(row);
-                });
-                document.getElementById('totalPendingAmount').textContent = `$${totalPending.toLocaleString()}`;
-                document.getElementById('activeLoansCount').textContent = activeLoans;
-                document.getElementById('finalizedLoansCount').textContent = finalizedLoans;
-                
-                document.querySelectorAll('.view-details-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const loanId = e.currentTarget.getAttribute('data-loan-id');
-                        const selectedLoan = data.loans.find(l => l.id == loanId);
-                        if (selectedLoan) {
-                            populateLoanDetailsModal(selectedLoan);
-                            const loanDetailsModal = new bootstrap.Modal(document.getElementById('loanDetailsModal'));
-                            loanDetailsModal.show();
-                        }
-                    });
-                });
-            } else {
-                loansTableBody.innerHTML = '<tr><td colspan="6" class="text-center">No tienes préstamos registrados.</td></tr>';
-            }
-        }
-
-        function populateLoanDetailsModal(loan) {
-            document.getElementById('loanIdTitle').textContent = loan.id;
-            document.getElementById('loanAmount').textContent = `$${loan.amount.toLocaleString()}`;
-            document.getElementById('loanBalance').textContent = `$${loan.currentBalance.toLocaleString()}`;
-            document.getElementById('loanStatus').textContent = loan.status === 'activo' ? 'Activo' : 'Finalizado';
-            document.getElementById('loanPayments').textContent = `${loan.paidInstallments} / ${loan.totalInstallments}`;
-            
-            const paymentsTableBody = document.getElementById('paymentsTableBody');
-            paymentsTableBody.innerHTML = '';
-            
-            if (loan.payments && loan.payments.length > 0) {
-                loan.payments.forEach(payment => {
-                    const row = document.createElement('tr');
-                    const statusBadge = payment.status === 'pagada' ?
-                        `<span class="badge bg-success">Pagada</span>` :
-                        `<span class="badge bg-warning">Pendiente</span>`;
-                    
-                    row.innerHTML = `
-                        <td>${payment.cuotaNumber}</td>
-                        <td>${payment.dueDate}</td>
-                        <td>$${payment.amount.toLocaleString()}</td>
-                        <td>$${payment.capital.toLocaleString()}</td>
-                        <td>$${payment.interest.toLocaleString()}</td>
-                        <td>${statusBadge}</td>
-                        <td>
-                           <button class="btn btn-sm btn-success pay-btn" data-payment-id="${payment.id}" ${payment.status === 'pagada' ? 'disabled' : ''}><i class="fas fa-money-bill-wave"></i> Pagar</button>
-                        </td>
-                    `;
-                    paymentsTableBody.appendChild(row);
-                });
-            } else {
-                paymentsTableBody.innerHTML = '<tr><td colspan="7" class="text-center">No hay pagos registrados para este préstamo.</td></tr>';
-            }
-
-            if (loan.status === 'finalizado' && loan.isPazSalvoGenerated) {
-                document.getElementById('generatePazSalvoBtn').style.display = 'block';
-            } else {
-                document.getElementById('generatePazSalvoBtn').style.display = 'none';
-            }
-        }
-
-        document.getElementById('loansTableBody').addEventListener('click', (e) => {
-            if (e.target.classList.contains('pay-btn')) {
-                const paymentId = e.target.getAttribute('data-payment-id');
-                const paymentModal = new bootstrap.Modal(document.getElementById('paymentModal'));
-                paymentModal.show();
-                document.getElementById('paymentLoanId').value = paymentId;
-            }
-        });
-
-        document.getElementById('viewContractBtn').addEventListener('click', () => {
-            const loanId = document.getElementById('loanIdTitle').textContent;
-            document.getElementById('contractClientName').textContent = document.getElementById('clientName').textContent;
-            document.getElementById('contractClientDoc').textContent = document.getElementById('clientDoc').textContent;
-            document.getElementById('contractLoanAmount').textContent = document.getElementById('loanAmount').textContent;
-            document.getElementById('contractInterestRate').textContent = '30';
-            document.getElementById('contractLoanTerms').textContent = '2';
-
-            const contractModal = new bootstrap.Modal(document.getElementById('contractModal'));
-            contractModal.show();
-        });
-
-        async function makeRequest(action, data) {
-            try {
-                const response = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ ...data, action }).toString()
-                });
-                return { success: true, data: {} };
-            } catch (error) {
-                console.error('Request failed:', error);
-                return { success: false, message: 'Error de conexión' };
-            }
-        }
-
-        function showAlert(message, type) {
-            const alertPlaceholder = document.getElementById('alertPlaceholder');
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = `
-                <div class="alert alert-${type} alert-dismissible fade show alert-custom" role="alert">
-                    <i class="fas fa-${getAlertIcon(type)} me-2"></i>
-                    ${message}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      <!-- PROFILE -->
+      <section id="profile" class="section" style="display:none">
+        <div class="card card-custom mb-4">
+          <div class="card-header-custom"><i class="fas fa-user-circle me-2"></i> Mi Perfil</div>
+          <div class="card-body">
+            <form id="profileForm">
+              <div class="row g-3">
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Documento (no editable)</label>
+                  <input id="profileDoc" class="form-control" readonly>
                 </div>
-            `;
-            alertPlaceholder.appendChild(wrapper);
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Nombre completo</label>
+                  <input id="profileName" class="form-control" required>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Teléfono</label>
+                  <input id="profilePhone" class="form-control" required>
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Dirección</label>
+                  <input id="profileAddress" class="form-control">
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Color favorito (pregunta seguridad)</label>
+                  <input id="profileColor" class="form-control">
+                </div>
+                <div class="col-12 col-md-6">
+                  <label class="form-label">Animal favorito (pregunta seguridad)</label>
+                  <input id="profileAnimal" class="form-control">
+                </div>
+                <div class="col-12 text-end">
+                  <button type="submit" class="btn btn-primary btn-custom"><i class="fas fa-save me-2"></i> Guardar cambios</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
 
-            setTimeout(() => {
-                const alert = bootstrap.Alert.getOrCreateInstance(wrapper.querySelector('.alert'));
-                alert.close();
-            }, 5000);
-        }
+        <div class="card card-custom mb-4">
+          <div class="card-header-custom"><i class="fas fa-key me-2"></i> Cambiar Contraseña</div>
+          <div class="card-body">
+            <form id="changePasswordForm">
+              <div class="row g-3">
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Contraseña actual</label>
+                  <input id="oldPassword" type="password" class="form-control" required>
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Nueva contraseña</label>
+                  <input id="newPassword" type="password" class="form-control" required>
+                </div>
+                <div class="col-12 col-md-4">
+                  <label class="form-label">Confirmar</label>
+                  <input id="confirmPassword" type="password" class="form-control" required>
+                </div>
+                <div class="col-12 text-end">
+                  <button class="btn btn-primary btn-custom" type="submit"><i class="fas fa-key me-2"></i> Cambiar</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
 
-        function getAlertIcon(type) {
-            const icons = {
-                success: 'check-circle', 
-                danger: 'exclamation-triangle',
-                warning: 'exclamation-circle',
-                info: 'info-circle'
-            };
-            return icons[type] || 'info-circle';     
-        }
+  <!-- Loan details modal -->
+  <div class="modal fade" id="loanModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header bg-light">
+          <h5 class="modal-title">Préstamo <span id="loanModalId"></span></h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3 mb-3">
+            <div class="col-6"><strong>Monto:</strong> <span id="modalLoanAmount"></span></div>
+            <div class="col-6"><strong>Saldo:</strong> <span id="modalLoanBalance"></span></div>
+            <div class="col-6"><strong>Cuotas:</strong> <span id="modalLoanCuotas"></span></div>
+            <div class="col-6"><strong>Estado:</strong> <span id="modalLoanEstado"></span></div>
+          </div>
+          <h6>Plan de pagos</h6>
+          <div class="table-responsive">
+            <table class="table table-sm">
+              <thead><tr><th>#</th><th>Vencimiento</th><th>Total</th><th>Capital</th><th>Interés</th><th>Estado</th></tr></thead>
+              <tbody id="modalPaymentsBody"></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button id="downloadContractBtn" class="btn btn-primary"><i class="fas fa-file-pdf me-2"></i> Descargar Contrato</button>
+          <button id="downloadPazSalvoBtn" class="btn btn-success" style="display:none"><i class="fas fa-file-export me-2"></i> Descargar Paz y Salvo</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        async function logout() {
-            await makeRequest('logout', { sessionToken });
-            localStorage.removeItem('sessionToken');
-            localStorage.removeItem('username');
-            clearInterval(activityCheckInterval);
-            window.location.href = 'login.html';
-        }
+  <!-- Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        function startActivityTracking() {
-            activityCheckInterval = setInterval(async () => {
-                if (!localStorage.getItem('sessionToken')) {
-                    showAlert('Sesión expirada. Por favor, inicie sesión de nuevo.', 'warning');
-                    setTimeout(() => window.location.href = 'login.html', 2000);
-                    clearInterval(activityCheckInterval);
-                }
-            }, 30000);
-        }
-    </script>
+  <script>
+  // ---------- CONFIG ----------
+  const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec'; // <-- reemplaza
+  const sessionToken = localStorage.getItem('sessionToken');
+  const username = localStorage.getItem('username');
+
+  // ---------- BOOTSTRAP / UI helpers ----------
+  function showAlert(msg, type='info') {
+    const ph = document.getElementById('alertPlaceholder');
+    const wrapper = document.createElement('div');
+    wrapper.className = 'alert alert-' + type + ' alert-fixed';
+    wrapper.innerHTML = `<div><strong>${msg}</strong></div>`;
+    ph.appendChild(wrapper);
+    setTimeout(()=> wrapper.remove(), 5000);
+  }
+
+  function toggleSidebar(open) {
+    const sb = document.getElementById('sidebar');
+    if(open) sb.classList.add('open'); else sb.classList.remove('open');
+  }
+
+  // ---------- NETWORK ----------
+  async function makeRequest(action, data = {}) {
+    try {
+      const payload = { ...data, action, sessionToken };
+      const form = new FormData();
+      form.append('payload', JSON.stringify(payload));
+      const resp = await fetch(BACKEND_URL, { method:'POST', body: form });
+      const result = await resp.json();
+      return result;
+    } catch (e) {
+      console.error('Request error', e);
+      return { success:false, message:'Error de conexión' };
+    }
+  }
+
+  // ---------- BOOT / NAV ----------
+  document.addEventListener('DOMContentLoaded', async () => {
+    if (!sessionToken || !username) {
+      window.location.href = '/';
+      return;
+    }
+    // responsive toggler
+    const toggler = document.getElementById('toggler');
+    toggler.addEventListener('click', ()=> toggleSidebar(true));
+    document.querySelectorAll('.sidebar a').forEach(a=>{
+      a.addEventListener('click', async (ev)=>{
+        ev.preventDefault();
+        document.querySelectorAll('.section').forEach(s => s.style.display='none');
+        const sec = a.getAttribute('data-section') || 'dashboard';
+        document.getElementById(sec).style.display = 'block';
+        document.querySelectorAll('.sidebar a').forEach(x=>x.classList.remove('active'));
+        a.classList.add('active');
+
+        // load data per section
+        if (sec === 'dashboard') await loadDashboard();
+        if (sec === 'loans') await loadLoans();
+        if (sec === 'contracts') await loadContracts();
+        if (sec === 'profile') await loadProfile();
+        // close sidebar on mobile
+        if (window.innerWidth <= 768) toggleSidebar(false);
+      });
+    });
+
+    // initial load
+    document.getElementById('clientNameTitle').textContent = username;
+    document.getElementById('clientNameHeadline').textContent = username;
+    await loadDashboard();
+    // setup forms
+    document.getElementById('profileForm').addEventListener('submit', saveProfile);
+    document.getElementById('changePasswordForm').addEventListener('submit', changePassword);
+    document.getElementById('logoutBtn').addEventListener('click', async (e)=>{ e.preventDefault(); await logout(); });
+
+    // download contract / paz y salvo
+    document.getElementById('downloadContractBtn').addEventListener('click', downloadCurrentContractPDF);
+    document.getElementById('downloadPazSalvoBtn').addEventListener('click', downloadCurrentPazSalvoPDF);
+  });
+
+  // ---------- DASHBOARD ----------
+  async function loadDashboard(){
+    // load client info, loans summary and recent activity
+    const infoResp = await makeRequest('getClientInfo', { username });
+    const loansResp = await makeRequest('getClientLoans', { username });
+    const paymentsResp = await makeRequest('getClientPayments', { clientId: username });
+
+    if (infoResp.success) {
+      const client = infoResp.data.client;
+      document.getElementById('clientNameTitle').textContent = client.name.split(' ')[0] || client.name;
+      document.getElementById('clientNameHeadline').textContent = client.name || username;
+    }
+
+    if (loansResp.success) {
+      const loans = loansResp.data.loans || [];
+      const totalPending = loans.filter(l => l.status === 'activo').reduce((s,l)=> s + (Number(l.currentBalance)||0),0);
+      const activeCount = loans.filter(l => l.status === 'activo').length;
+      const finalized = loans.filter(l => l.status !== 'activo').length;
+      document.getElementById('totalPendingAmount').textContent = formatMoney(totalPending);
+      document.getElementById('activeLoansCount').textContent = activeCount;
+      document.getElementById('finalizedLoansCount').textContent = finalized;
+
+      // recent activity: show last payments (from paymentsResp) or loan events
+      const container = document.getElementById('recentActivityContainer');
+      container.innerHTML = '';
+      const payments = paymentsResp.success ? (paymentsResp.data.payments || []) : [];
+      const recent = payments.slice(-6).reverse();
+      if (recent.length === 0) container.innerHTML = '<p class="text-muted">No hay actividad reciente.</p>';
+      else {
+        const ul = document.createElement('ul'); ul.className='list-group';
+        recent.forEach(p=>{
+          const li = document.createElement('li'); li.className='list-group-item d-flex justify-content-between align-items-start';
+          li.innerHTML = `<div><strong>Pago</strong> - Préstamo ${p[1]}<div class="text-muted small">${new Date(p[2]).toLocaleString()}</div></div><div class="fw-bold">${formatMoney(Number(p[4]||0))}</div>`;
+          ul.appendChild(li);
+        });
+        container.appendChild(ul);
+      }
+    }
+  }
+
+  // ---------- LOANS ----------
+  async function loadLoans(){
+    const resp = await makeRequest('getClientLoans', { username });
+    const tbody = document.getElementById('loansTableBody');
+    tbody.innerHTML = '';
+    if (!resp.success || !Array.isArray(resp.data.loans) || resp.data.loans.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No tienes préstamos registrados.</td></tr>';
+      return;
+    }
+    resp.data.loans.forEach(loan => {
+      const tr = document.createElement('tr');
+      const paid = Number(loan.paidInstallments || 0);
+      const total = Number(loan.totalInstallments || 0);
+      tr.innerHTML = `
+        <td>${loan.id}</td>
+        <td>${formatMoney(Number(loan.amount)||0)}</td>
+        <td>${formatMoney(Number(loan.currentBalance)||0)}</td>
+        <td>${paid} / ${total}</td>
+        <td>${loan.status === 'activo' ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Finalizado</span>'}</td>
+        <td>
+          <button class="btn btn-sm btn-primary btn-small view-loan" data-loan='${encodeURIComponent(JSON.stringify(loan))}'>
+            <i class="fas fa-eye me-1"></i> Ver
+          </button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+
+    // attach listeners
+    document.querySelectorAll('.view-loan').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const loan = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-loan')));
+        openLoanModal(loan);
+      });
+    });
+  }
+
+  // open modal and populate
+  let CURRENT_MODAL_CONTRACT = null;
+  async function openLoanModal(loan){
+    CURRENT_MODAL_CONTRACT = null;
+    document.getElementById('loanModalId').textContent = loan.id;
+    document.getElementById('modalLoanAmount').textContent = formatMoney(Number(loan.amount)||0);
+    document.getElementById('modalLoanBalance').textContent = formatMoney(Number(loan.currentBalance)||0);
+    document.getElementById('modalLoanCuotas').textContent = `${loan.paidInstallments||0} / ${loan.totalInstallments||0}`;
+    document.getElementById('modalLoanEstado').textContent = loan.status === 'activo' ? 'Activo' : 'Finalizado';
+    const tbody = document.getElementById('modalPaymentsBody'); tbody.innerHTML = '';
+
+    // payments might be array of objects or array-of-arrays depending on backend -> normalize
+    const payments = loan.payments || [];
+    if (!Array.isArray(payments) || payments.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay pagos registrados.</td></tr>';
+    } else {
+      payments.forEach(p=>{
+        // support object or array
+        let cuota = p.cuotaNumber ?? (p[5] ?? '');
+        let due = p.dueDate ?? (p[2] ?? '');
+        let total = p.amount ?? (p[4] ?? 0);
+        let capital = p.capital ?? (p[3] ?? 0);
+        let interest = p.interest ?? (p[4] ?? 0);
+        let status = (p.status ?? (p[5] ?? 'pendiente'));
+        tbody.insertAdjacentHTML('beforeend', `<tr>
+          <td>${cuota}</td>
+          <td>${new Date(due).toLocaleDateString()}</td>
+          <td>${formatMoney(Number(total)||0)}</td>
+          <td>${formatMoney(Number(capital)||0)}</td>
+          <td>${formatMoney(Number(interest)||0)}</td>
+          <td>${status === 'pagada' ? '<span class="badge bg-success">Pagada</span>' : '<span class="badge bg-warning">Pendiente</span>'}</td>
+        </tr>`);
+      });
+    }
+
+    // Try to load contract info for this loan
+    const cResp = await makeRequest('getClientContracts', { username });
+    if (cResp.success && Array.isArray(cResp.data.contracts)) {
+      // find contract for this loan
+      const found = cResp.data.contracts.find(c => String(c.loanId) === String(loan.id));
+      if (found) {
+        CURRENT_MODAL_CONTRACT = found;
+        document.getElementById('downloadContractBtn').disabled = false;
+        document.getElementById('downloadPazSalvoBtn').style.display = found.pazSalvo ? 'inline-block' : 'none';
+      } else {
+        document.getElementById('downloadContractBtn').disabled = true;
+        document.getElementById('downloadPazSalvoBtn').style.display = 'none';
+      }
+    } else {
+      document.getElementById('downloadContractBtn').disabled = true;
+      document.getElementById('downloadPazSalvoBtn').style.display = 'none';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('loanModal'));
+    modal.show();
+  }
+
+  // ---------- CONTRACTS ----------
+  async function loadContracts(){
+    const resp = await makeRequest('getClientContracts', { username });
+    const tbody = document.getElementById('contractsTableBody');
+    tbody.innerHTML = '';
+    if (!resp.success || !Array.isArray(resp.data.contracts) || resp.data.contracts.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay contratos registrados.</td></tr>';
+      return;
+    }
+    resp.data.contracts.forEach(c=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${c.id}</td><td>${c.loanId||''}</td><td>${new Date(c.date).toLocaleDateString()}</td><td>${c.type||'Contrato'}</td>
+        <td>
+          <button class="btn btn-sm btn-primary btn-small view-contract" data-contract='${encodeURIComponent(JSON.stringify(c))}'>
+            <i class="fas fa-eye me-1"></i> Ver / Descargar
+          </button>
+        </td>`;
+      tbody.appendChild(tr);
+    });
+    document.querySelectorAll('.view-contract').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        const c = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-contract')));
+        CURRENT_MODAL_CONTRACT = c;
+        // open a simple modal using loan modal fields
+        document.getElementById('loanModalId').textContent = c.loanId || 'Contrato';
+        document.getElementById('modalLoanAmount').textContent = c.amount ? formatMoney(Number(c.amount)) : '';
+        document.getElementById('modalLoanBalance').textContent = c.pazSalvo ? 'Paz y Salvo' : '';
+        document.getElementById('modalLoanCuotas').textContent = '';
+        document.getElementById('modalLoanEstado').textContent = '';
+        document.getElementById('modalPaymentsBody').innerHTML = `<tr><td colspan="6">${c.text || ''}</td></tr>`;
+        document.getElementById('downloadContractBtn').disabled = false;
+        document.getElementById('downloadPazSalvoBtn').style.display = c.pazSalvo ? 'inline-block' : 'none';
+        const modal = new bootstrap.Modal(document.getElementById('loanModal'));
+        modal.show();
+      });
+    });
+  }
+
+  // ---------- PROFILE ----------
+  async function loadProfile(){
+    const resp = await makeRequest('getClientInfo', { username });
+    if (!resp.success) { showAlert(resp.message||'No se pudo cargar perfil','danger'); return; }
+    const c = resp.data.client;
+    document.getElementById('profileDoc').value = c.doc || username;
+    document.getElementById('profileName').value = c.name || '';
+    document.getElementById('profilePhone').value = c.phone || '';
+    document.getElementById('profileAddress').value = c.address || '';
+    document.getElementById('profileColor').value = c.favoriteColor || '';
+    document.getElementById('profileAnimal').value = c.favoriteAnimal || '';
+  }
+
+  async function saveProfile(e){
+    e.preventDefault();
+    const payload = {
+      username,
+      name: document.getElementById('profileName').value.trim(),
+      phone: document.getElementById('profilePhone').value.trim(),
+      address: document.getElementById('profileAddress').value.trim(),
+      favoriteColor: document.getElementById('profileColor').value.trim(),
+      favoriteAnimal: document.getElementById('profileAnimal').value.trim()
+    };
+    const resp = await makeRequest('updateClientInfo', payload);
+    if (resp.success) { showAlert('Perfil actualizado','success'); await loadProfile(); }
+    else showAlert(resp.message || 'Error al guardar','danger');
+  }
+
+  async function changePassword(e){
+    e.preventDefault();
+    const oldP = document.getElementById('oldPassword').value;
+    const newP = document.getElementById('newPassword').value;
+    const conf = document.getElementById('confirmPassword').value;
+    if (newP !== conf) { showAlert('Las contraseñas no coinciden','warning'); return; }
+    const resp = await makeRequest('changePassword', { username, oldPassword: oldP, newPassword: newP });
+    if (resp.success) { showAlert('Contraseña cambiada','success'); document.getElementById('changePasswordForm').reset(); }
+    else showAlert(resp.message||'Error','danger');
+  }
+
+  // ---------- DOWNLOAD ----------
+  async function downloadCurrentContractPDF(){
+    if (!CURRENT_MODAL_CONTRACT) { showAlert('No hay contrato seleccionado','warning'); return; }
+    // create a minimal html layout
+    const html = `
+      <div style="font-family:Arial;padding:24px">
+        <h2 style="text-align:center">CONTRATO</h2>
+        <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
+        <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
+        <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
+        <p><strong>Fecha:</strong> ${new Date(CURRENT_MODAL_CONTRACT.date).toLocaleDateString()}</p>
+        <hr/>
+        <div>${CURRENT_MODAL_CONTRACT.text || ''}</div>
+      </div>`;
+    const blob = await htmlToPdfBlob(html, 0.98);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `contrato_${CURRENT_MODAL_CONTRACT.id||Date.now()}.pdf`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function downloadCurrentPazSalvoPDF(){
+    if (!CURRENT_MODAL_CONTRACT || !CURRENT_MODAL_CONTRACT.pazSalvo) { showAlert('No hay paz y salvo','warning'); return; }
+    const html = `<div style="font-family:Arial;padding:24px">
+      <h2 style="text-align:center">PAZ Y SALVO</h2>
+      <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
+      <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
+      <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
+      <p><strong>Fecha emisión:</strong> ${new Date(CURRENT_MODAL_CONTRACT.pazSalvo.date).toLocaleDateString()}</p>
+      <hr/>
+      <p>${CURRENT_MODAL_CONTRACT.pazSalvo.text || 'Documento de paz y salvo'}</p>
+    </div>`;
+    const blob = await htmlToPdfBlob(html, 0.98);
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = `pazsalvo_${CURRENT_MODAL_CONTRACT.id||Date.now()}.pdf`; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  async function htmlToPdfBlob(htmlContent, scale=1){
+    const wrap = document.createElement('div');
+    wrap.innerHTML = htmlContent;
+    document.body.appendChild(wrap);
+    const canvas = await html2canvas(wrap, { scale: scale });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'pt', 'a4');
+    const imgProps = pdf.getImageProperties(imgData);
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+    const blob = pdf.output('blob');
+    document.body.removeChild(wrap);
+    return blob;
+  }
+
+  // ---------- UTIL ----------
+  function formatMoney(v){ return new Intl.NumberFormat('es-CO',{style:'currency',currency:'COP',minimumFractionDigits:0}).format(Number(v||0)); }
+
+  // ---------- LOGOUT ----------
+  async function logout(){
+    await makeRequest('logout', { sessionToken });
+    localStorage.removeItem('sessionToken'); localStorage.removeItem('username');
+    window.location.href = '/';
+  }
+
+  </script>
 </body>
-
 </html>
-
