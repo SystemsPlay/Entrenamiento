@@ -1106,33 +1106,33 @@
           // sidebar links (si usas enlaces con data-section)
         
 document.addEventListener('DOMContentLoaded', () => {
+
   // Enlaces del sidebar: cambiar de sección y cargar datos
-  document.querySelectorAll('.sidebar-nav a').forEach(link => {
-    link.addEventListener('click', async (ev) => {   // ← callback ASÍNCRONO
-      ev.preventDefault();
+// Reemplaza el bloque de "sidebar links" por este:
+document.querySelectorAll('.sidebar-nav a').forEach(link => {
+  link.addEventListener('click', async (ev) => {
+    ev.preventDefault();
+    const target = link.dataset.section;
+    if (!target) return;
 
-      const target = link.dataset.section;
-      if (!target) return;
+    // activar enlace
+    document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+    link.classList.add('active');
 
-      // Activar el enlace seleccionado
-      document.querySelectorAll('.sidebar-nav a')
-              .forEach(a => a.classList.remove('active'));
-      link.classList.add('active');
+    // mostrar sección
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const section = document.getElementById(target);
+    if (section) section.classList.add('active');
 
-      // Mostrar la sección correspondiente
-      document.querySelectorAll('.section')
-              .forEach(s => s.classList.remove('active'));
-      const section = document.getElementById(target);
-      if (section) section.classList.add('active');
-
-      // Cargar datos según la sección
-      if (target === 'dashboard') { await loadDashboardData(); }
-      if (target === 'loans')     { await loadLoans(); }
-      if (target === 'contracts') { await loadContracts(); }
-      if (target === 'profile')   { await loadProfile(); }
-    });
+    // cargar datos según la sección
+    if (target === 'dashboard') await loadDashboardData();
+    if (target === 'loans') await loadLoans();
+    if (target === 'contracts') await loadContracts();
+    if (target === 'profile') await loadProfile();
   });
 });
+});
+
 
           // initial load
           await loadDashboardData();
