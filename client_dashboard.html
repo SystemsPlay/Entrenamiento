@@ -1104,23 +1104,35 @@
           });
 
           // sidebar links (si usas enlaces con data-section)
-          document.querySelectorAll('.sidebar-nav a').forEach(link => {
-  link.addEventListener('click', ev => {
-    ev.preventDefault();
-    const target = link.getAttribute('data-section');
-    if (!target) return;
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    const section = document.getElementById(target);
-    if (section) section.classList.add('active');
+        
+document.addEventListener('DOMContentLoaded', () => {
+  // Enlaces del sidebar: cambiar de sección y cargar datos
+  document.querySelectorAll('.sidebar-nav a').forEach(link => {
+    link.addEventListener('click', async (ev) => {   // ← callback ASÍNCRONO
+      ev.preventDefault();
 
-    if (target === 'dashboard') loadDashboardData();
-    if (target === 'loans') loadLoans();
-    if (target === 'contracts') loadContracts();
-    if (target === 'profile') loadProfile();
+      const target = link.dataset.section;
+      if (!target) return;
+
+      // Activar el enlace seleccionado
+      document.querySelectorAll('.sidebar-nav a')
+              .forEach(a => a.classList.remove('active'));
+      link.classList.add('active');
+
+      // Mostrar la sección correspondiente
+      document.querySelectorAll('.section')
+              .forEach(s => s.classList.remove('active'));
+      const section = document.getElementById(target);
+      if (section) section.classList.add('active');
+
+      // Cargar datos según la sección
+      if (target === 'dashboard') { await loadDashboardData(); }
+      if (target === 'loans')     { await loadLoans(); }
+      if (target === 'contracts') { await loadContracts(); }
+      if (target === 'profile')   { await loadProfile(); }
+    });
   });
 });
-
-
 
           // initial load
           await loadDashboardData();
