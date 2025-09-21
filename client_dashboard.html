@@ -1,955 +1,1031 @@
 <!DOCTYPE html>
 <html lang="es">
-
-<head>
+  <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Panel de Clientes - SGL Pro</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        :root {
-            --primary: #1a365d;
-            --primary-light: #2d5a87;
-            --secondary: #3182ce;
-            --accent: #805ad5;
-            --success: #38a169;
-            --warning: #d69e2e;
-            --danger: #e53e3e;
-            --light-bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --border-color: #e2e8f0;
-            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-                0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --gradient-primary: linear-gradient(135deg,
-                    var(--primary) 0%,
-                    var(--secondary) 100%);
-            --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            --gradient-warning: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
-            --gradient-accent: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
-        }
+      :root {
+        --primary: #1a365d;
+        --primary-light: #2d5a87;
+        --secondary: #3182ce;
+        --accent: #805ad5;
+        --success: #38a169;
+        --warning: #d69e2e;
+        --danger: #e53e3e;
+        --light-bg: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #2d3748;
+        --text-secondary: #4a5568;
+        --border-color: #e2e8f0;
+        --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --gradient-primary: linear-gradient(
+          135deg,
+          var(--primary) 0%,
+          var(--secondary) 100%
+        );
+        --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        --gradient-warning: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+        --gradient-accent: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            background: var(--light-bg);
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-                sans-serif;
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
+      body {
+        background: var(--light-bg);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        color: var(--text-primary);
+        line-height: 1.6;
+      }
 
-        /* LAYOUT */
-        .wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
+      /* LAYOUT */
+      .wrapper {
+        display: flex;
+        min-height: 100vh;
+      }
 
+      .sidebar {
+        width: 280px;
+        background: var(--gradient-primary);
+        color: white;
+        padding: 0;
+        position: fixed;
+        height: 100vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow-strong);
+        z-index: 1000;
+        transition: all 0.3s ease;
+      }
+
+      .sidebar-header {
+        padding: 2rem 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .brand {
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .brand-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+
+      .welcome-text {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+        font-weight: 400;
+      }
+
+      .sidebar-nav {
+        padding: 1rem 0;
+      }
+
+      .nav-item {
+        margin-bottom: 0.25rem;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: rgba(255, 255, 255, 0.85);
+        text-decoration: none;
+        border-radius: 0;
+        transition: all 0.3s ease;
+        position: relative;
+        font-weight: 500;
+      }
+
+      .nav-link:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        transform: translateX(4px);
+      }
+
+      .nav-link.active {
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        border-right: 4px solid #ffd700;
+      }
+
+      .nav-link i {
+        width: 20px;
+        margin-right: 1rem;
+        font-size: 1.1rem;
+      }
+
+      .sidebar-footer {
+        position: absolute;
+        bottom: 1rem;
+        left: 1.5rem;
+        right: 1.5rem;
+      }
+
+      .main {
+        margin-left: 280px;
+        padding: 2rem;
+        width: calc(100% - 280px);
+        min-height: 100vh;
+        transition: all 0.3s ease;
+      }
+
+      /* RESPONSIVE */
+      @media (max-width: 768px) {
         .sidebar {
-            width: 280px;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-strong);
-            z-index: 1000;
-            transition: all 0.3s ease;
+          left: -280px;
         }
 
-        .sidebar-header {
-            padding: 2rem 1.5rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .welcome-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            font-weight: 400;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-item {
-            margin-bottom: 0.25rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            border-radius: 0;
-            transition: all 0.3s ease;
-            position: relative;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateX(4px);
-        }
-
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-right: 4px solid #ffd700;
-        }
-
-        .nav-link i {
-            width: 20px;
-            margin-right: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 1rem;
-            left: 1.5rem;
-            right: 1.5rem;
+        .sidebar.open {
+          left: 0;
         }
 
         .main {
-            margin-left: 280px;
-            padding: 2rem;
-            width: calc(100% - 280px);
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .sidebar {
-                left: -280px;
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .main {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .mobile-toggle {
-                display: block !important;
-            }
-        }
-
-        /* COMPONENTS */
-        .page-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
+          margin-left: 0;
+          width: 100%;
         }
 
         .mobile-toggle {
-            display: none;
-            margin-bottom: 1rem;
+          display: block !important;
+        }
+      }
+
+      /* COMPONENTS */
+      .page-header {
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+      }
+
+      .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1rem;
+      }
+
+      .mobile-toggle {
+        display: none;
+        margin-bottom: 1rem;
+      }
+
+      /* CARDS */
+      .stat-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .stat-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: var(--gradient-primary);
+      }
+
+      .stat-card:hover {
+        box-shadow: var(--shadow-medium);
+        transform: translateY(-2px);
+      }
+
+      .stat-card.success::before {
+        background: var(--gradient-success);
+      }
+
+      .stat-card.warning::before {
+        background: var(--gradient-warning);
+      }
+
+      .stat-card.accent::before {
+        background: var(--gradient-accent);
+      }
+
+      .stat-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        color: white;
+      }
+
+      .stat-icon.primary {
+        background: var(--gradient-primary);
+      }
+
+      .stat-icon.success {
+        background: var(--gradient-success);
+      }
+
+      .stat-icon.warning {
+        background: var(--gradient-warning);
+      }
+
+      .stat-icon.accent {
+        background: var(--gradient-accent);
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 0.25rem;
+      }
+
+      .stat-label {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .content-card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        box-shadow: var(--shadow-light);
+        border: 1px solid var(--border-color);
+        overflow: hidden;
+        margin-bottom: 2rem;
+      }
+
+      .card-header-modern {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 1.5rem;
+        font-weight: 600;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .card-body-modern {
+        padding: 1.5rem;
+      }
+
+      /* CHARTS */
+      .chart-container {
+        position: relative;
+        height: 300px;
+        margin: 1rem 0;
+      }
+
+      /* TABLES */
+      .table-modern {
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      .table-modern th {
+        background: var(--light-bg);
+        color: var(--text-primary);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        border: none;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      .table-modern td {
+        padding: 1rem;
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+      }
+
+      .table-modern tbody tr:hover {
+        background: var(--light-bg);
+      }
+
+      /* BADGES */
+      .badge-modern {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        border-radius: 20px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .badge-success {
+        background: #e6fffa;
+        color: #00695c;
+      }
+
+      .badge-warning {
+        background: #fff8e1;
+        color: #e65100;
+      }
+
+      .badge-secondary {
+        background: #f5f5f5;
+        color: #616161;
+      }
+
+      /* BUTTONS */
+      .btn-modern {
+        padding: 0.75rem 1.5rem;
+        border-radius: 10px;
+        font-weight: 500;
+        font-size: 0.9rem;
+        border: none;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .btn-primary-modern {
+        background: var(--gradient-primary);
+        color: white;
+      }
+
+      .btn-primary-modern:hover {
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-medium);
+      }
+
+      .btn-sm-modern {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+      }
+
+      /* FORMS */
+      .form-control-modern {
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+      }
+
+      .form-control-modern:focus {
+        border-color: var(--secondary);
+        box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+      }
+
+      .form-label-modern {
+        font-weight: 500;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+      }
+
+      /* ALERTS */
+      .alert-fixed {
+        position: fixed;
+        top: 2rem;
+        right: 2rem;
+        z-index: 2000;
+        min-width: 320px;
+        border-radius: 12px;
+        border: none;
+        box-shadow: var(--shadow-strong);
+        animation: slideInRight 0.3s ease;
+      }
+
+      @keyframes slideInRight {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
         }
 
-        /* CARDS */
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-light);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+
+      /* ACTIVITY FEED */
+      .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+      }
+
+      .activity-item:hover {
+        background: var(--light-bg);
+      }
+
+      .activity-item:last-child {
+        border-bottom: none;
+      }
+
+      .activity-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: var(--gradient-success);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+        font-size: 1rem;
+      }
+
+      .activity-content {
+        flex: 1;
+      }
+
+      .activity-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+      }
+
+      .activity-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+      }
+
+      .activity-amount {
+        font-weight: 700;
+        color: var(--success);
+        font-size: 1.1rem;
+      }
+
+      /* LOADING */
+      .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid var(--secondary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
         }
 
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* SECTIONS */
+      .section {
+        display: none;
+      }
+
+      .section.active {
+        display: block;
+        animation: fadeIn 0.3s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
         }
 
-        .stat-card:hover {
-            box-shadow: var(--shadow-medium);
-            transform: translateY(-2px);
+        to {
+          opacity: 1;
+          transform: translateY(0);
         }
-
-        .stat-card.success::before {
-            background: var(--gradient-success);
-        }
-
-        .stat-card.warning::before {
-            background: var(--gradient-warning);
-        }
-
-        .stat-card.accent::before {
-            background: var(--gradient-accent);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .stat-icon.primary {
-            background: var(--gradient-primary);
-        }
-
-        .stat-icon.success {
-            background: var(--gradient-success);
-        }
-
-        .stat-icon.warning {
-            background: var(--gradient-warning);
-        }
-
-        .stat-icon.accent {
-            background: var(--gradient-accent);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .content-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: var(--shadow-light);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .card-header-modern {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 1.5rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-body-modern {
-            padding: 1.5rem;
-        }
-
-        /* CHARTS */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 1rem 0;
-        }
-
-        /* TABLES */
-        .table-modern {
-            margin: 0;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .table-modern th {
-            background: var(--light-bg);
-            color: var(--text-primary);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            padding: 1rem;
-            border: none;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table-modern td {
-            padding: 1rem;
-            border: none;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-
-        .table-modern tbody tr:hover {
-            background: var(--light-bg);
-        }
-
-        /* BADGES */
-        .badge-modern {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-success {
-            background: #e6fffa;
-            color: #00695c;
-        }
-
-        .badge-warning {
-            background: #fff8e1;
-            color: #e65100;
-        }
-
-        .badge-secondary {
-            background: #f5f5f5;
-            color: #616161;
-        }
-
-        /* BUTTONS */
-        .btn-modern {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            border: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary-modern {
-            background: var(--gradient-primary);
-            color: white;
-        }
-
-        .btn-primary-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .btn-sm-modern {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
-
-        /* FORMS */
-        .form-control-modern {
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control-modern:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
-        }
-
-        .form-label-modern {
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        /* ALERTS */
-        .alert-fixed {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 2000;
-            min-width: 320px;
-            border-radius: 12px;
-            border: none;
-            box-shadow: var(--shadow-strong);
-            animation: slideInRight 0.3s ease;
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* ACTIVITY FEED */
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .activity-item:hover {
-            background: var(--light-bg);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gradient-success);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1rem;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .activity-amount {
-            font-weight: 700;
-            color: var(--success);
-            font-size: 1.1rem;
-        }
-
-        /* LOADING */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--secondary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* SECTIONS */
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="wrapper">
-        <nav id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand">
-                    <div class="brand-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    SGL Pro
+      <nav id="sidebar" class="sidebar">
+        <div class="sidebar-header">
+          <div class="brand">
+            <div class="brand-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            SGL Pro
+          </div>
+          <div class="welcome-text">
+            Bienvenido, <strong id="clientNameTitle">Cliente</strong>
+          </div>
+        </div>
+
+        <div class="sidebar-nav">
+          <div class="nav-item">
+            <a href="#" class="nav-link active" data-section="dashboard">
+              <i class="fas fa-tachometer-alt"></i>
+              Panel Principal
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" data-section="loans">
+              <i class="fas fa-money-bill-wave"></i>
+              Mis Préstamos
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" data-section="contracts">
+              <i class="fas fa-file-contract"></i>
+              Contratos
+            </a>
+          </div>
+          <div class="nav-item">
+            <a href="#" class="nav-link" data-section="profile">
+              <i class="fas fa-user-circle"></i>
+              Mi Perfil
+            </a>
+          </div>
+        </div>
+
+        <div class="sidebar-footer">
+          <a
+            href="#"
+            id="logoutBtn"
+            class="nav-link"
+            style="color: rgba(255, 255, 255, 0.6)"
+          >
+            <i class="fas fa-sign-out-alt"></i>
+            Cerrar Sesión
+          </a>
+        </div>
+      </nav>
+
+      <main class="main">
+        <button id="mobileToggle" class="btn btn-light mobile-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="page-header">
+          <h1 class="page-title">
+            Hola, <span id="clientNameHeadline">Cliente</span>
+          </h1>
+          <p class="page-subtitle">
+            Gestiona tus préstamos y consulta tu información financiera
+          </p>
+        </div>
+
+        <div id="alertPlaceholder"></div>
+
+        <section id="dashboard" class="section active">
+          <div class="row g-4 mb-4">
+            <div class="col-12 col-md-6 col-xl-3">
+              <div class="stat-card primary">
+                <div class="stat-icon primary">
+                  <i class="fas fa-dollar-sign"></i>
                 </div>
-                <div class="welcome-text">
-                    Bienvenido, <strong id="clientNameTitle">Cliente</strong>
+                <div class="stat-value" id="totalPendingAmount">$0</div>
+                <div class="stat-label">Saldo Pendiente</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+              <div class="stat-card success">
+                <div class="stat-icon success">
+                  <i class="fas fa-check-circle"></i>
                 </div>
+                <div class="stat-value" id="activeLoansCount">0</div>
+                <div class="stat-label">Préstamos Activos</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+              <div class="stat-card warning">
+                <div class="stat-icon warning">
+                  <i class="fas fa-handshake"></i>
+                </div>
+                <div class="stat-value" id="finalizedLoansCount">0</div>
+                <div class="stat-label">Préstamos Finalizados</div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-3">
+              <div class="stat-card accent">
+                <div class="stat-icon accent">
+                  <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-value" id="averageInterestRate">0%</div>
+                <div class="stat-label">Tasa Promedio</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 col-lg-8">
+              <div class="content-card">
+                <div class="card-header-modern">
+                  <i class="fas fa-chart-area"></i>
+                  Evolución de Pagos
+                </div>
+                <div class="card-body-modern">
+                  <div class="chart-container">
+                    <canvas id="paymentsChart"></canvas>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="sidebar-nav">
-                <div class="nav-item">
-                    <a href="#" class="nav-link active" data-section="dashboard">
-                        <i class="fas fa-tachometer-alt"></i>
-                        Panel Principal
-                    </a>
+            <div class="col-12 col-lg-4">
+              <div class="content-card">
+                <div class="card-header-modern">
+                  <i class="fas fa-clock"></i>
+                  Actividad Reciente
                 </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="loans">
-                        <i class="fas fa-money-bill-wave"></i>
-                        Mis Préstamos
-                    </a>
+                <div class="card-body-modern" style="padding: 0">
+                  <div id="recentActivityContainer">
+                    <div class="text-center p-4">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted">Cargando actividad...</small>
+                    </div>
+                  </div>
                 </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="contracts">
-                        <i class="fas fa-file-contract"></i>
-                        Contratos
-                    </a>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <div class="col-12 col-md-6">
+              <div class="content-card">
+                <div class="card-header-modern">
+                  <i class="fas fa-chart-pie"></i>
+                  Estado de Préstamos
                 </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="profile">
-                        <i class="fas fa-user-circle"></i>
-                        Mi Perfil
-                    </a>
+                <div class="card-body-modern">
+                  <div class="chart-container" style="height: 250px">
+                    <canvas id="loanStatusChart"></canvas>
+                  </div>
                 </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6">
+              <div class="content-card">
+                <div class="card-header-modern">
+                  <i class="fas fa-calendar-alt"></i>
+                  Próximos Vencimientos
+                </div>
+                <div class="card-body-modern">
+                  <div id="upcomingPayments">
+                    <div class="text-center">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted">Cargando vencimientos...</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="loans" class="section">
+          <div class="content-card">
+            <div class="card-header-modern">
+              <i class="fas fa-money-bill-wave"></i>
+              Mis Préstamos
+            </div>
+            <div class="card-body-modern">
+              <div class="table-responsive">
+                <table class="table table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID Préstamo</th>
+                      <th>Monto Original</th>
+                      <th>Saldo Actual</th>
+                      <th>Cuotas</th>
+                      <th>Tasa</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="loansTableBody">
+                    <tr>
+                      <td colspan="7" class="text-center py-4">
+                        <div class="loading-spinner mx-auto mb-2"></div>
+                        <small class="text-muted">Cargando préstamos...</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="contracts" class="section">
+          <div class="content-card">
+            <div class="card-header-modern">
+              <i class="fas fa-file-contract"></i>
+              Contratos y Documentos
+            </div>
+            <div class="card-body-modern">
+              <div class="table-responsive">
+                <table class="table table-modern">
+                  <thead>
+                    <tr>
+                      <th>ID Documento</th>
+                      <th>Préstamo</th>
+                      <th>Fecha</th>
+                      <th>Tipo</th>
+                      <th>Estado</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="contractsTableBody">
+                    <tr>
+                      <td colspan="6" class="text-center py-4">
+                        <div class="loading-spinner mx-auto mb-2"></div>
+                        <small class="text-muted">Cargando documentos...</small>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="profile" class="section">
+          <div class="row">
+            <div class="col-12 col-lg-8">
+              <div class="content-card">
+                <div class="card-header-modern">
+                  <i class="fas fa-user-circle"></i>
+                  Información Personal
+                </div>
+                <div class="card-body-modern">
+                  <form id="profileForm">
+                    <div class="row g-3">
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-modern"
+                          >Documento (no editable)</label
+                        >
+                        <input
+                          id="profileDoc"
+                          class="form-control form-control-modern"
+                          readonly
+                        />
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-modern">Nombre Completo</label>
+                        <input
+                          id="profileName"
+                          class="form-control form-control-modern"
+                          required
+                        />
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-modern">Teléfono</label>
+                        <input
+                          id="profilePhone"
+                          class="form-control form-control-modern"
+                          required
+                        />
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-modern">Dirección</label>
+                        <input
+                          id="profileAddress"
+                          class="form-control form-control-modern"
+                        />
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-modern">Color Favorito</label>
+                        <input
+                          id="profileColor"
+                          class="form-control form-control-modern"
+                        />
+                      </div>
+                      <div class="col-12 col-md-6">
+                        <label class="form-label-modern">Animal Favorito</label>
+                        <input
+                          id="profileAnimal"
+                          class="form-control form-control-modern"
+                        />
+                      </div>
+                      <div class="col-12 text-end">
+                        <button
+                          type="submit"
+                          class="btn btn-modern btn-primary-modern"
+                        >
+                          <i class="fas fa-save"></i>
+                          Guardar Cambios
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
 
-            <div class="sidebar-footer">
-                <a href="#" id="logoutBtn" class="nav-link" style="color: rgba(255, 255, 255, 0.6)">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Cerrar Sesión
-                </a>
+            <div class="col-12 col-lg-4">
+              <div class="content-card">
+                <div class="card-header-modern">
+                  <i class="fas fa-key"></i>
+                  Cambiar Contraseña
+                </div>
+                <div class="card-body-modern">
+                  <form id="changePasswordForm">
+                    <div class="mb-3">
+                      <label class="form-label-modern">Contraseña Actual</label>
+                      <input
+                        id="oldPassword"
+                        type="password"
+                        class="form-control form-control-modern"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label-modern">Nueva Contraseña</label>
+                      <input
+                        id="newPassword"
+                        type="password"
+                        class="form-control form-control-modern"
+                        required
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label class="form-label-modern"
+                        >Confirmar Contraseña</label
+                      >
+                      <input
+                        id="confirmPassword"
+                        type="password"
+                        class="form-control form-control-modern"
+                        required
+                      />
+                    </div>
+                    <button
+                      class="btn btn-modern btn-primary-modern w-100"
+                      type="submit"
+                    >
+                      <i class="fas fa-key"></i>
+                      Cambiar Contraseña
+                    </button>
+                  </form>
+                </div>
+              </div>
             </div>
-        </nav>
-
-        <main class="main">
-            <button id="mobileToggle" class="btn btn-light mobile-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <div class="page-header">
-                <h1 class="page-title">
-                    Hola, <span id="clientNameHeadline">Cliente</span>
-                </h1>
-                <p class="page-subtitle">
-                    Gestiona tus préstamos y consulta tu información financiera
-                </p>
-            </div>
-
-            <div id="alertPlaceholder"></div>
-
-            <section id="dashboard" class="section active">
-                <div class="row g-4 mb-4">
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card primary">
-                            <div class="stat-icon primary">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="stat-value" id="totalPendingAmount">$0</div>
-                            <div class="stat-label">Saldo Pendiente</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card success">
-                            <div class="stat-icon success">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="stat-value" id="activeLoansCount">0</div>
-                            <div class="stat-label">Préstamos Activos</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card warning">
-                            <div class="stat-icon warning">
-                                <i class="fas fa-handshake"></i>
-                            </div>
-                            <div class="stat-value" id="finalizedLoansCount">0</div>
-                            <div class="stat-label">Préstamos Finalizados</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card accent">
-                            <div class="stat-icon accent">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="stat-value" id="averageInterestRate">0%</div>
-                            <div class="stat-label">Tasa Promedio</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 col-lg-8">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-chart-area"></i>
-                                Evolución de Pagos
-                            </div>
-                            <div class="card-body-modern">
-                                <div class="chart-container">
-                                    <canvas id="paymentsChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-4">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-clock"></i>
-                                Actividad Reciente
-                            </div>
-                            <div class="card-body-modern" style="padding: 0">
-                                <div id="recentActivityContainer">
-                                    <div class="text-center p-4">
-                                        <div class="loading-spinner mx-auto mb-2"></div>
-                                        <small class="text-muted">Cargando actividad...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-4">
-                    <div class="col-12 col-md-6">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-chart-pie"></i>
-                                Estado de Préstamos
-                            </div>
-                            <div class="card-body-modern">
-                                <div class="chart-container" style="height: 250px">
-                                    <canvas id="loanStatusChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-calendar-alt"></i>
-                                Próximos Vencimientos
-                            </div>
-                            <div class="card-body-modern">
-                                <div id="upcomingPayments">
-                                    <div class="text-center">
-                                        <div class="loading-spinner mx-auto mb-2"></div>
-                                        <small class="text-muted">Cargando vencimientos...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="loans" class="section">
-                <div class="content-card">
-                    <div class="card-header-modern">
-                        <i class="fas fa-money-bill-wave"></i>
-                        Mis Préstamos
-                    </div>
-                    <div class="card-body-modern">
-                        <div class="table-responsive">
-                            <table class="table table-modern">
-                                <thead>
-                                    <tr>
-                                        <th>ID Préstamo</th>
-                                        <th>Monto Original</th>
-                                        <th>Saldo Actual</th>
-                                        <th>Cuotas</th>
-                                        <th>Tasa</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="loansTableBody">
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4">
-                                            <div class="loading-spinner mx-auto mb-2"></div>
-                                            <small class="text-muted">Cargando préstamos...</small>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="contracts" class="section">
-                <div class="content-card">
-                    <div class="card-header-modern">
-                        <i class="fas fa-file-contract"></i>
-                        Contratos y Documentos
-                    </div>
-                    <div class="card-body-modern">
-                        <div class="table-responsive">
-                            <table class="table table-modern">
-                                <thead>
-                                    <tr>
-                                        <th>ID Documento</th>
-                                        <th>Préstamo</th>
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="contractsTableBody">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-4">
-                                            <div class="loading-spinner mx-auto mb-2"></div>
-                                            <small class="text-muted">Cargando documentos...</small>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="profile" class="section">
-                <div class="row">
-                    <div class="col-12 col-lg-8">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-user-circle"></i>
-                                Información Personal
-                            </div>
-                            <div class="card-body-modern">
-                                <form id="profileForm">
-                                    <div class="row g-3">
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Documento (no editable)</label>
-                                            <input id="profileDoc" class="form-control form-control-modern" readonly />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Nombre Completo</label>
-                                            <input id="profileName" class="form-control form-control-modern" required />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Teléfono</label>
-                                            <input id="profilePhone" class="form-control form-control-modern"
-                                                required />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Dirección</label>
-                                            <input id="profileAddress" class="form-control form-control-modern" />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Color Favorito</label>
-                                            <input id="profileColor" class="form-control form-control-modern" />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Animal Favorito</label>
-                                            <input id="profileAnimal" class="form-control form-control-modern" />
-                                        </div>
-                                        <div class="col-12 text-end">
-                                            <button type="submit" class="btn btn-modern btn-primary-modern">
-                                                <i class="fas fa-save"></i>
-                                                Guardar Cambios
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-4">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-key"></i>
-                                Cambiar Contraseña
-                            </div>
-                            <div class="card-body-modern">
-                                <form id="changePasswordForm">
-                                    <div class="mb-3">
-                                        <label class="form-label-modern">Contraseña Actual</label>
-                                        <input id="oldPassword" type="password" class="form-control form-control-modern"
-                                            required />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label-modern">Nueva Contraseña</label>
-                                        <input id="newPassword" type="password" class="form-control form-control-modern"
-                                            required />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label-modern">Confirmar Contraseña</label>
-                                        <input id="confirmPassword" type="password"
-                                            class="form-control form-control-modern" required />
-                                    </div>
-                                    <button class="btn btn-modern btn-primary-modern w-100" type="submit">
-                                        <i class="fas fa-key"></i>
-                                        Cambiar Contraseña
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
+          </div>
+        </section>
+      </main>
     </div>
 
     <div class="modal fade" id="loanModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content" style="
+      <div
+        class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable"
+      >
+        <div
+          class="modal-content"
+          style="
             border-radius: 16px;
             border: none;
             box-shadow: var(--shadow-strong);
-          ">
-                <div class="modal-header" style="
+          "
+        >
+          <div
+            class="modal-header"
+            style="
               background: var(--gradient-primary);
               color: white;
               border: none;
-            ">
-                    <h5 class="modal-title">
-                        <i class="fas fa-money-bill-wave me-2"></i>
-                        Préstamo <span id="loanModalId"></span>
-                    </h5>
-                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            "
+          >
+            <h5 class="modal-title">
+              <i class="fas fa-money-bill-wave me-2"></i>
+              Préstamo <span id="loanModalId"></span>
+            </h5>
+            <button
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="row g-3 mb-4">
+              <div class="col-6 col-md-3">
+                <div class="stat-card" style="margin: 0">
+                  <small class="text-muted">Monto Original</small>
+                  <h6 id="modalLoanAmount" class="mb-0">$0</h6>
                 </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3 mb-4">
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Monto Original</small>
-                                <h6 id="modalLoanAmount" class="mb-0">$0</h6>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Saldo Actual</small>
-                                <h6 id="modalLoanBalance" class="mb-0">$0</h6>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Cuotas</small>
-                                <h6 id="modalLoanCuotas" class="mb-0">0/0</h6>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Estado</small>
-                                <h6 id="modalLoanEstado" class="mb-0">-</h6>
-                            </div>
-                        </div>
-                    </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-card" style="margin: 0">
+                  <small class="text-muted">Saldo Actual</small>
+                  <h6 id="modalLoanBalance" class="mb-0">$0</h6>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-card" style="margin: 0">
+                  <small class="text-muted">Cuotas</small>
+                  <h6 id="modalLoanCuotas" class="mb-0">0/0</h6>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-card" style="margin: 0">
+                  <small class="text-muted">Estado</small>
+                  <h6 id="modalLoanEstado" class="mb-0">-</h6>
+                </div>
+              </div>
+            </div>
 
-                    <h6 class="mb-3">
-                        <i class="fas fa-calendar-check me-2"></i>
-                        Plan de Pagos
-                    </h6>
-                    <div class="table-responsive">
-                        <table class="table table-modern">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Vencimiento</th>
-                                    <th>Total</th>
-                                    <th>Capital</th>
-                                    <th>Interés</th>
-                                    <th>Estado</th>
-                                </tr>
-                            </thead>
-                            <tbody id="modalPaymentsBody">
-                                <tr>
-                                    <td colspan="6" class="text-center py-3">
-                                        <div class="loading-spinner mx-auto mb-2"></div>
-                                        <small class="text-muted">Cargando plan de pagos...</small>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 bg-light">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">
-                        Cerrar
-                    </button>
-                    <button id="downloadContractBtn" class="btn btn-modern btn-primary-modern">
-                        <i class="fas fa-file-pdf"></i>
-                        Descargar Contrato
-                    </button>
-                    <button id="downloadPazSalvoBtn" class="btn btn-modern" style="
+            <h6 class="mb-3">
+              <i class="fas fa-calendar-check me-2"></i>
+              Plan de Pagos
+            </h6>
+            <div class="table-responsive">
+              <table class="table table-modern">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Vencimiento</th>
+                    <th>Total</th>
+                    <th>Capital</th>
+                    <th>Interés</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="modalPaymentsBody">
+                  <tr>
+                    <td colspan="6" class="text-center py-3">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted"
+                        >Cargando plan de pagos...</small
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="modal-footer border-0 bg-light">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">
+              Cerrar
+            </button>
+            <button
+              id="downloadContractBtn"
+              class="btn btn-modern btn-primary-modern"
+            >
+              <i class="fas fa-file-pdf"></i>
+              Descargar Contrato
+            </button>
+            <button
+              id="downloadPazSalvoBtn"
+              class="btn btn-modern"
+              style="
                 background: var(--gradient-success);
                 color: white;
                 display: none;
-              ">
-                        <i class="fas fa-file-export"></i>
-                        Descargar Paz y Salvo
-                    </button>
-                </div>
-            </div>
+              "
+            >
+              <i class="fas fa-file-export"></i>
+              Descargar Paz y Salvo
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
@@ -957,406 +1033,406 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script>
-        // ========== CONFIGURACIÓN ==========
-        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec';
+      // ========== CONFIGURACIÓN ==========
+      const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec';
 
-        /* ---------- SESSION ---------- */
-        const sessionToken = localStorage.getItem('sessionToken');
-        const username = localStorage.getItem('username');
+      /* ---------- SESSION ---------- */
+      const sessionToken = localStorage.getItem('sessionToken');
+      const username = localStorage.getItem('username');
 
-        /* ---------- UI helpers ---------- */
-        function showAlert(message, type = 'info', timeout = 4500) {
-            const ph = document.getElementById('alertPlaceholder');
-            if (!ph) return;
-            const wrapper = document.createElement('div');
-            wrapper.className = `alert alert-${type} alert-dismissible fade show`;
-            wrapper.role = 'alert';
-            wrapper.innerHTML = `${message}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            ph.appendChild(wrapper);
-            if (timeout) setTimeout(() => wrapper.remove(), timeout);
-        }
+      /* ---------- UI helpers ---------- */
+      function showAlert(message, type = 'info', timeout = 4500) {
+          const ph = document.getElementById('alertPlaceholder');
+          if (!ph) return;
+          const wrapper = document.createElement('div');
+          wrapper.className = `alert alert-${type} alert-dismissible fade show`;
+          wrapper.role = 'alert';
+          wrapper.innerHTML = `${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+          ph.appendChild(wrapper);
+          if (timeout) setTimeout(() => wrapper.remove(), timeout);
+      }
 
-        /* ---------- NETWORK: robust makeRequest usando FormData ---------- */
-        async function makeRequest(action, data = {}) {
-            try {
-                if (!BACKEND_URL || BACKEND_URL.includes('PASTE_YOUR')) {
-                    console.error('BACKEND_URL no configurado. Reemplaza la constante con tu URL /exec.');
-                    return { success: false, message: 'BACKEND_URL no configurado' };
-                }
+      /* ---------- NETWORK: robust makeRequest usando FormData ---------- */
+      async function makeRequest(action, data = {}) {
+          try {
+              if (!BACKEND_URL || BACKEND_URL.includes('PASTE_YOUR')) {
+                  console.error('BACKEND_URL no configurado. Reemplaza la constante con tu URL /exec.');
+                  return { success: false, message: 'BACKEND_URL no configurado' };
+              }
 
-                const payload = { ...data, action, sessionToken };
-                const form = new FormData();
-                form.append('payload', JSON.stringify(payload));
+              const payload = { ...data, action, sessionToken };
+              const form = new FormData();
+              form.append('payload', JSON.stringify(payload));
 
-                const resp = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    body: form
-                    // NO headers, NO mode: 'no-cors'
-                });
+              const resp = await fetch(BACKEND_URL, {
+                  method: 'POST',
+                  body: form
+                  // NO headers, NO mode: 'no-cors'
+              });
 
-                // Si la respuesta no es JSON (error 500, HTML, etc.) capturamos
-                const text = await resp.text();
-                try {
-                    const json = JSON.parse(text);
-                    return json;
-                } catch (err) {
-                    console.error('Respuesta no JSON:', text);
-                    return { success: false, message: 'Respuesta inválida del servidor' };
-                }
+              // Si la respuesta no es JSON (error 500, HTML, etc.) capturamos
+              const text = await resp.text();
+              try {
+                  const json = JSON.parse(text);
+                  return json;
+              } catch (err) {
+                  console.error('Respuesta no JSON:', text);
+                  return { success: false, message: 'Respuesta inválida del servidor' };
+              }
 
-            } catch (error) {
-                console.error('Error en makeRequest:', error);
-                return { success: false, message: 'Error de conexión con el servidor' };
-            }
-        }
+          } catch (error) {
+              console.error('Error en makeRequest:', error);
+              return { success: false, message: 'Error de conexión con el servidor' };
+          }
+      }
 
-        /* ---------- PAGE BOOT ---------- */
-        document.addEventListener('DOMContentLoaded', async () => {
-            // seguridad simple
-            if (!sessionToken || !username) {
-                // no hay sesión -> volver al login
-                window.location.replace('/'); // ajusta si tu login no está en /
-                return;
-            }
+      /* ---------- PAGE BOOT ---------- */
+      document.addEventListener('DOMContentLoaded', async () => {
+          // seguridad simple
+          if (!sessionToken || !username) {
+              // no hay sesión -> volver al login
+              window.location.replace('/'); // ajusta si tu login no está en /
+              return;
+          }
 
-            // attach logout handler if exists
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) logoutBtn.addEventListener('click', async (e) => {
-                e.preventDefault();
-                await logout();
-            });
+          // attach logout handler if exists
+          const logoutBtn = document.getElementById('logoutBtn');
+          if (logoutBtn) logoutBtn.addEventListener('click', async (e) => {
+              e.preventDefault();
+              await logout();
+          });
 
-            // sidebar links (si usas enlaces con data-section)
-            document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                link.addEventListener('click', ev => {
-                    ev.preventDefault();
-                    const target = link.getAttribute('data-section');
-                    if (!target) return;
-                    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                    const section = document.getElementById(target);
-                    if (section) section.classList.add('active');
+          // sidebar links (si usas enlaces con data-section)
+          document.querySelectorAll('.sidebar-nav a').forEach(link => {
+  link.addEventListener('click', ev => {
+    ev.preventDefault();
+    const target = link.getAttribute('data-section');
+    if (!target) return;
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    const section = document.getElementById(target);
+    if (section) section.classList.add('active');
 
-                    if (target === 'dashboard') loadDashboardData();
-                    if (target === 'loans') loadLoans();
-                    if (target === 'contracts') loadContracts();
-                    if (target === 'profile') loadProfile();
-                });
-            });
+    if (target === 'dashboard') loadDashboardData();
+    if (target === 'loans') loadLoans();
+    if (target === 'contracts') loadContracts();
+    if (target === 'profile') loadProfile();
+  });
+});
 
 
-            // initial load
-            await loadDashboardData();
-            // attach profile and change password handlers
-            const profileForm = document.getElementById('profileForm');
-            if (profileForm) profileForm.addEventListener('submit', saveProfile);
 
-            const changePassForm = document.getElementById('changePasswordForm');
-            if (changePassForm) changePassForm.addEventListener('submit', changePassword);
-        });
+          // initial load
+          await loadDashboardData();
+          // attach profile and change password handlers
+          const profileForm = document.getElementById('profileForm');
+          if (profileForm) profileForm.addEventListener('submit', saveProfile);
 
-        /* ---------- DASHBOARD / DATA LOADERS ---------- */
+          const changePassForm = document.getElementById('changePasswordForm');
+          if (changePassForm) changePassForm.addEventListener('submit', changePassword);
+      });
 
-        async function loadDashboardData() {
-            try {
-                // Consigue cliente y prestamos
-                const infoResp = await makeRequest('getClientInfo', { username });
-                const loansResp = await makeRequest('getClientLoans', { username });
-                const paymentsResp = await makeRequest('getClientPayments', { clientId: username });
+      /* ---------- DASHBOARD / DATA LOADERS ---------- */
 
-                // CLIENT INFO: tolerante con formatos
-                if (infoResp && infoResp.success) {
-                    const client = infoResp.data?.client || infoResp.data || {};
-                    document.getElementById('clientNameTitle')?.textContent = (client.name || client.nombreCompleto || username).split(' ')[0];
-                    document.getElementById('clientNameHeadline')?.textContent = client.name || client.nombreCompleto || username;
-                } else {
-                    console.warn('No se pudo cargar info del cliente:', infoResp && infoResp.message);
-                    // no mostrar error global por ahora
-                }
+      async function loadDashboardData() {
+          try {
+              // Consigue cliente y prestamos
+              const infoResp = await makeRequest('getClientInfo', { username });
+              const loansResp = await makeRequest('getClientLoans', { username });
+              const paymentsResp = await makeRequest('getClientPayments', { clientId: username });
 
-                // LOANS summary
-                if (loansResp && loansResp.success) {
-                    const loans = loansResp.data?.loans || [];
-                    const totalPending = loans.filter(l => l.status === 'activo' || l.estado === 'activo').reduce((acc, l) => acc + (Number(l.currentBalance || l.saldo || l.monto) || 0), 0);
-                    const activeCount = loans.filter(l => (l.status || l.estado) === 'activo').length;
-                    const finalized = loans.length - activeCount;
+              // CLIENT INFO: tolerante con formatos
+              if (infoResp && infoResp.success) {
+                  const client = infoResp.data?.client || infoResp.data || {};
+                  document.getElementById('clientNameTitle')?.textContent = (client.name || client.nombreCompleto || username).split(' ')[0];
+                  document.getElementById('clientNameHeadline')?.textContent = client.name || client.nombreCompleto || username;
+              } else {
+                  console.warn('No se pudo cargar info del cliente:', infoResp && infoResp.message);
+                  // no mostrar error global por ahora
+              }
 
-                    const elPending = document.getElementById('totalPendingAmount');
-                    if (elPending) elPending.textContent = formatMoney(totalPending);
-                    const elActive = document.getElementById('activeLoansCount');
-                    if (elActive) elActive.textContent = activeCount;
-                    const elFinal = document.getElementById('finalizedLoansCount');
-                    if (elFinal) elFinal.textContent = finalized;
+              // LOANS summary
+              if (loansResp && loansResp.success) {
+                  const loans = loansResp.data?.loans || [];
+                  const totalPending = loans.filter(l => l.status === 'activo' || l.estado === 'activo').reduce((acc, l) => acc + (Number(l.currentBalance || l.saldo || l.monto) || 0), 0);
+                  const activeCount = loans.filter(l => (l.status || l.estado) === 'activo').length;
+                  const finalized = loans.length - activeCount;
 
-                    // Recent activity from paymentsResp
-                    const container = document.getElementById('recentActivityContainer');
-                    if (container) {
-                        container.innerHTML = '';
-                        const payments = (paymentsResp && paymentsResp.success) ? (paymentsResp.data?.payments || []) : [];
-                        const recent = payments.slice(-6).reverse();
-                        if (recent.length === 0) container.innerHTML = '<p class="text-muted">No hay actividad reciente.</p>';
-                        else {
-                            const ul = document.createElement('ul'); ul.className = 'list-group';
-                            recent.forEach(p => {
-                                const date = p.fecha || p[2] || p[3] || '';
-                                const amount = p.monto || p[1] || p[4] || 0;
-                                const loanId = p.loanId || p[1] || p[0] || '';
-                                const li = document.createElement('li');
-                                li.className = 'list-group-item d-flex justify-content-between align-items-start';
-                                li.innerHTML = `<div><strong>Pago</strong> - Préstamo ${loanId}<div class="text-muted small">${date ? new Date(date).toLocaleString() : ''}</div></div><div class="fw-bold">${formatMoney(Number(amount) || 0)}</div>`;
-                                ul.appendChild(li);
-                            });
-                            container.appendChild(ul);
-                        }
-                    }
-                } else {
-                    console.warn('No se pudieron cargar prestamos (dashboard):', loansResp && loansResp.message);
-                }
+                  const elPending = document.getElementById('totalPendingAmount');
+                  if (elPending) elPending.textContent = formatMoney(totalPending);
+                  const elActive = document.getElementById('activeLoansCount');
+                  if (elActive) elActive.textContent = activeCount;
+                  const elFinal = document.getElementById('finalizedLoansCount');
+                  if (elFinal) elFinal.textContent = finalized;
 
-            } catch (err) {
-                console.error('Error al cargar datos del dashboard:', err);
-                showAlert('Error al cargar datos del dashboard. Revisa la consola.', 'danger');
-            }
-        }
+                  // Recent activity from paymentsResp
+                  const container = document.getElementById('recentActivityContainer');
+                  if (container) {
+                      container.innerHTML = '';
+                      const payments = (paymentsResp && paymentsResp.success) ? (paymentsResp.data?.payments || []) : [];
+                      const recent = payments.slice(-6).reverse();
+                      if (recent.length === 0) container.innerHTML = '<p class="text-muted">No hay actividad reciente.</p>';
+                      else {
+                          const ul = document.createElement('ul'); ul.className = 'list-group';
+                          recent.forEach(p => {
+                              const date = p.fecha || p[2] || p[3] || '';
+                              const amount = p.monto || p[1] || p[4] || 0;
+                              const loanId = p.loanId || p[1] || p[0] || '';
+                              const li = document.createElement('li');
+                              li.className = 'list-group-item d-flex justify-content-between align-items-start';
+                              li.innerHTML = `<div><strong>Pago</strong> - Préstamo ${loanId}<div class="text-muted small">${date ? new Date(date).toLocaleString() : ''}</div></div><div class="fw-bold">${formatMoney(Number(amount) || 0)}</div>`;
+                              ul.appendChild(li);
+                          });
+                          container.appendChild(ul);
+                      }
+                  }
+              } else {
+                  console.warn('No se pudieron cargar prestamos (dashboard):', loansResp && loansResp.message);
+              }
 
-        /* ---------- LOANS ---------- */
+          } catch (err) {
+              console.error('Error al cargar datos del dashboard:', err);
+              showAlert('Error al cargar datos del dashboard. Revisa la consola.', 'danger');
+          }
+      }
 
-        async function loadLoans() {
-            try {
-                const resp = await makeRequest('getClientLoans', { username });
-                const tbody = document.getElementById('loansTableBody');
-                if (!tbody) return;
-                tbody.innerHTML = '';
+      /* ---------- LOANS ---------- */
 
-                if (!resp.success || !Array.isArray(resp.data?.loans) || resp.data.loans.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No tienes préstamos registrados.</td></tr>';
-                    return;
-                }
+      async function loadLoans() {
+          try {
+              const resp = await makeRequest('getClientLoans', { username });
+              const tbody = document.getElementById('loansTableBody');
+              if (!tbody) return;
+              tbody.innerHTML = '';
 
-                resp.data.loans.forEach(loan => {
-                    const paid = Number(loan.paidInstallments || loan.pagas || 0);
-                    const total = Number(loan.totalInstallments || loan.cuotas || loan.montoCuotas || 0);
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-              <td>${loan.id || loan.loanId || ''}</td>
-              <td>${formatMoney(Number(loan.amount || loan.monto || 0))}</td>
-              <td>${formatMoney(Number(loan.currentBalance || loan.saldo || 0))}</td>
-              <td>${paid} / ${total}</td>
-              <td>${(loan.status || loan.estado) === 'activo' ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Finalizado</span>'}</td>
-              <td>
-                <button class="btn btn-sm btn-primary btn-small view-loan" data-loan='${encodeURIComponent(JSON.stringify(loan))}'>
-                  <i class="fas fa-eye me-1"></i> Ver
-                </button>
-              </td>`;
-                    tbody.appendChild(tr);
-                });
+              if (!resp.success || !Array.isArray(resp.data?.loans) || resp.data.loans.length === 0) {
+                  tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No tienes préstamos registrados.</td></tr>';
+                  return;
+              }
 
-                document.querySelectorAll('.view-loan').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const loan = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-loan')));
-                        openLoanModal(loan);
-                    });
-                });
+              resp.data.loans.forEach(loan => {
+                  const paid = Number(loan.paidInstallments || loan.pagas || 0);
+                  const total = Number(loan.totalInstallments || loan.cuotas || loan.montoCuotas || 0);
+                  const tr = document.createElement('tr');
+                  tr.innerHTML = `
+            <td>${loan.id || loan.loanId || ''}</td>
+            <td>${formatMoney(Number(loan.amount || loan.monto || 0))}</td>
+            <td>${formatMoney(Number(loan.currentBalance || loan.saldo || 0))}</td>
+            <td>${paid} / ${total}</td>
+            <td>${(loan.status || loan.estado) === 'activo' ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Finalizado</span>'}</td>
+            <td>
+              <button class="btn btn-sm btn-primary btn-small view-loan" data-loan='${encodeURIComponent(JSON.stringify(loan))}'>
+                <i class="fas fa-eye me-1"></i> Ver
+              </button>
+            </td>`;
+                  tbody.appendChild(tr);
+              });
 
-            } catch (err) {
-                console.error('Error al cargar préstamos:', err);
-                showAlert('Error al cargar préstamos. Revisa la consola.', 'danger');
-            }
-        }
+              document.querySelectorAll('.view-loan').forEach(btn => {
+                  btn.addEventListener('click', (e) => {
+                      const loan = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-loan')));
+                      openLoanModal(loan);
+                  });
+              });
 
-        /* ---------- MODAL RENDERS ---------- */
-        let CURRENT_MODAL_CONTRACT = null;
+          } catch (err) {
+              console.error('Error al cargar préstamos:', err);
+              showAlert('Error al cargar préstamos. Revisa la consola.', 'danger');
+          }
+      }
 
-        async function openLoanModal(loan) {
-            try {
-                document.getElementById('loanModalId').textContent = loan.id || loan.loanId || '';
-                document.getElementById('modalLoanAmount').textContent = formatMoney(Number(loan.amount || loan.monto || 0));
-                document.getElementById('modalLoanBalance').textContent = formatMoney(Number(loan.currentBalance || loan.saldo || 0));
-                document.getElementById('modalLoanCuotas').textContent = `${loan.paidInstallments || 0} / ${loan.totalInstallments || 0}`;
-                document.getElementById('modalLoanEstado').textContent = (loan.status || loan.estado) === 'activo' ? 'Activo' : 'Finalizado';
+      /* ---------- MODAL RENDERS ---------- */
+      let CURRENT_MODAL_CONTRACT = null;
 
-                const tbody = document.getElementById('modalPaymentsBody'); tbody.innerHTML = '';
+      async function openLoanModal(loan) {
+          try {
+              document.getElementById('loanModalId').textContent = loan.id || loan.loanId || '';
+              document.getElementById('modalLoanAmount').textContent = formatMoney(Number(loan.amount || loan.monto || 0));
+              document.getElementById('modalLoanBalance').textContent = formatMoney(Number(loan.currentBalance || loan.saldo || 0));
+              document.getElementById('modalLoanCuotas').textContent = `${loan.paidInstallments || 0} / ${loan.totalInstallments || 0}`;
+              document.getElementById('modalLoanEstado').textContent = (loan.status || loan.estado) === 'activo' ? 'Activo' : 'Finalizado';
 
-                const payments = Array.isArray(loan.payments) ? loan.payments : (loan.paymentsRaw || []);
-                if (!payments.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay pagos registrados.</td></tr>';
-                } else {
-                    payments.forEach(p => {
-                        const cuota = p.cuotaNumber ?? p[0] ?? '';
-                        const due = p.dueDate ?? p[1] ?? '';
-                        const total = p.amount ?? p[2] ?? 0;
-                        const capital = p.capital ?? p[3] ?? 0;
-                        const interest = p.interest ?? p[4] ?? 0;
-                        const status = p.status ?? 'pendiente';
-                        tbody.insertAdjacentHTML('beforeend', `<tr>
-                <td>${cuota}</td>
-                <td>${due ? new Date(due).toLocaleDateString() : ''}</td>
-                <td>${formatMoney(Number(total) || 0)}</td>
-                <td>${formatMoney(Number(capital) || 0)}</td>
-                <td>${formatMoney(Number(interest) || 0)}</td>
-                <td>${status === 'pagada' ? '<span class="badge bg-success">Pagada</span>' : '<span class="badge bg-warning">Pendiente</span>'}</td>
-              </tr>`);
-                    });
-                }
+              const tbody = document.getElementById('modalPaymentsBody'); tbody.innerHTML = '';
 
-                // buscar contrato
-                const cResp = await makeRequest('getClientContracts', { username });
-                if (cResp?.success) {
-                    const found = (cResp.data?.contracts || []).find(c => String(c.loanId || c.préstamo || c.loan).trim() === String(loan.id || loan.loanId).trim());
-                    CURRENT_MODAL_CONTRACT = found || null;
-                    document.getElementById('downloadContractBtn').disabled = !found;
-                    const pazBtn = document.getElementById('downloadPazSalvoBtn');
-                    if (pazBtn) pazBtn.style.display = found?.pazSalvo ? 'inline-block' : 'none';
-                }
+              const payments = Array.isArray(loan.payments) ? loan.payments : (loan.paymentsRaw || []);
+              if (!payments.length) {
+                  tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay pagos registrados.</td></tr>';
+              } else {
+                  payments.forEach(p => {
+                      const cuota = p.cuotaNumber ?? p[0] ?? '';
+                      const due = p.dueDate ?? p[1] ?? '';
+                      const total = p.amount ?? p[2] ?? 0;
+                      const capital = p.capital ?? p[3] ?? 0;
+                      const interest = p.interest ?? p[4] ?? 0;
+                      const status = p.status ?? 'pendiente';
+                      tbody.insertAdjacentHTML('beforeend', `<tr>
+              <td>${cuota}</td>
+              <td>${due ? new Date(due).toLocaleDateString() : ''}</td>
+              <td>${formatMoney(Number(total) || 0)}</td>
+              <td>${formatMoney(Number(capital) || 0)}</td>
+              <td>${formatMoney(Number(interest) || 0)}</td>
+              <td>${status === 'pagada' ? '<span class="badge bg-success">Pagada</span>' : '<span class="badge bg-warning">Pendiente</span>'}</td>
+            </tr>`);
+                  });
+              }
 
-                const modal = new bootstrap.Modal(document.getElementById('loanModal'));
-                modal.show();
+              // buscar contrato
+              const cResp = await makeRequest('getClientContracts', { username });
+              if (cResp?.success) {
+                  const found = (cResp.data?.contracts || []).find(c => String(c.loanId || c.préstamo || c.loan).trim() === String(loan.id || loan.loanId).trim());
+                  CURRENT_MODAL_CONTRACT = found || null;
+                  document.getElementById('downloadContractBtn').disabled = !found;
+                  const pazBtn = document.getElementById('downloadPazSalvoBtn');
+                  if (pazBtn) pazBtn.style.display = found?.pazSalvo ? 'inline-block' : 'none';
+              }
 
-            } catch (err) {
-                console.error('openLoanModal error', err);
-                showAlert('Error abriendo modal de préstamo.', 'danger');
-            }
-        }
+              const modal = new bootstrap.Modal(document.getElementById('loanModal'));
+              modal.show();
 
-        /* ---------- CONTRACTS ---------- */
+          } catch (err) {
+              console.error('openLoanModal error', err);
+              showAlert('Error abriendo modal de préstamo.', 'danger');
+          }
+      }
 
-        async function loadContracts() {
-            try {
-                const resp = await makeRequest('getClientContracts', { username });
-                const tbody = document.getElementById('contractsTableBody');
-                if (!tbody) return;
-                tbody.innerHTML = '';
+      /* ---------- CONTRACTS ---------- */
 
-                if (!resp.success || !Array.isArray(resp.data?.contracts) || resp.data.contracts.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay contratos registrados.</td></tr>';
-                    return;
-                }
+      async function loadContracts() {
+          try {
+              const resp = await makeRequest('getClientContracts', { username });
+              const tbody = document.getElementById('contractsTableBody');
+              if (!tbody) return;
+              tbody.innerHTML = '';
 
-                resp.data.contracts.forEach(c => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${c.id}</td><td>${c.loanId || c.préstamo || ''}</td><td>${c.fecha ? new Date(c.fecha).toLocaleDateString() : ''}</td><td>${c.type || 'Contrato'}</td>
-              <td>
-                <button class="btn btn-sm btn-primary btn-small view-contract" data-contract='${encodeURIComponent(JSON.stringify(c))}'>
-                  <i class="fas fa-eye me-1"></i> Ver / Descargar
-                </button>
-              </td>`;
-                    tbody.appendChild(tr);
-                });
+              if (!resp.success || !Array.isArray(resp.data?.contracts) || resp.data.contracts.length === 0) {
+                  tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay contratos registrados.</td></tr>';
+                  return;
+              }
 
-                document.querySelectorAll('.view-contract').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const c = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-contract')));
-                        CURRENT_MODAL_CONTRACT = c;
-                        openLoanModal({ id: c.loanId, payments: [] }); // reusar modal para mostrar info/descarga
-                    });
-                });
+              resp.data.contracts.forEach(c => {
+                  const tr = document.createElement('tr');
+                  tr.innerHTML = `<td>${c.id}</td><td>${c.loanId || c.préstamo || ''}</td><td>${c.fecha ? new Date(c.fecha).toLocaleDateString() : ''}</td><td>${c.type || 'Contrato'}</td>
+            <td>
+              <button class="btn btn-sm btn-primary btn-small view-contract" data-contract='${encodeURIComponent(JSON.stringify(c))}'>
+                <i class="fas fa-eye me-1"></i> Ver / Descargar
+              </button>
+            </td>`;
+                  tbody.appendChild(tr);
+              });
 
-            } catch (err) {
-                console.error('Error al cargar contratos:', err);
-                showAlert('Error al cargar contratos', 'danger');
-            }
-        }
+              document.querySelectorAll('.view-contract').forEach(btn => {
+                  btn.addEventListener('click', (e) => {
+                      const c = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-contract')));
+                      CURRENT_MODAL_CONTRACT = c;
+                      openLoanModal({ id: c.loanId, payments: [] }); // reusar modal para mostrar info/descarga
+                  });
+              });
 
-        /* ---------- PROFILE ---------- */
+          } catch (err) {
+              console.error('Error al cargar contratos:', err);
+              showAlert('Error al cargar contratos', 'danger');
+          }
+      }
 
-        async function loadProfile() {
-            try {
-                const resp = await makeRequest('getClientInfo', { username });
-                if (!resp.success) { showAlert(resp.message || 'No se pudo cargar perfil', 'danger'); return; }
-                const c = resp.data?.client || resp.data || {};
-                document.getElementById('profileDoc').value = c.numeroDocumento || c.doc || username;
-                document.getElementById('profileName').value = c.nombreCompleto || c.name || '';
-                document.getElementById('profilePhone').value = c.telefono || c.phone || '';
-                document.getElementById('profileAddress').value = c.direccion || c.address || '';
-                document.getElementById('profileColor').value = c.colorFavorito || c.favoriteColor || '';
-                document.getElementById('profileAnimal').value = c.animalFavorito || c.favoriteAnimal || '';
-            } catch (err) {
-                console.error('Error al cargar perfil:', err);
-                showAlert('Error al cargar perfil', 'danger');
-            }
-        }
+      /* ---------- PROFILE ---------- */
 
-        async function saveProfile(e) {
-            e.preventDefault();
-            const payload = {
-                username,
-                nombreCompleto: document.getElementById('profileName').value.trim(),
-                telefono: document.getElementById('profilePhone').value.trim(),
-                direccion: document.getElementById('profileAddress').value.trim(),
-                colorFavorito: document.getElementById('profileColor').value.trim(),
-                animalFavorito: document.getElementById('profileAnimal').value.trim()
-            };
-            const resp = await makeRequest('updateClientProfile', payload);
-            if (resp.success) {
-                showAlert('Perfil actualizado', 'success');
-                await loadProfile();
-            } else showAlert(resp.message || 'Error al guardar perfil', 'danger');
-        }
+      async function loadProfile() {
+          try {
+              const resp = await makeRequest('getClientInfo', { username });
+              if (!resp.success) { showAlert(resp.message || 'No se pudo cargar perfil', 'danger'); return; }
+              const c = resp.data?.client || resp.data || {};
+              document.getElementById('profileDoc').value = c.numeroDocumento || c.doc || username;
+              document.getElementById('profileName').value = c.nombreCompleto || c.name || '';
+              document.getElementById('profilePhone').value = c.telefono || c.phone || '';
+              document.getElementById('profileAddress').value = c.direccion || c.address || '';
+              document.getElementById('profileColor').value = c.colorFavorito || c.favoriteColor || '';
+              document.getElementById('profileAnimal').value = c.animalFavorito || c.favoriteAnimal || '';
+          } catch (err) {
+              console.error('Error al cargar perfil:', err);
+              showAlert('Error al cargar perfil', 'danger');
+          }
+      }
 
-        async function changePassword(e) {
-            e.preventDefault();
-            const oldP = document.getElementById('oldPassword').value;
-            const newP = document.getElementById('newPassword').value;
-            const conf = document.getElementById('confirmPassword').value;
-            if (newP !== conf) { showAlert('Las contraseñas no coinciden', 'warning'); return; }
-            const resp = await makeRequest('changePassword', { username, oldPassword: oldP, newPassword: newP });
-            if (resp.success) {
-                showAlert('Contraseña cambiada exitosamente.', 'success');
-                document.getElementById('changePasswordForm').reset();
-            } else {
-                showAlert(resp.message || 'Error al cambiar la contraseña.', 'danger');
-            }
-        }
+      async function saveProfile(e) {
+          e.preventDefault();
+          const payload = {
+              username,
+              nombreCompleto: document.getElementById('profileName').value.trim(),
+              telefono: document.getElementById('profilePhone').value.trim(),
+              direccion: document.getElementById('profileAddress').value.trim(),
+              colorFavorito: document.getElementById('profileColor').value.trim(),
+              animalFavorito: document.getElementById('profileAnimal').value.trim()
+          };
+          const resp = await makeRequest('updateClientProfile', payload);
+          if (resp.success) {
+              showAlert('Perfil actualizado', 'success');
+              await loadProfile();
+          } else showAlert(resp.message || 'Error al guardar perfil', 'danger');
+      }
 
-        /* ---------- DOWNLOAD helpers (contrato/paz y salvo) ---------- */
+      async function changePassword(e) {
+          e.preventDefault();
+          const oldP = document.getElementById('oldPassword').value;
+          const newP = document.getElementById('newPassword').value;
+          const conf = document.getElementById('confirmPassword').value;
+          if (newP !== conf) { showAlert('Las contraseñas no coinciden', 'warning'); return; }
+          const resp = await makeRequest('changePassword', { username, oldPassword: oldP, newPassword: newP });
+          if (resp.success) {
+              showAlert('Contraseña cambiada exitosamente.', 'success');
+              document.getElementById('changePasswordForm').reset();
+          } else {
+              showAlert(resp.message || 'Error al cambiar la contraseña.', 'danger');
+          }
+      }
 
-        async function downloadCurrentContractPDF() {
-            if (!CURRENT_MODAL_CONTRACT) { showAlert('No hay contrato seleccionado', 'warning'); return; }
-            const html = `<div style="font-family:Arial;padding:24px">
-          <h2>CONTRATO</h2>
-          <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
-          <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
-          <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
-          <p><strong>Fecha:</strong> ${CURRENT_MODAL_CONTRACT.fecha ? new Date(CURRENT_MODAL_CONTRACT.fecha).toLocaleDateString() : ''}</p>
-          <hr/>${CURRENT_MODAL_CONTRACT.text || ''}
-        </div>`;
-            const blob = await htmlToPdfBlob(html, 1);
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `contrato_${CURRENT_MODAL_CONTRACT.id || Date.now()}.pdf`; a.click();
-            URL.revokeObjectURL(url);
-        }
+      /* ---------- DOWNLOAD helpers (contrato/paz y salvo) ---------- */
 
-        async function htmlToPdfBlob(htmlContent, scale = 1) {
-            const wrapper = document.createElement('div'); wrapper.innerHTML = htmlContent; document.body.appendChild(wrapper);
-            const canvas = await html2canvas(wrapper, { scale });
-            const imgData = canvas.toDataURL('image/png');
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'pt', 'a4');
-            const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            const blob = pdf.output('blob');
-            document.body.removeChild(wrapper);
-            return blob;
-        }
+      async function downloadCurrentContractPDF() {
+          if (!CURRENT_MODAL_CONTRACT) { showAlert('No hay contrato seleccionado', 'warning'); return; }
+          const html = `<div style="font-family:Arial;padding:24px">
+        <h2>CONTRATO</h2>
+        <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
+        <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
+        <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
+        <p><strong>Fecha:</strong> ${CURRENT_MODAL_CONTRACT.fecha ? new Date(CURRENT_MODAL_CONTRACT.fecha).toLocaleDateString() : ''}</p>
+        <hr/>${CURRENT_MODAL_CONTRACT.text || ''}
+      </div>`;
+          const blob = await htmlToPdfBlob(html, 1);
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a'); a.href = url; a.download = `contrato_${CURRENT_MODAL_CONTRACT.id || Date.now()}.pdf`; a.click();
+          URL.revokeObjectURL(url);
+      }
 
-        /* ---------- UTIL ---------- */
-        function formatMoney(value) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(Number(value || 0)); }
+      async function htmlToPdfBlob(htmlContent, scale = 1) {
+          const wrapper = document.createElement('div'); wrapper.innerHTML = htmlContent; document.body.appendChild(wrapper);
+          const canvas = await html2canvas(wrapper, { scale });
+          const imgData = canvas.toDataURL('image/png');
+          const { jsPDF } = window.jspdf;
+          const pdf = new jsPDF('p', 'pt', 'a4');
+          const imgProps = pdf.getImageProperties(imgData);
+          const pdfWidth = pdf.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          const blob = pdf.output('blob');
+          document.body.removeChild(wrapper);
+          return blob;
+      }
 
-        /* ---------- LOGOUT ---------- */
-        async function logout() {
-            try {
-                await makeRequest('logout', { sessionToken });
-            } catch (e) {
-                console.warn('logout error', e);
-            } finally {
-                localStorage.clear();
-                // replace evita que el usuario vuelva con el botón Atrás a la sesión anterior
-                window.location.replace('login.html'); // ajusta si tu login tiene otra ruta
-            }
-        }
+      /* ---------- UTIL ---------- */
+      function formatMoney(value) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(Number(value || 0)); }
+
+      /* ---------- LOGOUT ---------- */
+      async function logout() {
+          try {
+              await makeRequest('logout', { sessionToken });
+          } catch (e) {
+              console.warn('logout error', e);
+          } finally {
+              localStorage.clear();
+              // replace evita que el usuario vuelva con el botón Atrás a la sesión anterior
+              window.location.replace('login.html'); // ajusta si tu login tiene otra ruta
+          }
+      }
     </script>
-</body>
-
+  </body>
 </html>
