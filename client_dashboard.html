@@ -542,30 +542,35 @@
                 <div class="brand">
                     <div class="brand-icon">
                         <i class="fas fa-chart-line"></i>
-                    </div>SGL Pro</div>
+                    </div>SGL Pro
+                </div>
                 <div class="welcome-text"> Bienvenido, <strong id="clientNameTitle">Cliente</strong></div>
             </div>
 
-            <div class="sidebar-nav">
-                <div class="nav-item">
+            <div id="sidebar" class="sidebar">
+                <div class="sidebar-header">
                     <a href="#" class="nav-link active" data-section="dashboard">
-                        <i class="fas fa-tachometer-alt"></i>Panel Principal</a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="loans">
-                        <i class="fas fa-money-bill-wave"></i>Mis Préstamos
+                        <span class="icon"><i class="fas fa-home"></i></span>
+                        <span class="text">Inicio</span>
                     </a>
                 </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="contracts">
-                        <i class="fas fa-file-contract"></i>Contratos
-                    </a>
-                </div>
-                <div class="nav-item">
-                    <a href="#" class="nav-link" data-section="profile">
-                        <i class="fas fa-user-circle"></i>Mi Perfil
-                    </a>
-                </div>
+                <ul class="nav flex-column mb-auto">
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="loans">
+                            <i class="fas fa-credit-card me-2"></i> Préstamos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="contracts">
+                            <i class="fas fa-file-contract me-2"></i> Contratos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" data-section="profile">
+                            <i class="fas fa-user-circle me-2"></i> Perfil
+                        </a>
+                    </li>
+                </ul>
             </div>
 
             <div class="sidebar-footer">
@@ -1020,33 +1025,33 @@
             // sidebar links (si usas enlaces con data-section)
 
             document.addEventListener('DOMContentLoaded', async () => {
-   if (!sessionToken || !username) {
-       window.location.replace('login.html');
-       return;
-   }
+                if (!sessionToken || !username) {
+                    window.location.replace('login.html');
+                    return;
+                }
 
-   // Sidebar links
-   document.querySelectorAll('.sidebar-nav a').forEach(link => {
-     link.addEventListener('click', async ev => {
-       ev.preventDefault();
-       const target = link.dataset.section;
-       if (!target) return;
+                // Sidebar links
+                document.querySelectorAll('.sidebar-nav a').forEach(link => {
+                    link.addEventListener('click', async ev => {
+                        ev.preventDefault();
+                        const target = link.dataset.section;
+                        if (!target) return;
 
-       document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
-       link.classList.add('active');
+                        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
+                        link.classList.add('active');
 
-       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-       document.getElementById(target)?.classList.add('active');
+                        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                        document.getElementById(target)?.classList.add('active');
 
-       if (target === 'dashboard') await loadDashboardData();
-       if (target === 'loans') await loadLoans();
-       if (target === 'contracts') await loadContracts();
-       if (target === 'profile') await loadProfile();
-     });
-   });
+                        if (target === 'dashboard') await loadDashboardData();
+                        if (target === 'loans') await loadLoans();
+                        if (target === 'contracts') await loadContracts();
+                        if (target === 'profile') await loadProfile();
+                    });
+                });
 
-   await loadDashboardData();
-});
+                await loadDashboardData();
+            });
 
 
 
@@ -1332,30 +1337,30 @@
         }
 
         async function htmlToPdfBlob(htmlContent, scale = 1) {
-    const wrap = document.createElement('div');
-    wrap.innerHTML = htmlContent;
-    document.body.appendChild(wrap);
+            const wrap = document.createElement('div');
+            wrap.innerHTML = htmlContent;
+            document.body.appendChild(wrap);
 
-    const canvas = await html2canvas(wrap, {
-      scale: scale,
-      logging: false,
-      useCORS: true
-    });
-    const imgData = canvas.toDataURL('image/png');
+            const canvas = await html2canvas(wrap, {
+                scale: scale,
+                logging: false,
+                useCORS: true
+            });
+            const imgData = canvas.toDataURL('image/png');
 
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const imgProps = pdf.getImageProperties(imgData);
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'pt', 'a4');
+            const imgProps = pdf.getImageProperties(imgData);
 
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-    const blob = pdf.output('blob');
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            const blob = pdf.output('blob');
 
-    document.body.removeChild(wrap);
-    return blob;
-  }
+            document.body.removeChild(wrap);
+            return blob;
+        }
 
         /* ---------- UTIL ---------- */
         function formatMoney(value) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(Number(value || 0)); }
@@ -1374,41 +1379,58 @@
         }
 
         // Añade esto al final de tu <script>
-document.addEventListener('DOMContentLoaded', () => {
-    // Escucha el clic en los enlaces de navegación
-    document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+        document.addEventListener('DOMContentLoaded', () => {
+            // Escucha el clic en los enlaces de navegación
+            document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    showModule(sectionId);
+                });
+            });
+
+            // Código para el menú móvil (opcional)
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.getElementById('sidebar');
+
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function () {
+                    sidebar.classList.toggle('open');
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+    // Escucha todos los clics en los enlaces de la barra lateral
+    document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', function(e) {
-            e.preventDefault();
+            e.preventDefault(); // Evita que la página se recargue
+
+            // Obtiene el ID del módulo a mostrar desde el atributo data-section
             const sectionId = this.getAttribute('data-section');
-            showModule(sectionId);
+            if (sectionId) {
+                showModule(sectionId);
+            }
         });
     });
 
-    // Código para el menú móvil (opcional)
-    const mobileToggle = document.getElementById('mobileToggle');
-    const sidebar = document.getElementById('sidebar');
-
-    if (mobileToggle) {
-        mobileToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('open');
-        });
-    }
+    // Muestra el módulo de inicio al cargar la página por primera vez
+    showModule('dashboard'); 
 });
 
-// Tu función showModule debe lucir así para funcionar con el código anterior
 function showModule(sectionId) {
-    // Oculta todas las secciones
-    document.querySelectorAll('.section').forEach(section => {
+    // 1. Oculta todas las secciones de contenido
+    document.querySelectorAll('section.content-section').forEach(section => {
         section.classList.remove('active');
     });
 
-    // Muestra la sección correcta
+    // 2. Muestra la sección correcta
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.classList.add('active');
     }
 
-    // Actualiza la clase 'active' en los enlaces de navegación
+    // 3. Actualiza la clase 'active' en el menú de navegación
     document.querySelectorAll('.nav-link').forEach(link => {
         link.classList.remove('active');
     });
@@ -1418,7 +1440,7 @@ function showModule(sectionId) {
         targetLink.classList.add('active');
     }
 
-    // Carga los datos solo si no se han cargado antes
+    // 4. Llama a la función para cargar los datos de la sección
     if (sectionId === 'dashboard') {
         fetchDashboardData();
     } else if (sectionId === 'loans') {
@@ -1429,6 +1451,7 @@ function showModule(sectionId) {
         fetchClientProfile();
     }
 }
+
     </script>
 </body>
 
