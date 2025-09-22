@@ -857,7 +857,7 @@
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   
@@ -891,27 +891,22 @@
     // ===================================
     // FUNCIÓN DE CONEXIÓN AL BACKEND
     // ===================================
-    async function makeRequest(action, payload = {}) {
-      try {
-        const response = await fetch(BACKEND_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ action, ...payload }),
+    async function makeRequest(action, data = {}) {
+    const url = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec';
+    const form = new FormData();
+    form.append('payload', JSON.stringify({ ...data, action, sessionToken }));
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: form      // ✅ igual que admin
         });
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Error de red: ${response.status} - ${errorText}`);
-        }
-        
-        return response.json();
-      } catch (error) {
+        return await response.json();
+    } catch (error) {
         console.error('Error en makeRequest:', error);
-        throw error;
-      }
+        return { success: false, message: 'Error de conexión' };
     }
+}
 
     // ===================================
     // MANEJO DE SECCIONES Y NAVEGACIÓN
