@@ -1,1458 +1,1473 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Panel de Clientes - SGL Pro</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet" />
-    <style>
-        :root {
-            --primary: #1a365d;
-            --primary-light: #2d5a87;
-            --secondary: #3182ce;
-            --accent: #805ad5;
-            --success: #38a169;
-            --warning: #d69e2e;
-            --danger: #e53e3e;
-            --light-bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text-primary: #2d3748;
-            --text-secondary: #4a5568;
-            --border-color: #e2e8f0;
-            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-                0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-                0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-                0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            --gradient-primary: linear-gradient(135deg,
-                    var(--primary) 0%,
-                    var(--secondary) 100%);
-            --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
-            --gradient-warning: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
-            --gradient-accent: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--light-bg);
-            font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-                sans-serif;
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        /* LAYOUT */
-        .wrapper {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: var(--gradient-primary);
-            color: white;
-            padding: 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-strong);
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        .sidebar-header {
-            padding: 2rem 1.5rem 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .welcome-text {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            font-weight: 400;
-        }
-
-        .sidebar-nav {
-            padding: 1rem 0;
-        }
-
-        .nav-item {
-            margin-bottom: 0.25rem;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 1rem 1.5rem;
-            color: rgba(255, 255, 255, 0.85);
-            text-decoration: none;
-            border-radius: 0;
-            transition: all 0.3s ease;
-            position: relative;
-            font-weight: 500;
-        }
-
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            transform: translateX(4px);
-        }
-
-        .nav-link.active {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border-right: 4px solid #ffd700;
-        }
-
-        .nav-link i {
-            width: 20px;
-            margin-right: 1rem;
-            font-size: 1.1rem;
-        }
-
-        .sidebar-footer {
-            position: absolute;
-            bottom: 1rem;
-            left: 1.5rem;
-            right: 1.5rem;
-        }
-
-        .main {
-            margin-left: 280px;
-            padding: 2rem;
-            width: calc(100% - 280px);
-            min-height: 100vh;
-            transition: all 0.3s ease;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 768px) {
-            .sidebar {
-                left: -280px;
-            }
-
-            .sidebar.open {
-                left: 0;
-            }
-
-            .main {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .mobile-toggle {
-                display: block !important;
-            }
-        }
-
-        /* COMPONENTS */
-        .page-header {
-            margin-bottom: 2rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .page-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .page-subtitle {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        .mobile-toggle {
-            display: none;
-            margin-bottom: 1rem;
-        }
-
-        /* CARDS */
-        .stat-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-light);
-            border: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-        }
-
-        .stat-card:hover {
-            box-shadow: var(--shadow-medium);
-            transform: translateY(-2px);
-        }
-
-        .stat-card.success::before {
-            background: var(--gradient-success);
-        }
-
-        .stat-card.warning::before {
-            background: var(--gradient-warning);
-        }
-
-        .stat-card.accent::before {
-            background: var(--gradient-accent);
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: white;
-        }
-
-        .stat-icon.primary {
-            background: var(--gradient-primary);
-        }
-
-        .stat-icon.success {
-            background: var(--gradient-success);
-        }
-
-        .stat-icon.warning {
-            background: var(--gradient-warning);
-        }
-
-        .stat-icon.accent {
-            background: var(--gradient-accent);
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .content-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: var(--shadow-light);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            margin-bottom: 2rem;
-        }
-
-        .card-header-modern {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 1.5rem;
-            font-weight: 600;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-body-modern {
-            padding: 1.5rem;
-        }
-
-        /* CHARTS */
-        .chart-container {
-            position: relative;
-            height: 300px;
-            margin: 1rem 0;
-        }
-
-        /* TABLES */
-        .table-modern {
-            margin: 0;
-            border-collapse: separate;
-            border-spacing: 0;
-        }
-
-        .table-modern th {
-            background: var(--light-bg);
-            color: var(--text-primary);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 0.5px;
-            padding: 1rem;
-            border: none;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .table-modern td {
-            padding: 1rem;
-            border: none;
-            border-bottom: 1px solid var(--border-color);
-            vertical-align: middle;
-        }
-
-        .table-modern tbody tr:hover {
-            background: var(--light-bg);
-        }
-
-        /* BADGES */
-        .badge-modern {
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border-radius: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-success {
-            background: #e6fffa;
-            color: #00695c;
-        }
-
-        .badge-warning {
-            background: #fff8e1;
-            color: #e65100;
-        }
-
-        .badge-secondary {
-            background: #f5f5f5;
-            color: #616161;
-        }
-
-        /* BUTTONS */
-        .btn-modern {
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            border: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary-modern {
-            background: var(--gradient-primary);
-            color: white;
-        }
-
-        .btn-primary-modern:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .btn-sm-modern {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
-
-        /* FORMS */
-        .form-control-modern {
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            font-size: 0.9rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control-modern:focus {
-            border-color: var(--secondary);
-            box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
-        }
-
-        .form-label-modern {
-            font-weight: 500;
-            color: var(--text-primary);
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-
-        /* ALERTS */
-        .alert-fixed {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            z-index: 2000;
-            min-width: 320px;
-            border-radius: 12px;
-            border: none;
-            box-shadow: var(--shadow-strong);
-            animation: slideInRight 0.3s ease;
-        }
-
-        @keyframes slideInRight {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* ACTIVITY FEED */
-        .activity-item {
-            display: flex;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.3s ease;
-        }
-
-        .activity-item:hover {
-            background: var(--light-bg);
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--gradient-success);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 1rem;
-            font-size: 1rem;
-        }
-
-        .activity-content {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-subtitle {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .activity-amount {
-            font-weight: 700;
-            color: var(--success);
-            font-size: 1.1rem;
-        }
-
-        /* LOADING */
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid #f3f3f3;
-            border-top: 2px solid var(--secondary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* SECTIONS */
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel de Clientes - SGL Pro</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #1a365d;
+      --primary-light: #2d5a87;
+      --secondary: #3182ce;
+      --accent: #805ad5;
+      --success: #38a169;
+      --warning: #d69e2e;
+      --danger: #e53e3e;
+      --light-bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text-primary: #2d3748;
+      --text-secondary: #4a5568;
+      --border-color: #e2e8f0;
+      --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      --shadow-strong: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      --gradient-success: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+      --gradient-warning: linear-gradient(135deg, #ecc94b 0%, #d69e2e 100%);
+      --gradient-accent: linear-gradient(135deg, #9f7aea 0%, #805ad5 100%);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background: var(--light-bg);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    
+    /* LAYOUT */
+    .wrapper {
+      display: flex;
+      min-height: 100vh;
+    }
+    
+    .sidebar {
+      width: 280px;
+      background: var(--gradient-primary);
+      color: white;
+      padding: 0;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-strong);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .sidebar-header {
+      padding: 2rem 1.5rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    
+    .welcome-text {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+      font-weight: 400;
+    }
+    
+    .sidebar-nav {
+      padding: 1rem 0;
+    }
+    
+    .nav-item {
+      margin-bottom: 0.25rem;
+    }
+    
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      color: rgba(255, 255, 255, 0.85);
+      text-decoration: none;
+      border-radius: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      font-weight: 500;
+    }
+    
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      transform: translateX(4px);
+    }
+    
+    .nav-link.active {
+      background: rgba(255, 255, 255, 0.15);
+      color: white;
+      border-right: 4px solid #ffd700;
+    }
+    
+    .nav-link i {
+      width: 20px;
+      margin-right: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .sidebar-footer {
+      position: absolute;
+      bottom: 1rem;
+      left: 1.5rem;
+      right: 1.5rem;
+    }
+    
+    .main {
+      margin-left: 280px;
+      padding: 2rem;
+      width: calc(100% - 280px);
+      min-height: 100vh;
+      transition: all 0.3s ease;
+    }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar {
+        left: -280px;
+      }
+      
+      .sidebar.open {
+        left: 0;
+      }
+      
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .mobile-toggle {
+        display: block !important;
+      }
+    }
+    
+    /* COMPONENTS */
+    .page-header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+    
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 1rem;
+    }
+    
+    .mobile-toggle {
+      display: none;
+      margin-bottom: 1rem;
+    }
+    
+    /* CARDS */
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: var(--gradient-primary);
+    }
+    
+    .stat-card:hover {
+      box-shadow: var(--shadow-medium);
+      transform: translateY(-2px);
+    }
+    
+    .stat-card.success::before {
+      background: var(--gradient-success);
+    }
+    
+    .stat-card.warning::before {
+      background: var(--gradient-warning);
+    }
+    
+    .stat-card.accent::before {
+      background: var(--gradient-accent);
+    }
+    
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: white;
+    }
+    
+    .stat-icon.primary {
+      background: var(--gradient-primary);
+    }
+    
+    .stat-icon.success {
+      background: var(--gradient-success);
+    }
+    
+    .stat-icon.warning {
+      background: var(--gradient-warning);
+    }
+    
+    .stat-icon.accent {
+      background: var(--gradient-accent);
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .content-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow-light);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .card-header-modern {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 1.5rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .card-body-modern {
+      padding: 1.5rem;
+    }
+    
+    /* CHARTS */
+    .chart-container {
+      position: relative;
+      height: 300px;
+      margin: 1rem 0;
+    }
+    
+    /* TABLES */
+    .table-modern {
+      margin: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+    
+    .table-modern th {
+      background: var(--light-bg);
+      color: var(--text-primary);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+      padding: 1rem;
+      border: none;
+      border-bottom: 2px solid var(--border-color);
+    }
+    
+    .table-modern td {
+      padding: 1rem;
+      border: none;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+    
+    .table-modern tbody tr:hover {
+      background: var(--light-bg);
+    }
+    
+    /* BADGES */
+    .badge-modern {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .badge-success {
+      background: #e6fffa;
+      color: #00695c;
+    }
+    
+    .badge-warning {
+      background: #fff8e1;
+      color: #e65100;
+    }
+    
+    .badge-secondary {
+      background: #f5f5f5;
+      color: #616161;
+    }
+    
+    /* BUTTONS */
+    .btn-modern {
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      border: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-primary-modern {
+      background: var(--gradient-primary);
+      color: white;
+    }
+    
+    .btn-primary-modern:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-medium);
+    }
+    
+    .btn-sm-modern {
+      padding: 0.5rem 1rem;
+      font-size: 0.85rem;
+    }
+    
+    /* FORMS */
+    .form-control-modern {
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.75rem 1rem;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control-modern:focus {
+      border-color: var(--secondary);
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+    }
+    
+    .form-label-modern {
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    /* ALERTS */
+    .alert-fixed {
+      position: fixed;
+      top: 2rem;
+      right: 2rem;
+      z-index: 2000;
+      min-width: 320px;
+      border-radius: 12px;
+      border: none;
+      box-shadow: var(--shadow-strong);
+      animation: slideInRight 0.3s ease;
+    }
+    
+    @keyframes slideInRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+    
+    /* ACTIVITY FEED */
+    .activity-item {
+      display: flex;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+    
+    .activity-item:hover {
+      background: var(--light-bg);
+    }
+    
+    .activity-item:last-child {
+      border-bottom: none;
+    }
+    
+    .activity-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--gradient-success);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 1rem;
+      font-size: 1rem;
+    }
+    
+    .activity-content {
+      flex: 1;
+    }
+    
+    .activity-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .activity-subtitle {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+    
+    .activity-amount {
+      font-weight: 700;
+      color: var(--success);
+      font-size: 1.1rem;
+    }
+    
+    /* LOADING */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid var(--secondary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    /* SECTIONS */
+    .section {
+      display: none;
+    }
+    
+    .section.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="wrapper">
-        <nav id="sidebar" class="sidebar">
-            <div class="sidebar-header">
-                <div class="brand">
-                    <div class="brand-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>SGL Pro
-                </div>
-                <div class="welcome-text"> Bienvenido, <strong id="clientNameTitle">Cliente</strong></div>
+  <div class="wrapper">
+    <nav id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          SGL Pro
+        </div>
+        <div class="welcome-text">
+          Bienvenido, <strong id="clientNameTitle">Cliente</strong>
+        </div>
+      </div>
+      
+      <div class="sidebar-nav">
+        <div class="nav-item">
+          <a href="#" class="nav-link active" data-section="dashboard">
+            <i class="fas fa-tachometer-alt"></i>
+            Panel Principal
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="loans">
+            <i class="fas fa-money-bill-wave"></i>
+            Mis Préstamos
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="contracts">
+            <i class="fas fa-file-contract"></i>
+            Contratos
+          </a>
+        </div>
+        <div class="nav-item">
+          <a href="#" class="nav-link" data-section="profile">
+            <i class="fas fa-user-circle"></i>
+            Mi Perfil
+          </a>
+        </div>
+      </div>
+      
+      <div class="sidebar-footer">
+        <a href="#" id="logoutBtn" class="nav-link" style="color: rgba(255,255,255,0.6);">
+          <i class="fas fa-sign-out-alt"></i>
+          Cerrar Sesión
+        </a>
+      </div>
+    </nav>
+
+    <main class="main">
+      <button id="mobileToggle" class="btn btn-light mobile-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      
+      <div class="page-header">
+        <h1 class="page-title">Hola, <span id="clientNameHeadline">Cliente</span></h1>
+        <p class="page-subtitle">Gestiona tus préstamos y consulta tu información financiera</p>
+      </div>
+
+      <div id="alertPlaceholder"></div>
+
+      <section id="dashboard" class="section active">
+        <div class="row g-4 mb-4">
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card primary">
+              <div class="stat-icon primary">
+                <i class="fas fa-dollar-sign"></i>
+              </div>
+              <div class="stat-value" id="totalPendingAmount">$0</div>
+              <div class="stat-label">Saldo Pendiente</div>
             </div>
-
-            <div id="sidebar" class="sidebar">
-                <div class="sidebar-header">
-                    <a href="#" class="nav-link active" data-section="dashboard">
-                        <span class="icon"><i class="fas fa-home"></i></span>
-                        <span class="text">Inicio</span>
-                    </a>
-                </div>
-                <ul class="nav flex-column mb-auto">
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="loans">
-                            <i class="fas fa-credit-card me-2"></i> Préstamos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="contracts">
-                            <i class="fas fa-file-contract me-2"></i> Contratos
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link" data-section="profile">
-                            <i class="fas fa-user-circle me-2"></i> Perfil
-                        </a>
-                    </li>
-                </ul>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card success">
+              <div class="stat-icon success">
+                <i class="fas fa-check-circle"></i>
+              </div>
+              <div class="stat-value" id="activeLoansCount">0</div>
+              <div class="stat-label">Préstamos Activos</div>
             </div>
-
-            <div class="sidebar-footer">
-                <a href="#" id="logoutBtn" class="nav-link" style="color: rgb(255, 0, 0)">
-                    <i class="fas fa-sign-out-alt"></i>Cerrar Sesión
-                </a>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card warning">
+              <div class="stat-icon warning">
+                <i class="fas fa-handshake"></i>
+              </div>
+              <div class="stat-value" id="finalizedLoansCount">0</div>
+              <div class="stat-label">Préstamos Finalizados</div>
             </div>
-        </nav>
-
-        <main class="main">
-            <button id="mobileToggle" class="btn btn-light mobile-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
-
-            <div class="page-header">
-                <h1 class="page-title">
-                    Hola, <span id="clientNameHeadline">Cliente</span>
-                </h1>
-                <p class="page-subtitle">
-                    Gestiona tus préstamos y consulta tu información financiera
-                </p>
+          </div>
+          <div class="col-12 col-md-6 col-xl-3">
+            <div class="stat-card accent">
+              <div class="stat-icon accent">
+                <i class="fas fa-percentage"></i>
+              </div>
+              <div class="stat-value" id="averageInterestRate">0%</div>
+              <div class="stat-label">Tasa Promedio</div>
             </div>
-
-            <div id="alertPlaceholder"></div>
-
-            <section id="dashboard" class="section active">
-                <div class="row g-4 mb-4">
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card primary">
-                            <div class="stat-icon primary">
-                                <i class="fas fa-dollar-sign"></i>
-                            </div>
-                            <div class="stat-value" id="totalPendingAmount">$0</div>
-                            <div class="stat-label">Saldo Pendiente</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card success">
-                            <div class="stat-icon success">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                            <div class="stat-value" id="activeLoansCount">0</div>
-                            <div class="stat-label">Préstamos Activos</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card warning">
-                            <div class="stat-icon warning">
-                                <i class="fas fa-handshake"></i>
-                            </div>
-                            <div class="stat-value" id="finalizedLoansCount">0</div>
-                            <div class="stat-label">Préstamos Finalizados</div>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-xl-3">
-                        <div class="stat-card accent">
-                            <div class="stat-icon accent">
-                                <i class="fas fa-percentage"></i>
-                            </div>
-                            <div class="stat-value" id="averageInterestRate">0%</div>
-                            <div class="stat-label">Tasa Promedio</div>
-                        </div>
-                    </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 col-lg-8">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-chart-area"></i> Evolución de Pagos
+              </div>
+              <div class="card-body-modern">
+                <div class="chart-container">
+                  <canvas id="paymentsChart"></canvas>
                 </div>
-
-                <div class="row">
-                    <div class="col-12 col-lg-8">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-chart-area"></i>
-                                Evolución de Pagos
-                            </div>
-                            <div class="card-body-modern">
-                                <div class="chart-container">
-                                    <canvas id="paymentsChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-lg-4">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-clock"></i>
-                                Actividad Reciente
-                            </div>
-                            <div class="card-body-modern" style="padding: 0">
-                                <div id="recentActivityContainer">
-                                    <div class="text-center p-4">
-                                        <div class="loading-spinner mx-auto mb-2"></div>
-                                        <small class="text-muted">Cargando actividad...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-4">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-clock"></i> Actividad Reciente
+              </div>
+              <div class="card-body-modern" style="padding: 0;">
+                <div id="recentActivityContainer">
+                  <div class="text-center p-4">
+                    <div class="loading-spinner mx-auto mb-2"></div>
+                    <small class="text-muted">Cargando actividad...</small>
+                  </div>
                 </div>
-
-                <div class="row mt-4">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-12 col-md-6">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-chart-pie"></i> Estado de Préstamos
+              </div>
+              <div class="card-body-modern">
+                <div class="chart-container" style="height: 250px;">
+                  <canvas id="loanStatusChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-md-6">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-calendar-alt"></i> Próximos Vencimientos
+              </div>
+              <div class="card-body-modern">
+                <div id="upcomingPayments">
+                  <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-2"></div>
+                    <small class="text-muted">Cargando vencimientos...</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="loans" class="section">
+        <div class="content-card">
+          <div class="card-header-modern">
+            <i class="fas fa-money-bill-wave"></i> Mis Préstamos
+          </div>
+          <div class="card-body-modern">
+            <div class="table-responsive">
+              <table class="table table-modern">
+                <thead>
+                  <tr>
+                    <th>ID Préstamo</th>
+                    <th>Monto Original</th>
+                    <th>Saldo Actual</th>
+                    <th>Cuotas</th>
+                    <th>Tasa</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="loansTableBody">
+                  <tr>
+                    <td colspan="7" class="text-center py-4">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted">Cargando préstamos...</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="contracts" class="section">
+        <div class="content-card">
+          <div class="card-header-modern">
+            <i class="fas fa-file-contract"></i> Contratos y Documentos
+          </div>
+          <div class="card-body-modern">
+            <div class="table-responsive">
+              <table class="table table-modern">
+                <thead>
+                  <tr>
+                    <th>ID Documento</th>
+                    <th>Préstamo</th>
+                    <th>Fecha</th>
+                    <th>Tipo</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody id="contractsTableBody">
+                  <tr>
+                    <td colspan="6" class="text-center py-4">
+                      <div class="loading-spinner mx-auto mb-2"></div>
+                      <small class="text-muted">Cargando documentos...</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="profile" class="section">
+        <div class="row">
+          <div class="col-12 col-lg-8">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-user-circle"></i> Información Personal
+              </div>
+              <div class="card-body-modern">
+                <form id="profileForm">
+                  <div class="row g-3">
                     <div class="col-12 col-md-6">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-chart-pie"></i>
-                                Estado de Préstamos
-                            </div>
-                            <div class="card-body-modern">
-                                <div class="chart-container" style="height: 250px">
-                                    <canvas id="loanStatusChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
+                      <label class="form-label-modern">Documento (no editable)</label>
+                      <input id="profileDoc" class="form-control form-control-modern" readonly>
                     </div>
                     <div class="col-12 col-md-6">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-calendar-alt"></i>
-                                Próximos Vencimientos
-                            </div>
-                            <div class="card-body-modern">
-                                <div id="upcomingPayments">
-                                    <div class="text-center">
-                                        <div class="loading-spinner mx-auto mb-2"></div>
-                                        <small class="text-muted">Cargando vencimientos...</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      <label class="form-label-modern">Nombre Completo</label>
+                      <input id="profileName" class="form-control form-control-modern" required>
                     </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Teléfono</label>
+                      <input id="profilePhone" class="form-control form-control-modern" required>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Dirección</label>
+                      <input id="profileAddress" class="form-control form-control-modern">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Color Favorito</label>
+                      <input id="profileColor" class="form-control form-control-modern">
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label class="form-label-modern">Animal Favorito</label>
+                      <input id="profileAnimal" class="form-control form-control-modern">
+                    </div>
+                    <div class="col-12 text-end">
+                      <button type="submit" class="btn btn-modern btn-primary-modern">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-4">
+            <div class="content-card">
+              <div class="card-header-modern">
+                <i class="fas fa-key"></i> Cambiar Contraseña
+              </div>
+              <div class="card-body-modern">
+                <form id="changePasswordForm">
+                  <div class="mb-3">
+                    <label class="form-label-modern">Contraseña Actual</label>
+                    <input type="password" id="currentPassword" class="form-control form-control-modern" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label-modern">Nueva Contraseña</label>
+                    <input type="password" id="newPassword" class="form-control form-control-modern" required>
+                  </div>
+                  <div class="mb-3">
+                    <label class="form-label-modern">Confirmar Nueva Contraseña</label>
+                    <input type="password" id="confirmNewPassword" class="form-control form-control-modern" required>
+                  </div>
+                  <div class="text-end">
+                    <button type="submit" class="btn btn-modern btn-primary-modern">
+                      <i class="fas fa-lock"></i> Cambiar
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="modal fade" id="loanDetailsModal" tabindex="-1" aria-labelledby="loanDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="loanDetailsModalLabel">Detalles del Préstamo</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="modalBodyContent">
+                <p><strong>ID Préstamo:</strong> <span id="modalLoanId"></span></p>
+                <p><strong>Monto Original:</strong> <span id="modalOriginalAmount"></span></p>
+                <p><strong>Saldo Pendiente:</strong> <span id="modalPendingBalance"></span></p>
+                <p><strong>Tasa de Interés:</strong> <span id="modalInterestRate"></span></p>
+                <p><strong>Cuotas Totales:</strong> <span id="modalInstallments"></span></p>
+                <p><strong>Cuotas Pagadas:</strong> <span id="modalPaidInstallments"></span></p>
+                <p><strong>Fecha de Desembolso:</strong> <span id="modalDisbursementDate"></span></p>
+                <hr>
+                <h6>Plan de Pagos</h6>
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody id="modalPaymentsTable">
+                    </tbody>
+                  </table>
                 </div>
-            </section>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-            <section id="loans" class="section">
-                <div class="content-card">
-                    <div class="card-header-modern">
-                        <i class="fas fa-money-bill-wave"></i>
-                        Mis Préstamos
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <script>
+    // **AQUÍ DEBES PEGAR LA URL DE TU APLICACIÓN WEB DE GOOGLE APPS SCRIPT**
+    const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec'; 
+
+    // Variables globales
+    let sessionToken = localStorage.getItem('sessionToken');
+    let username = localStorage.getItem('username');
+    let currentLoanId = null;
+
+    // Elementos del DOM
+    const sidebar = document.getElementById('sidebar');
+    const mobileToggle = document.getElementById('mobileToggle');
+    const navLinks = document.querySelectorAll('.nav-link');
+    const sections = document.querySelectorAll('.section');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const profileForm = document.getElementById('profileForm');
+    const changePasswordForm = document.getElementById('changePasswordForm');
+    const loansTableBody = document.getElementById('loansTableBody');
+    const contractsTableBody = document.getElementById('contractsTableBody');
+
+    // Inicializar Charts
+    let paymentsChart = null;
+    let loanStatusChart = null;
+
+    // Estado del modal para contrato
+    let CURRENT_MODAL_CONTRACT = null;
+
+    // ===================================
+    // FUNCIÓN DE CONEXIÓN AL BACKEND
+    // ===================================
+    async function makeRequest(action, payload = {}) {
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ action, ...payload }),
+        });
+        
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Error de red: ${response.status} - ${errorText}`);
+        }
+        
+        return response.json();
+      } catch (error) {
+        console.error('Error en makeRequest:', error);
+        throw error;
+      }
+    }
+
+    // ===================================
+    // MANEJO DE SECCIONES Y NAVEGACIÓN
+    // ===================================
+
+    function showSection(sectionId) {
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+      navLinks.forEach(link => {
+        if (link.dataset.section === sectionId) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+      // Ocultar sidebar en móvil al cambiar de sección
+      if (window.innerWidth <= 768) {
+        sidebar.classList.remove('open');
+      }
+    }
+
+    // Event listeners para la navegación
+    navLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const sectionId = link.dataset.section;
+        showSection(sectionId);
+        // Cargar datos específicos de la sección
+        if (sectionId === 'dashboard') {
+          loadDashboardData();
+        } else if (sectionId === 'loans') {
+          loadLoans();
+        } else if (sectionId === 'contracts') {
+          loadContracts();
+        } else if (sectionId === 'profile') {
+          loadProfile();
+        }
+      });
+    });
+
+    // Event listener para el botón de menú en móviles
+    mobileToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('open');
+    });
+
+    // ===================================
+    // FUNCIONES DE UTILIDAD
+    // ===================================
+
+    function showAlert(message, type = 'danger') {
+      const alertPlaceholder = document.getElementById('alertPlaceholder');
+      const alert = document.createElement('div');
+      alert.className = `alert alert-${type} alert-dismissible fade show alert-fixed`;
+      alert.innerHTML = `
+        <div>${message}</div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      `;
+      alertPlaceholder.appendChild(alert);
+      setTimeout(() => alert.classList.remove('show'), 5000);
+    }
+    
+    function formatMoney(value) {
+        return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
+    }
+
+    // ===================================
+    // AUTENTICACIÓN Y CARGA INICIAL
+    // ===================================
+
+    async function checkAuthAndLoadData() {
+        if (!sessionToken || !username) {
+            showAlert('Tu sesión ha expirado o no has iniciado sesión.', 'warning');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return;
+        }
+        
+        // Actualizar nombres de usuario en la interfaz
+        document.getElementById('clientNameTitle').textContent = username;
+        document.getElementById('clientNameHeadline').textContent = username;
+
+        // Cargar datos del dashboard por defecto
+        loadDashboardData();
+    }
+
+    window.addEventListener('load', checkAuthAndLoadData);
+
+    // ===================================
+    // FUNCIONES PARA CARGAR DATOS
+    // ===================================
+
+    async function loadDashboardData() {
+        // Mostrar spinners de carga
+        document.getElementById('totalPendingAmount').innerHTML = '<div class="loading-spinner"></div>';
+        document.getElementById('activeLoansCount').innerHTML = '<div class="loading-spinner"></div>';
+        document.getElementById('finalizedLoansCount').innerHTML = '<div class="loading-spinner"></div>';
+        document.getElementById('averageInterestRate').innerHTML = '<div class="loading-spinner"></div>';
+        document.getElementById('upcomingPayments').innerHTML = '<div class="text-center"><div class="loading-spinner mx-auto mb-2"></div><small class="text-muted">Cargando vencimientos...</small></div>';
+        document.getElementById('recentActivityContainer').innerHTML = '<div class="text-center p-4"><div class="loading-spinner mx-auto mb-2"></div><small class="text-muted">Cargando actividad...</small></div>';
+
+        try {
+            const data = await makeRequest('getDashboardData');
+            if (data.success) {
+                const stats = data.stats;
+                document.getElementById('totalPendingAmount').textContent = formatMoney(stats.totalPendingAmount || 0);
+                document.getElementById('activeLoansCount').textContent = stats.activeLoansCount || 0;
+                document.getElementById('finalizedLoansCount').textContent = stats.finalizedLoansCount || 0;
+                document.getElementById('averageInterestRate').textContent = `${(stats.averageInterestRate * 100).toFixed(2)}%`;
+                
+                renderPaymentsChart(data.paymentsEvolution);
+                renderLoanStatusChart(data.loanStatus);
+                renderUpcomingPayments(data.upcomingPayments);
+                renderRecentActivity(data.recentActivity);
+            } else {
+                showAlert(data.message);
+            }
+        } catch (error) {
+            console.error("Error al cargar datos del dashboard:", error);
+            showAlert('Error al cargar datos del dashboard.');
+        }
+    }
+
+    async function loadLoans() {
+        loansTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4"><div class="loading-spinner mx-auto mb-2"></div><small class="text-muted">Cargando préstamos...</small></td></tr>`;
+
+        try {
+            const data = await makeRequest('getClientLoans');
+            if (data.success) {
+                renderLoansTable(data.loans);
+            } else {
+                showAlert(data.message);
+                loansTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4"><small class="text-muted">${data.message}</small></td></tr>`;
+            }
+        } catch (error) {
+            console.error("Error al cargar préstamos:", error);
+            showAlert('Error al cargar los préstamos.');
+            loansTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4"><small class="text-danger">Error al cargar los préstamos.</small></td></tr>`;
+        }
+    }
+
+    async function loadContracts() {
+        contractsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><div class="loading-spinner mx-auto mb-2"></div><small class="text-muted">Cargando documentos...</small></td></tr>`;
+
+        try {
+            const data = await makeRequest('getClientContracts');
+            if (data.success) {
+                renderContractsTable(data.contracts);
+            } else {
+                showAlert(data.message);
+                contractsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><small class="text-muted">${data.message}</small></td></tr>`;
+            }
+        } catch (error) {
+            console.error("Error al cargar contratos:", error);
+            showAlert('Error al cargar los contratos.');
+            contractsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><small class="text-danger">Error al cargar los contratos.</small></td></tr>`;
+        }
+    }
+
+    async function loadProfile() {
+        try {
+            const data = await makeRequest('getClientInfo');
+            if (data.success) {
+                const client = data.clientInfo;
+                document.getElementById('profileDoc').value = client.docNumber;
+                document.getElementById('profileName').value = client.fullName;
+                document.getElementById('profilePhone').value = client.phone;
+                document.getElementById('profileAddress').value = client.address;
+                document.getElementById('profileColor').value = client.favoriteColor;
+                document.getElementById('profileAnimal').value = client.favoriteAnimal;
+            } else {
+                showAlert(data.message);
+            }
+        } catch (error) {
+            console.error("Error al cargar perfil:", error);
+            showAlert('Error al cargar la información del perfil.');
+        }
+    }
+
+    // ===================================
+    // FUNCIONES DE RENDERIZADO
+    // ===================================
+
+    function renderPaymentsChart(data) {
+      if (paymentsChart) {
+        paymentsChart.destroy();
+      }
+      const ctx = document.getElementById('paymentsChart').getContext('2d');
+      paymentsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.map(d => d.date),
+          datasets: [{
+            label: 'Monto Pagado',
+            data: data.map(d => d.amount),
+            borderColor: 'rgb(54, 162, 235)',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    function renderLoanStatusChart(data) {
+      if (loanStatusChart) {
+        loanStatusChart.destroy();
+      }
+      const ctx = document.getElementById('loanStatusChart').getContext('2d');
+      loanStatusChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Activos', 'Finalizados', 'En Mora'],
+          datasets: [{
+            label: 'Estado de Préstamos',
+            data: [data.active, data.finalized, data.overdue],
+            backgroundColor: [
+              '#3182ce',
+              '#38a169',
+              '#e53e3e'
+            ],
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom' },
+          }
+        }
+      });
+    }
+    
+    function renderUpcomingPayments(data) {
+        const container = document.getElementById('upcomingPayments');
+        if (data.length === 0) {
+            container.innerHTML = '<div class="text-center py-4"><small class="text-muted">No hay próximos vencimientos.</small></div>';
+            return;
+        }
+
+        let html = '';
+        data.forEach(payment => {
+            html += `
+                <div class="activity-item">
+                    <div class="activity-icon" style="background: var(--gradient-warning);"><i class="fas fa-calendar-day"></i></div>
+                    <div class="activity-content">
+                        <div class="activity-title">Cuota de préstamo #${payment.loanId}</div>
+                        <div class="activity-subtitle">Vence el ${new Date(payment.dueDate).toLocaleDateString()}</div>
                     </div>
-                    <div class="card-body-modern">
-                        <div class="table-responsive">
-                            <table class="table table-modern">
-                                <thead>
-                                    <tr>
-                                        <th>ID Préstamo</th>
-                                        <th>Monto Original</th>
-                                        <th>Saldo Actual</th>
-                                        <th>Cuotas</th>
-                                        <th>Tasa</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="loansTableBody">
-                                    <tr>
-                                        <td colspan="7" class="text-center py-4">
-                                            <div class="loading-spinner mx-auto mb-2"></div>
-                                            <small class="text-muted">Cargando préstamos...</small>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                    <div class="activity-amount text-warning">${formatMoney(payment.amount)}</div>
                 </div>
-            </section>
+            `;
+        });
+        container.innerHTML = html;
+    }
 
-            <section id="contracts" class="section">
-                <div class="content-card">
-                    <div class="card-header-modern">
-                        <i class="fas fa-file-contract"></i>
-                        Contratos y Documentos
-                    </div>
-                    <div class="card-body-modern">
-                        <div class="table-responsive">
-                            <table class="table table-modern">
-                                <thead>
-                                    <tr>
-                                        <th>ID Documento</th>
-                                        <th>Préstamo</th>
-                                        <th>Fecha</th>
-                                        <th>Tipo</th>
-                                        <th>Estado</th>
-                                        <th>Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="contractsTableBody">
-                                    <tr>
-                                        <td colspan="6" class="text-center py-4">
-                                            <div class="loading-spinner mx-auto mb-2"></div>
-                                            <small class="text-muted">Cargando documentos...</small>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </section>
+    function renderRecentActivity(data) {
+      const container = document.getElementById('recentActivityContainer');
+        if (data.length === 0) {
+            container.innerHTML = '<div class="text-center py-4"><small class="text-muted">No hay actividad reciente.</small></div>';
+            return;
+        }
 
-            <section id="profile" class="section">
-                <div class="row">
-                    <div class="col-12 col-lg-8">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-user-circle"></i>
-                                Información Personal
-                            </div>
-                            <div class="card-body-modern">
-                                <form id="profileForm">
-                                    <div class="row g-3">
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Documento (no editable)</label>
-                                            <input id="profileDoc" class="form-control form-control-modern" readonly />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Nombre Completo</label>
-                                            <input id="profileName" class="form-control form-control-modern" required />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Teléfono</label>
-                                            <input id="profilePhone" class="form-control form-control-modern"
-                                                required />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Dirección</label>
-                                            <input id="profileAddress" class="form-control form-control-modern" />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Color Favorito</label>
-                                            <input id="profileColor" class="form-control form-control-modern" />
-                                        </div>
-                                        <div class="col-12 col-md-6">
-                                            <label class="form-label-modern">Animal Favorito</label>
-                                            <input id="profileAnimal" class="form-control form-control-modern" />
-                                        </div>
-                                        <div class="col-12 text-end">
-                                            <button type="submit" class="btn btn-modern btn-primary-modern">
-                                                <i class="fas fa-save"></i>
-                                                Guardar Cambios
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+      let html = '';
+      data.forEach(activity => {
+        const icon = activity.type === 'Pago' ? '<i class="fas fa-hand-holding-usd"></i>' : '<i class="fas fa-money-bill-wave"></i>';
+        const color = activity.type === 'Pago' ? 'var(--gradient-success)' : 'var(--gradient-primary)';
+        const amountColor = activity.type === 'Pago' ? 'var(--success)' : 'var(--primary)';
+        
+        html += `
+          <div class="activity-item">
+            <div class="activity-icon" style="background: ${color};">${icon}</div>
+            <div class="activity-content">
+              <div class="activity-title">${activity.title}</div>
+              <div class="activity-subtitle">${activity.date}</div>
+            </div>
+            <div class="activity-amount" style="color: ${amountColor};">${formatMoney(activity.amount)}</div>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
 
-                    <div class="col-12 col-lg-4">
-                        <div class="content-card">
-                            <div class="card-header-modern">
-                                <i class="fas fa-key"></i>
-                                Cambiar Contraseña
-                            </div>
-                            <div class="card-body-modern">
-                                <form id="changePasswordForm">
-                                    <div class="mb-3">
-                                        <label class="form-label-modern">Contraseña Actual</label>
-                                        <input id="oldPassword" type="password" class="form-control form-control-modern"
-                                            required />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label-modern">Nueva Contraseña</label>
-                                        <input id="newPassword" type="password" class="form-control form-control-modern"
-                                            required />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label class="form-label-modern">Confirmar Contraseña</label>
-                                        <input id="confirmPassword" type="password"
-                                            class="form-control form-control-modern" required />
-                                    </div>
-                                    <button class="btn btn-modern btn-primary-modern w-100" type="submit">
-                                        <i class="fas fa-key"></i>
-                                        Cambiar Contraseña
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-        </main>
-    </div>
+    function renderLoansTable(loans) {
+      loansTableBody.innerHTML = '';
+      if (loans.length === 0) {
+        loansTableBody.innerHTML = `<tr><td colspan="7" class="text-center py-4"><small class="text-muted">No tienes préstamos registrados.</small></td></tr>`;
+        return;
+      }
+      
+      loans.forEach(loan => {
+        const statusBadge = `<span class="badge-modern badge-${loan.status === 'ACTIVO' ? 'success' : 'secondary'}">${loan.status}</span>`;
+        const row = `
+          <tr>
+            <td>${loan.id}</td>
+            <td>${formatMoney(loan.originalAmount)}</td>
+            <td>${formatMoney(loan.pendingAmount)}</td>
+            <td>${loan.paidInstallments}/${loan.totalInstallments}</td>
+            <td>${(loan.interestRate * 100).toFixed(2)}%</td>
+            <td>${statusBadge}</td>
+            <td>
+              <button class="btn btn-sm-modern btn-primary-modern" onclick="openLoanDetailsModal('${loan.id}')">
+                <i class="fas fa-eye"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+        loansTableBody.innerHTML += row;
+      });
+    }
+    
+    function renderContractsTable(contracts) {
+        contractsTableBody.innerHTML = '';
+        if (contracts.length === 0) {
+            contractsTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-4"><small class="text-muted">No tienes contratos registrados.</small></td></tr>`;
+            return;
+        }
 
-    <div class="modal fade" id="loanModal" tabindex="-1">
-        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content" style="
-            border-radius: 16px;
-            border: none;
-            box-shadow: var(--shadow-strong);
-          ">
-                <div class="modal-header" style="
-              background: var(--gradient-primary);
-              color: white;
-              border: none;
-            ">
-                    <h5 class="modal-title">
-                        <i class="fas fa-money-bill-wave me-2"></i>
-                        Préstamo <span id="loanModalId"></span>
-                    </h5>
-                    <button class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="row g-3 mb-4">
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Monto Original</small>
-                                <h6 id="modalLoanAmount" class="mb-0">$0</h6>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Saldo Actual</small>
-                                <h6 id="modalLoanBalance" class="mb-0">$0</h6>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Cuotas</small>
-                                <h6 id="modalLoanCuotas" class="mb-0">0/0</h6>
-                            </div>
-                        </div>
-                        <div class="col-6 col-md-3">
-                            <div class="stat-card" style="margin: 0">
-                                <small class="text-muted">Estado</small>
-                                <h6 id="modalLoanEstado" class="mb-0">-</h6>
-                            </div>
-                        </div>
-                    </div>
+        contracts.forEach(contract => {
+            const row = `
+                <tr>
+                    <td>${contract.id}</td>
+                    <td>Préstamo #${contract.loanId}</td>
+                    <td>${new Date(contract.date).toLocaleDateString()}</td>
+                    <td>Tipo: Contrato</td>
+                    <td><span class="badge-modern badge-success">Generado</span></td>
+                    <td>
+                        <button class="btn btn-sm-modern btn-primary-modern" onclick="downloadContract('${contract.loanId}')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+            contractsTableBody.innerHTML += row;
+        });
+    }
 
-                    <h6 class="mb-3">
-                        <i class="fas fa-calendar-check me-2"></i>
-                        Plan de Pagos
-                    </h6>
-                    <div class="table-responsive">
-                        <table class="table table-modern">
-                            <thead>
+    // ===================================
+    // MANEJO DE MODALES
+    // ===================================
+    
+    async function openLoanDetailsModal(loanId) {
+        try {
+            const data = await makeRequest('getLoanDetails', { loanId });
+            if (data.success) {
+                const loan = data.loan;
+                const paymentPlan = data.paymentPlan;
+                
+                document.getElementById('modalLoanId').textContent = loan.id;
+                document.getElementById('modalOriginalAmount').textContent = formatMoney(loan.originalAmount);
+                document.getElementById('modalPendingBalance').textContent = formatMoney(loan.pendingAmount);
+                document.getElementById('modalInterestRate').textContent = `${(loan.interestRate * 100).toFixed(2)}%`;
+                document.getElementById('modalInstallments').textContent = loan.totalInstallments;
+                document.getElementById('modalPaidInstallments').textContent = loan.paidInstallments;
+                document.getElementById('modalDisbursementDate').textContent = new Date(loan.disbursementDate).toLocaleDateString();
+
+                const paymentsTableBody = document.getElementById('modalPaymentsTable');
+                paymentsTableBody.innerHTML = '';
+                paymentPlan.forEach((p, index) => {
+                    const status = p[3] ? 'Pagada' : 'Pendiente';
+                    const statusClass = p[3] ? 'text-success' : 'text-danger';
+                    const row = `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${new Date(p[0]).toLocaleDateString()}</td>
+                            <td>${formatMoney(p[1])}</td>
+                            <td class="${statusClass}">${status}</td>
+                        </tr>
+                    `;
+                    paymentsTableBody.innerHTML += row;
+                });
+                
+                new bootstrap.Modal(document.getElementById('loanDetailsModal')).show();
+            } else {
+                showAlert(data.message);
+            }
+        } catch (error) {
+            console.error("Error al obtener detalles del préstamo:", error);
+            showAlert('Error al obtener los detalles del préstamo.');
+        }
+    }
+
+    // ===================================
+    // FORMULARIOS Y ACCIONES
+    // ===================================
+
+    profileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = {
+            fullName: document.getElementById('profileName').value,
+            phone: document.getElementById('profilePhone').value,
+            address: document.getElementById('profileAddress').value,
+            favoriteColor: document.getElementById('profileColor').value,
+            favoriteAnimal: document.getElementById('profileAnimal').value,
+            sessionToken: sessionToken
+        };
+        try {
+            const response = await makeRequest('updateClientInfo', data);
+            if (response.success) {
+                showAlert('Perfil actualizado correctamente.', 'success');
+            } else {
+                showAlert(response.message);
+            }
+        } catch (error) {
+            console.error("Error al actualizar perfil:", error);
+            showAlert('Error al actualizar el perfil.');
+        }
+    });
+
+    changePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+        if (newPassword !== confirmNewPassword) {
+            showAlert('Las contraseñas no coinciden.');
+            return;
+        }
+
+        const data = {
+            currentPassword: currentPassword,
+            newPassword: newPassword,
+            sessionToken: sessionToken
+        };
+        try {
+            const response = await makeRequest('changePassword', data);
+            if (response.success) {
+                showAlert('Contraseña cambiada correctamente.', 'success');
+                changePasswordForm.reset();
+            } else {
+                showAlert(response.message);
+            }
+        } catch (error) {
+            console.error("Error al cambiar la contraseña:", error);
+            showAlert('Error al cambiar la contraseña.');
+        }
+    });
+
+    // ===================================
+    // LOGOUT
+    // ===================================
+
+    logoutBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      try {
+        await makeRequest('logout', { sessionToken });
+      } catch (error) {
+        console.error('Error durante el cierre de sesión:', error);
+      } finally {
+        localStorage.removeItem('sessionToken');
+        localStorage.removeItem('username');
+        showAlert('Sesión cerrada correctamente', 'success');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1000);
+      }
+    });
+
+    // ===================================
+    // MANEJO DE CONTRATOS
+    // ===================================
+    
+    // Función para descargar un contrato (usando html2canvas y jspdf)
+    async function downloadContract(loanId) {
+        showAlert('Generando documento... Esto puede tomar unos segundos.', 'info');
+        try {
+            const data = await makeRequest('generateContract', { loanId });
+            if (data.success) {
+                const contractData = data.data.contract;
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; padding: 2rem; max-width: 800px; margin: auto;">
+                        <h2 style="text-align: center; color: #3182ce;">Contrato de Préstamo</h2>
+                        <p style="text-align: center; color: #4a5568;"><strong>ID Préstamo:</strong> ${contractData.loanId}</p>
+                        <hr style="border-top: 1px solid #e2e8f0;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <div><strong>Cliente:</strong> ${contractData.clientName}</div>
+                            <div><strong>Fecha:</strong> ${new Date(contractData.date).toLocaleDateString()}</div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 1rem;">
+                            <div><strong>Documento:</strong> ${contractData.clientDoc}</div>
+                            <div><strong>Monto:</strong> ${formatMoney(contractData.amount)}</div>
+                        </div>
+                        <p style="margin-top: 2rem;">El presente documento certifica el acuerdo de préstamo entre las partes, con las siguientes condiciones:</p>
+                        <ul>
+                            <li><strong>Monto Principal:</strong> ${formatMoney(contractData.amount)}</li>
+                            <li><strong>Cuotas:</strong> ${contractData.installments}</li>
+                            <li><strong>Tasa de Interés:</strong> ${(contractData.interestRate * 100).toFixed(2)}%</li>
+                        </ul>
+                        <h4 style="margin-top: 2rem; color: #2d3748;">Plan de Pagos</h4>
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead style="background: #f8fafc;">
                                 <tr>
-                                    <th>#</th>
-                                    <th>Vencimiento</th>
-                                    <th>Total</th>
-                                    <th>Capital</th>
-                                    <th>Interés</th>
-                                    <th>Estado</th>
+                                    <th style="padding: 0.75rem; border: 1px solid #e2e8f0;"># Cuota</th>
+                                    <th style="padding: 0.75rem; border: 1px solid #e2e8f0;">Fecha</th>
+                                    <th style="padding: 0.75rem; border: 1px solid #e2e8f0;">Monto</th>
                                 </tr>
                             </thead>
-                            <tbody id="modalPaymentsBody">
-                                <tr>
-                                    <td colspan="6" class="text-center py-3">
-                                        <div class="loading-spinner mx-auto mb-2"></div>
-                                        <small class="text-muted">Cargando plan de pagos...</small>
-                                    </td>
-                                </tr>
+                            <tbody>
+                                ${contractData.paymentPlan.map((p, i) => `
+                                    <tr>
+                                        <td style="padding: 0.75rem; border: 1px solid #e2e8f0;">${i + 1}</td>
+                                        <td style="padding: 0.75rem; border: 1px solid #e2e8f0;">${new Date(p.date).toLocaleDateString()}</td>
+                                        <td style="padding: 0.75rem; border: 1px solid #e2e8f0;">${formatMoney(p.amount)}</td>
+                                    </tr>
+                                `).join('')}
                             </tbody>
                         </table>
+                        <div style="margin-top: 3rem; text-align: center; color: #718096; font-size: 0.9rem;">
+                            Documento generado el ${new Date().toLocaleDateString()} por SGL Pro.
+                        </div>
                     </div>
-                </div>
-                <div class="modal-footer border-0 bg-light">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">
-                        Cerrar
-                    </button>
-                    <button id="downloadContractBtn" class="btn btn-modern btn-primary-modern">
-                        <i class="fas fa-file-pdf"></i>
-                        Descargar Contrato
-                    </button>
-                    <button id="downloadPazSalvoBtn" class="btn btn-modern" style="
-                background: var(--gradient-success);
-                color: white;
-                display: none;
-              ">
-                        <i class="fas fa-file-export"></i>
-                        Descargar Paz y Salvo
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script>
-        // ========== CONFIGURACIÓN ==========
-        const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbxCILJhPhwUWLdc1ws6THP2UUkL7z8SwJbl5yPU6Lc6yRXoJcBmqqyofI9MCKjNfBFygg/exec';
-
-        /* ---------- SESSION ---------- */
-        const sessionToken = localStorage.getItem('sessionToken');
-        const username = localStorage.getItem('username');
-
-        /* ---------- UI helpers ---------- */
-        function showAlert(message, type = 'info', timeout = 4500) {
-            const ph = document.getElementById('alertPlaceholder');
-            if (!ph) return;
-            const wrapper = document.createElement('div');
-            wrapper.className = `alert alert-${type} alert-dismissible fade show`;
-            wrapper.role = 'alert';
-            wrapper.innerHTML = `${message}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
-            ph.appendChild(wrapper);
-            if (timeout) setTimeout(() => wrapper.remove(), timeout);
-        }
-
-        /* ---------- NETWORK: robust makeRequest usando FormData ---------- */
-        async function makeRequest(action, data = {}) {
-            try {
-                if (!BACKEND_URL || BACKEND_URL.includes('PASTE_YOUR')) {
-                    console.error('BACKEND_URL no configurado. Reemplaza la constante con tu URL /exec.');
-                    return { success: false, message: 'BACKEND_URL no configurado' };
-                }
-
-                const payload = { ...data, action, sessionToken };
-                const form = new FormData();
-                form.append('payload', JSON.stringify(payload));
-
-                const resp = await fetch(BACKEND_URL, {
-                    method: 'POST',
-                    body: form
-                    // NO headers, NO mode: 'no-cors'
-                });
-
-                // Si la respuesta no es JSON (error 500, HTML, etc.) capturamos
-                const text = await resp.text();
-                try {
-                    const json = JSON.parse(text);
-                    return json;
-                } catch (err) {
-                    console.error('Respuesta no JSON:', text);
-                    return { success: false, message: 'Respuesta inválida del servidor' };
-                }
-
-            } catch (error) {
-                console.error('Error en makeRequest:', error);
-                return { success: false, message: 'Error de conexión con el servidor' };
-            }
-        }
-
-        /* ---------- PAGE BOOT ---------- */
-        document.addEventListener('DOMContentLoaded', async () => {
-            // seguridad simple
-            if (!sessionToken || !username) {
-                // no hay sesión -> volver al login
-                window.location.replace('/'); // ajusta si tu login no está en /
-                return;
-            }
-
-            // attach logout handler if exists
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) logoutBtn.addEventListener('click', async (e) => {
-                e.preventDefault();
-                await logout();
-            });
-
-            // sidebar links (si usas enlaces con data-section)
-
-            document.addEventListener('DOMContentLoaded', async () => {
-                if (!sessionToken || !username) {
-                    window.location.replace('login.html');
-                    return;
-                }
-
-                // Sidebar links
-                document.querySelectorAll('.sidebar-nav a').forEach(link => {
-                    link.addEventListener('click', async ev => {
-                        ev.preventDefault();
-                        const target = link.dataset.section;
-                        if (!target) return;
-
-                        document.querySelectorAll('.sidebar-nav a').forEach(a => a.classList.remove('active'));
-                        link.classList.add('active');
-
-                        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-                        document.getElementById(target)?.classList.add('active');
-
-                        if (target === 'dashboard') await loadDashboardData();
-                        if (target === 'loans') await loadLoans();
-                        if (target === 'contracts') await loadContracts();
-                        if (target === 'profile') await loadProfile();
-                    });
-                });
-
-                await loadDashboardData();
-            });
-
-
-
-            // initial load
-            await loadDashboardData();
-            // attach profile and change password handlers
-            const profileForm = document.getElementById('profileForm');
-            if (profileForm) profileForm.addEventListener('submit', saveProfile);
-
-            const changePassForm = document.getElementById('changePasswordForm');
-            if (changePassForm) changePassForm.addEventListener('submit', changePassword);
-        });
-
-        /* ---------- DASHBOARD / DATA LOADERS ---------- */
-
-        async function loadDashboardData() {
-            try {
-                // Consigue cliente y prestamos
-                const infoResp = await makeRequest('getClientInfo', { username });
-                const loansResp = await makeRequest('getClientLoans', { username });
-                const paymentsResp = await makeRequest('getClientPayments', { clientId: username });
-
-                // CLIENT INFO: tolerante con formatos
-                if (infoResp && infoResp.success) {
-                    const client = infoResp.data?.client || infoResp.data || {};
-                    document.getElementById('clientNameTitle')?.textContent = (client.name || client.nombreCompleto || username).split(' ')[0];
-                    document.getElementById('clientNameHeadline')?.textContent = client.name || client.nombreCompleto || username;
-                } else {
-                    console.warn('No se pudo cargar info del cliente:', infoResp && infoResp.message);
-                    // no mostrar error global por ahora
-                }
-
-                // LOANS summary
-                if (loansResp && loansResp.success) {
-                    const loans = loansResp.data?.loans || [];
-                    const totalPending = loans.filter(l => l.status === 'activo' || l.estado === 'activo').reduce((acc, l) => acc + (Number(l.currentBalance || l.saldo || l.monto) || 0), 0);
-                    const activeCount = loans.filter(l => (l.status || l.estado) === 'activo').length;
-                    const finalized = loans.length - activeCount;
-
-                    const elPending = document.getElementById('totalPendingAmount');
-                    if (elPending) elPending.textContent = formatMoney(totalPending);
-                    const elActive = document.getElementById('activeLoansCount');
-                    if (elActive) elActive.textContent = activeCount;
-                    const elFinal = document.getElementById('finalizedLoansCount');
-                    if (elFinal) elFinal.textContent = finalized;
-
-                    // Recent activity from paymentsResp
-                    const container = document.getElementById('recentActivityContainer');
-                    if (container) {
-                        container.innerHTML = '';
-                        const payments = (paymentsResp && paymentsResp.success) ? (paymentsResp.data?.payments || []) : [];
-                        const recent = payments.slice(-6).reverse();
-                        if (recent.length === 0) container.innerHTML = '<p class="text-muted">No hay actividad reciente.</p>';
-                        else {
-                            const ul = document.createElement('ul'); ul.className = 'list-group';
-                            recent.forEach(p => {
-                                const date = p.fecha || p[2] || p[3] || '';
-                                const amount = p.monto || p[1] || p[4] || 0;
-                                const loanId = p.loanId || p[1] || p[0] || '';
-                                const li = document.createElement('li');
-                                li.className = 'list-group-item d-flex justify-content-between align-items-start';
-                                li.innerHTML = `<div><strong>Pago</strong> - Préstamo ${loanId}<div class="text-muted small">${date ? new Date(date).toLocaleString() : ''}</div></div><div class="fw-bold">${formatMoney(Number(amount) || 0)}</div>`;
-                                ul.appendChild(li);
-                            });
-                            container.appendChild(ul);
-                        }
-                    }
-                } else {
-                    console.warn('No se pudieron cargar prestamos (dashboard):', loansResp && loansResp.message);
-                }
-
-            } catch (err) {
-                console.error('Error al cargar datos del dashboard:', err);
-                showAlert('Error al cargar datos del dashboard. Revisa la consola.', 'danger');
-            }
-        }
-
-        /* ---------- LOANS ---------- */
-
-        async function loadLoans() {
-            try {
-                const resp = await makeRequest('getClientLoans', { username });
-                const tbody = document.getElementById('loansTableBody');
-                if (!tbody) return;
-                tbody.innerHTML = '';
-
-                if (!resp.success || !Array.isArray(resp.data?.loans) || resp.data.loans.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No tienes préstamos registrados.</td></tr>';
-                    return;
-                }
-
-                resp.data.loans.forEach(loan => {
-                    const paid = Number(loan.paidInstallments || loan.pagas || 0);
-                    const total = Number(loan.totalInstallments || loan.cuotas || loan.montoCuotas || 0);
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-            <td>${loan.id || loan.loanId || ''}</td>
-            <td>${formatMoney(Number(loan.amount || loan.monto || 0))}</td>
-            <td>${formatMoney(Number(loan.currentBalance || loan.saldo || 0))}</td>
-            <td>${paid} / ${total}</td>
-            <td>${(loan.status || loan.estado) === 'activo' ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Finalizado</span>'}</td>
-            <td>
-              <button class="btn btn-sm btn-primary btn-small view-loan" data-loan='${encodeURIComponent(JSON.stringify(loan))}'>
-                <i class="fas fa-eye me-1"></i> Ver
-              </button>
-            </td>`;
-                    tbody.appendChild(tr);
-                });
-
-                document.querySelectorAll('.view-loan').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const loan = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-loan')));
-                        openLoanModal(loan);
-                    });
-                });
-
-            } catch (err) {
-                console.error('Error al cargar préstamos:', err);
-                showAlert('Error al cargar préstamos. Revisa la consola.', 'danger');
-            }
-        }
-
-        /* ---------- MODAL RENDERS ---------- */
-        let CURRENT_MODAL_CONTRACT = null;
-
-        async function openLoanModal(loan) {
-            try {
-                document.getElementById('loanModalId').textContent = loan.id || loan.loanId || '';
-                document.getElementById('modalLoanAmount').textContent = formatMoney(Number(loan.amount || loan.monto || 0));
-                document.getElementById('modalLoanBalance').textContent = formatMoney(Number(loan.currentBalance || loan.saldo || 0));
-                document.getElementById('modalLoanCuotas').textContent = `${loan.paidInstallments || 0} / ${loan.totalInstallments || 0}`;
-                document.getElementById('modalLoanEstado').textContent = (loan.status || loan.estado) === 'activo' ? 'Activo' : 'Finalizado';
-
-                const tbody = document.getElementById('modalPaymentsBody'); tbody.innerHTML = '';
-
-                const payments = Array.isArray(loan.payments) ? loan.payments : (loan.paymentsRaw || []);
-                if (!payments.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No hay pagos registrados.</td></tr>';
-                } else {
-                    payments.forEach(p => {
-                        const cuota = p.cuotaNumber ?? p[0] ?? '';
-                        const due = p.dueDate ?? p[1] ?? '';
-                        const total = p.amount ?? p[2] ?? 0;
-                        const capital = p.capital ?? p[3] ?? 0;
-                        const interest = p.interest ?? p[4] ?? 0;
-                        const status = p.status ?? 'pendiente';
-                        tbody.insertAdjacentHTML('beforeend', `<tr>
-              <td>${cuota}</td>
-              <td>${due ? new Date(due).toLocaleDateString() : ''}</td>
-              <td>${formatMoney(Number(total) || 0)}</td>
-              <td>${formatMoney(Number(capital) || 0)}</td>
-              <td>${formatMoney(Number(interest) || 0)}</td>
-              <td>${status === 'pagada' ? '<span class="badge bg-success">Pagada</span>' : '<span class="badge bg-warning">Pendiente</span>'}</td>
-            </tr>`);
-                    });
-                }
-
-                // buscar contrato
-                const cResp = await makeRequest('getClientContracts', { username });
-                if (cResp?.success) {
-                    const found = (cResp.data?.contracts || []).find(c => String(c.loanId || c.préstamo || c.loan).trim() === String(loan.id || loan.loanId).trim());
-                    CURRENT_MODAL_CONTRACT = found || null;
-                    document.getElementById('downloadContractBtn').disabled = !found;
-                    const pazBtn = document.getElementById('downloadPazSalvoBtn');
-                    if (pazBtn) pazBtn.style.display = found?.pazSalvo ? 'inline-block' : 'none';
-                }
-
-                const modal = new bootstrap.Modal(document.getElementById('loanModal'));
-                modal.show();
-
-            } catch (err) {
-                console.error('openLoanModal error', err);
-                showAlert('Error abriendo modal de préstamo.', 'danger');
-            }
-        }
-
-        /* ---------- CONTRACTS ---------- */
-
-        async function loadContracts() {
-            try {
-                const resp = await makeRequest('getClientContracts', { username });
-                const tbody = document.getElementById('contractsTableBody');
-                if (!tbody) return;
-                tbody.innerHTML = '';
-
-                if (!resp.success || !Array.isArray(resp.data?.contracts) || resp.data.contracts.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5" class="text-center text-muted">No hay contratos registrados.</td></tr>';
-                    return;
-                }
-
-                resp.data.contracts.forEach(c => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${c.id}</td><td>${c.loanId || c.préstamo || ''}</td><td>${c.fecha ? new Date(c.fecha).toLocaleDateString() : ''}</td><td>${c.type || 'Contrato'}</td>
-            <td>
-              <button class="btn btn-sm btn-primary btn-small view-contract" data-contract='${encodeURIComponent(JSON.stringify(c))}'>
-                <i class="fas fa-eye me-1"></i> Ver / Descargar
-              </button>
-            </td>`;
-                    tbody.appendChild(tr);
-                });
-
-                document.querySelectorAll('.view-contract').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const c = JSON.parse(decodeURIComponent(e.currentTarget.getAttribute('data-contract')));
-                        CURRENT_MODAL_CONTRACT = c;
-                        openLoanModal({ id: c.loanId, payments: [] }); // reusar modal para mostrar info/descarga
-                    });
-                });
-
-            } catch (err) {
-                console.error('Error al cargar contratos:', err);
-                showAlert('Error al cargar contratos', 'danger');
-            }
-        }
-
-        /* ---------- PROFILE ---------- */
-
-        async function loadProfile() {
-            try {
-                const resp = await makeRequest('getClientInfo', { username });
-                if (!resp.success) { showAlert(resp.message || 'No se pudo cargar perfil', 'danger'); return; }
-                const c = resp.data?.client || resp.data || {};
-                document.getElementById('profileDoc').value = c.numeroDocumento || c.doc || username;
-                document.getElementById('profileName').value = c.nombreCompleto || c.name || '';
-                document.getElementById('profilePhone').value = c.telefono || c.phone || '';
-                document.getElementById('profileAddress').value = c.direccion || c.address || '';
-                document.getElementById('profileColor').value = c.colorFavorito || c.favoriteColor || '';
-                document.getElementById('profileAnimal').value = c.animalFavorito || c.favoriteAnimal || '';
-            } catch (err) {
-                console.error('Error al cargar perfil:', err);
-                showAlert('Error al cargar perfil', 'danger');
-            }
-        }
-
-        async function saveProfile(e) {
-            e.preventDefault();
-            const payload = {
-                username,
-                nombreCompleto: document.getElementById('profileName').value.trim(),
-                telefono: document.getElementById('profilePhone').value.trim(),
-                direccion: document.getElementById('profileAddress').value.trim(),
-                colorFavorito: document.getElementById('profileColor').value.trim(),
-                animalFavorito: document.getElementById('profileAnimal').value.trim()
-            };
-            const resp = await makeRequest('updateClientProfile', payload);
-            if (resp.success) {
-                showAlert('Perfil actualizado', 'success');
-                await loadProfile();
-            } else showAlert(resp.message || 'Error al guardar perfil', 'danger');
-        }
-
-        async function changePassword(e) {
-            e.preventDefault();
-            const oldP = document.getElementById('oldPassword').value;
-            const newP = document.getElementById('newPassword').value;
-            const conf = document.getElementById('confirmPassword').value;
-            if (newP !== conf) { showAlert('Las contraseñas no coinciden', 'warning'); return; }
-            const resp = await makeRequest('changePassword', { username, oldPassword: oldP, newPassword: newP });
-            if (resp.success) {
-                showAlert('Contraseña cambiada exitosamente.', 'success');
-                document.getElementById('changePasswordForm').reset();
+                `;
+                const filename = `contrato_${contractData.loanId}.pdf`;
+                await generatePdfAndDownload(htmlContent, filename);
+                showAlert('Documento generado exitosamente.', 'success');
             } else {
-                showAlert(resp.message || 'Error al cambiar la contraseña.', 'danger');
+                showAlert(data.message);
             }
+        } catch (error) {
+            console.error("Error al generar el contrato:", error);
+            showAlert('Error al generar el contrato.');
         }
-
-        /* ---------- DOWNLOAD helpers (contrato/paz y salvo) ---------- */
-
-        async function downloadCurrentContractPDF() {
-            if (!CURRENT_MODAL_CONTRACT) { showAlert('No hay contrato seleccionado', 'warning'); return; }
-            const html = `<div style="font-family:Arial;padding:24px">
-        <h2>CONTRATO</h2>
-        <p><strong>ID:</strong> ${CURRENT_MODAL_CONTRACT.id || ''}</p>
-        <p><strong>Préstamo:</strong> ${CURRENT_MODAL_CONTRACT.loanId || ''}</p>
-        <p><strong>Cliente:</strong> ${CURRENT_MODAL_CONTRACT.clientName || ''}</p>
-        <p><strong>Fecha:</strong> ${CURRENT_MODAL_CONTRACT.fecha ? new Date(CURRENT_MODAL_CONTRACT.fecha).toLocaleDateString() : ''}</p>
-        <hr/>${CURRENT_MODAL_CONTRACT.text || ''}
-      </div>`;
-            const blob = await htmlToPdfBlob(html, 1);
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `contrato_${CURRENT_MODAL_CONTRACT.id || Date.now()}.pdf`; a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        async function htmlToPdfBlob(htmlContent, scale = 1) {
-            const wrap = document.createElement('div');
-            wrap.innerHTML = htmlContent;
-            document.body.appendChild(wrap);
-
-            const canvas = await html2canvas(wrap, {
-                scale: scale,
-                logging: false,
-                useCORS: true
-            });
-            const imgData = canvas.toDataURL('image/png');
-
-            const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('p', 'pt', 'a4');
-            const imgProps = pdf.getImageProperties(imgData);
-
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            const blob = pdf.output('blob');
-
-            document.body.removeChild(wrap);
-            return blob;
-        }
-
-        /* ---------- UTIL ---------- */
-        function formatMoney(value) { return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 0 }).format(Number(value || 0)); }
-
-        /* ---------- LOGOUT ---------- */
-        async function logout() {
-            try {
-                await makeRequest('logout', { sessionToken });
-            } catch (e) {
-                console.warn('logout error', e);
-            } finally {
-                localStorage.clear();
-                // replace evita que el usuario vuelva con el botón Atrás a la sesión anterior
-                window.location.replace('login.html'); // ajusta si tu login tiene otra ruta
-            }
-        }
-
-        // Añade esto al final de tu <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Escucha el clic en los enlaces de navegación
-            document.querySelectorAll('.nav-link[data-section]').forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const sectionId = this.getAttribute('data-section');
-                    showModule(sectionId);
-                });
-            });
-
-            // Código para el menú móvil (opcional)
-            const mobileToggle = document.getElementById('mobileToggle');
-            const sidebar = document.getElementById('sidebar');
-
-            if (mobileToggle) {
-                mobileToggle.addEventListener('click', function () {
-                    sidebar.classList.toggle('open');
-                });
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-    // Escucha todos los clics en los enlaces de la barra lateral
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault(); // Evita que la página se recargue
-
-            // Obtiene el ID del módulo a mostrar desde el atributo data-section
-            const sectionId = this.getAttribute('data-section');
-            if (sectionId) {
-                showModule(sectionId);
-            }
-        });
-    });
-
-    // Muestra el módulo de inicio al cargar la página por primera vez
-    showModule('dashboard'); 
-});
-
-function showModule(sectionId) {
-    // 1. Oculta todas las secciones de contenido
-    document.querySelectorAll('section.content-section').forEach(section => {
-        section.classList.remove('active');
-    });
-
-    // 2. Muestra la sección correcta
-    const targetSection = document.getElementById(sectionId);
-    if (targetSection) {
-        targetSection.classList.add('active');
     }
 
-    // 3. Actualiza la clase 'active' en el menú de navegación
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.classList.remove('active');
-    });
-
-    const targetLink = document.querySelector(`.nav-link[data-section="${sectionId}"]`);
-    if (targetLink) {
-        targetLink.classList.add('active');
+    async function generatePdfAndDownload(htmlContent, filename) {
+        const wrap = document.createElement('div');
+        wrap.style.width = '210mm'; // A4 width
+        wrap.innerHTML = htmlContent;
+        document.body.appendChild(wrap);
+        
+        const canvas = await html2canvas(wrap);
+        const imgData = canvas.toDataURL('image/png');
+        
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const imgProps = pdf.getImageProperties(imgData);
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        
+        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+        pdf.save(filename);
+        
+        document.body.removeChild(wrap);
     }
-
-    // 4. Llama a la función para cargar los datos de la sección
-    if (sectionId === 'dashboard') {
-        fetchDashboardData();
-    } else if (sectionId === 'loans') {
-        fetchClientLoans();
-    } else if (sectionId === 'contracts') {
-        fetchClientContracts();
-    } else if (sectionId === 'profile') {
-        fetchClientProfile();
-    }
-}
-
-    </script>
+  </script>
 </body>
-
 </html>
